@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Login · Empireyoncar</title>
+
+  <style>
+    :root{
+      --bg:#0d1117;
+      --panel:#161b22;
+      --border:#30363d;
+      --text:#c9d1d9;
+      --muted:#8b949e;
+      --btn-bg:#238636;
+      --btn-bg-hover:#2ea043;
+      --radius:6px;
+    }
+
+    *{box-sizing:border-box;font-family:system-ui,Segoe UI,Roboto,Arial}
+    body{
+      margin:0;
+      background:var(--bg);
+      color:var(--text);
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      min-height:100vh;
+      padding:20px;
+    }
+
+    .wrap{
+      width:100%;
+      max-width:360px;
+      text-align:center;
+    }
+
+    .logo{
+      width:64px;
+      height:64px;
+      border-radius:50%;
+      background:#fff;
+      margin:0 auto 20px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:28px;
+      font-weight:800;
+      color:#000;
+    }
+
+    .card{
+      background:var(--panel);
+      border:1px solid var(--border);
+      padding:28px;
+      border-radius:var(--radius);
+      text-align:left;
+    }
+
+    label{
+      display:block;
+      margin-bottom:6px;
+      font-size:14px;
+      color:var(--text);
+    }
+
+    input{
+      width:100%;
+      padding:10px;
+      border-radius:var(--radius);
+      border:1px solid var(--border);
+      background:#0d1117;
+      color:var(--text);
+      margin-bottom:14px;
+      font-size:14px;
+    }
+
+    input:focus{
+      outline:none;
+      border-color:#58a6ff;
+      box-shadow:0 0 0 3px rgba(56,139,253,0.3);
+    }
+
+    .btn{
+      width:100%;
+      padding:10px;
+      border:none;
+      border-radius:var(--radius);
+      background:var(--btn-bg);
+      color:#fff;
+      font-weight:600;
+      cursor:pointer;
+      font-size:15px;
+      margin-top:6px;
+    }
+
+    .btn:hover{
+      background:var(--btn-bg-hover);
+    }
+
+    .links{
+      margin-top:16px;
+      font-size:13px;
+      text-align:center;
+    }
+
+    .links a{
+      color:#58a6ff;
+      text-decoration:none;
+    }
+
+    .flash{
+      background:#1f6feb22;
+      border:1px solid #1f6feb55;
+      padding:10px;
+      border-radius:var(--radius);
+      color:#58a6ff;
+      margin-bottom:14px;
+      font-size:14px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+
+    <div class="logo">E</div>
+
+          <div class="flash">Empireyoncar Social Productiva</div>
+
+    <div class="card">
+      <form method="post" autocomplete="off">
+        <label for="user">Usuario o correo</label>
+        <input id="user" name="user" type="text" required>
+
+        <label for="password">Contraseña</label>
+        <input id="password" name="password" type="password" required>
+
+        <button class="btn" type="submit">Iniciar sesión</button>
+      </form>
+    </div>
+
+    <div class="links">
+      <p><a href="{{ url_for('register') }}">Crear una cuenta</a></p>
+    </div>
+
+  </div>
+</body>
+</html>
