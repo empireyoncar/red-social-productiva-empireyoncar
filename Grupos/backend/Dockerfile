@@ -6,6 +6,6 @@ COPY . /app
 
 RUN pip install --no-cache-dir -r requirements.txt
 
-EXPOSE 5100
+EXPOSE 5106
 
-CMD ["python", "server.py"]
+CMD ["python", "grupos_webserver.py"]

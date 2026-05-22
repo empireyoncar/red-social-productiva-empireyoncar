@@ -7,63 +7,38 @@ app = Flask(__name__)
 CORS(app)
 
 # ============================================================
-# Cargar plantillas desde /Usuarios/frontend
+# RUTA DEL FRONTEND DEL CHAT
 # ============================================================
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-FRONTEND_PATH = os.environ.get(
-    "FRONTEND_PATH",
-    os.path.normpath(os.path.join(BASE_DIR, "..", "frontend")),
-)
+
+CHAT_FRONTEND_PATH = "/app/chat_frontend"
 
 app.jinja_loader = ChoiceLoader([
-    FileSystemLoader(FRONTEND_PATH)
+    FileSystemLoader(CHAT_FRONTEND_PATH)
 ])
 
 # ============================================================
 # RUTAS DEL FRONTEND
 # ============================================================
 
+@app.route("/chat")
+def chat():
+    return render_template("chat.html")
 
 @app.route("/")
 def index():
-    return render_template("login.html")
-
-
-@app.route("/login")
-def login():
-    return render_template("login.html")
-
-
-@app.route("/register")
-def register():
-    return render_template("register.html")
-
-
-@app.route("/home")
-def home():
-    return render_template("home.html")
-
-
-@app.route("/perfil")
-def perfil():
-    return render_template("perfil.html")
-
+    return render_template("chat.html")
 
 # ============================================================
-# ARCHIVOS ESTATICOS (CSS, JS, IMAGENES)
+# ARCHIVOS ESTÁTICOS
 # ============================================================
-
 
 @app.route("/static/<path:filename>")
 def static_files(filename):
-    static_dir = os.path.join(FRONTEND_PATH, "static")
-    return send_from_directory(static_dir, filename)
-
+    return send_from_directory(os.path.join(CHAT_FRONTEND_PATH, "static"), filename)
 
 # ============================================================
 # INICIAR SERVIDOR
 # ============================================================
 
-
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5100, debug=True)
+    app.run(host="0.0.0.0", port=5103, debug=True)

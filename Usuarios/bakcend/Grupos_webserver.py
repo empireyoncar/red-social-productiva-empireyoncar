@@ -7,63 +7,46 @@ app = Flask(__name__)
 CORS(app)
 
 # ============================================================
-# Cargar plantillas desde /Usuarios/frontend
+# RUTA DEL FRONTEND DE GRUPOS
 # ============================================================
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-FRONTEND_PATH = os.environ.get(
-    "FRONTEND_PATH",
-    os.path.normpath(os.path.join(BASE_DIR, "..", "frontend")),
-)
+
+GRUPOS_FRONTEND_PATH = "/app/Usuarios/frontend"
 
 app.jinja_loader = ChoiceLoader([
-    FileSystemLoader(FRONTEND_PATH)
+    FileSystemLoader(GRUPOS_FRONTEND_PATH)
 ])
 
 # ============================================================
 # RUTAS DEL FRONTEND
 # ============================================================
 
+@app.route("/grupos")
+def grupos():
+    return render_template("grupos.html")
+
+@app.route("/solicitud-grupo")
+def solicitud_grupo():
+    return render_template("solicituddegrupos.html")
+
+@app.route("/aprobar-miembro")
+def aprobar_miembro():
+    return render_template("aprobarmiembrogrupo.html")
 
 @app.route("/")
 def index():
-    return render_template("login.html")
-
-
-@app.route("/login")
-def login():
-    return render_template("login.html")
-
-
-@app.route("/register")
-def register():
-    return render_template("register.html")
-
-
-@app.route("/home")
-def home():
-    return render_template("home.html")
-
-
-@app.route("/perfil")
-def perfil():
-    return render_template("perfil.html")
-
+    return render_template("grupos.html")
 
 # ============================================================
-# ARCHIVOS ESTATICOS (CSS, JS, IMAGENES)
+# ARCHIVOS ESTÁTICOS
 # ============================================================
-
 
 @app.route("/static/<path:filename>")
 def static_files(filename):
-    static_dir = os.path.join(FRONTEND_PATH, "static")
-    return send_from_directory(static_dir, filename)
-
+    return send_from_directory(os.path.join(GRUPOS_FRONTEND_PATH, "static"), filename)
 
 # ============================================================
 # INICIAR SERVIDOR
 # ============================================================
 
-
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5100, debug=True)
+    app.run(host="0.0.0.0", port=5106, debug=True)

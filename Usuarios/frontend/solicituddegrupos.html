@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solicitud de Grupo - Empireyoncar Social</title>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: #f0f4ff;
+        }
+
+        .navbar {
+            width: 100%;
+            background: #1a73e8;
+            padding: 12px 20px;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        .logo {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .nav-links {
+            margin-left: 40px;
+            display: flex;
+        }
+
+        .nav-links a {
+            margin-right: 20px;
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .nav-links a:hover {
+            text-decoration: underline;
+        }
+
+        .request-container {
+            width: 600px;
+            margin: 40px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .group-header {
+            text-align: center;
+        }
+
+        .group-header img {
+            width: 120px;
+            height: 120px;
+            border-radius: 16px;
+            border: 4px solid #1a73e8;
+        }
+
+        .group-name {
+            font-size: 24px;
+            font-weight: bold;
+            margin-top: 10px;
+            color: #333;
+        }
+
+        .group-description {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .btn-request {
+            margin: 25px auto;
+            display: block;
+            padding: 14px 20px;
+            background: #1a73e8;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-request:hover {
+            background: #155fc0;
+        }
+
+        .status-box {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f0f6ff;
+            border-left: 4px solid #1a73e8;
+            border-radius: 10px;
+            font-size: 14px;
+            color: #333;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="navbar">
+        <div class="logo">Empireyoncar Social</div>
+
+        <div class="nav-links">
+            <a href="home.html">Inicio</a>
+            <a href="perfil.html">Perfil</a>
+            <a href="grupos.html">Grupos</a>
+        </div>
+    </div>
+
+    <div class="request-container">
+
+        <div class="group-header">
+            <img src="https://picsum.photos/200" alt="Grupo">
+            <div class="group-name">Grupo de Productividad</div>
+            <div class="group-description">
+                Comunidad enfocada en mejorar la productividad diaria, compartir ideas y crecer juntos.
+            </div>
+        </div>
+
+        <button class="btn-request">Solicitar unirse al grupo</button>
+
+        <!-- Estado opcional -->
+        <div class="status-box">
+            Tu solicitud está pendiente de aprobación.
+        </div>
+
+    </div>
+
+</body>
+</html>

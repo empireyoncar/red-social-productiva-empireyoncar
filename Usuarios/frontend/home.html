@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Empireyoncar Social - Home</title>
+
+    <style>
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: "Segoe UI", Arial, sans-serif;
+        background: #f0f4ff;
+    }
+
+    /* NAVBAR SUPERIOR */
+    .navbar {
+        width: 100%;
+        background: #1a73e8;
+        padding: 12px 20px 16px 20px;
+        color: white;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+
+    .navbar-top {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;   /* ANTES: space-between */
+    }
+
+    .logo {
+        font-size: 20px;
+        font-weight: bold;
+    }
+
+    .nav-links {
+        display: flex;
+        margin-left: 40px;             /* ACERCA PERFIL/GRUPOS AL LOGO */
+    }
+
+    .nav-links a {
+        margin-right: 20px;            /* ANTES: margin-left */
+        color: white;
+        text-decoration: none;
+        font-weight: 500;
+        transition: 0.2s;
+    }
+
+    .nav-links a:hover {
+        text-decoration: underline;
+    }
+
+    .navbar-search {
+        margin-top: 10px;
+        max-width: 320px;
+    }
+
+    .navbar-search input {
+        width: 100%;
+        padding: 8px 10px;
+        border-radius: 8px;
+        border: none;
+        font-size: 14px;
+    }
+
+    .navbar-search input:focus {
+        outline: none;
+        box-shadow: 0 0 4px rgba(0,0,0,0.25);
+    }
+
+    .main-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 25px;
+    }
+
+    .feed {
+        width: 600px;
+    }
+
+    .post-card {
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        margin-bottom: 20px;
+    }
+
+    .post-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 12px;
+    }
+
+    .post-header img {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        margin-right: 12px;
+    }
+
+    .post-header .name {
+        font-weight: bold;
+        color: #333;
+    }
+
+    .post-header .time {
+        font-size: 12px;
+        color: #777;
+    }
+
+    .post-text {
+        font-size: 15px;
+        color: #333;
+        margin-bottom: 12px;
+    }
+
+    .post-image {
+        width: 100%;
+        border-radius: 10px;
+        margin-bottom: 12px;
+    }
+
+    .post-actions {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 10px;
+    }
+
+    .post-actions button {
+        background: #e8f0ff;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: 0.2s;
+    }
+
+    .post-actions button:hover {
+        background: #d6e4ff;
+    }
+</style>
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <div class="navbar">
+        <div class="navbar-top">
+            <div class="logo">Empireyoncar Social</div>
+
+            <div class="nav-links">
+                <a href="perfil.html">Perfil</a>
+                <a href="grupos.html">Grupos</a>
+            </div>
+        </div>
+
+        <!-- BUSCADOR DEBAJO DEL LOGO -->
+        <div class="navbar-search">
+            <input type="text" placeholder="Buscar usuarios, hashtags o publicaciones...">
+        </div>
+    </div>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <div class="main-container">
+
+        <div class="feed">
+
+            <!-- POST DE EJEMPLO -->
+            <div class="post-card">
+                <div class="post-header">
+                    <img src="https://i.pravatar.cc/100" alt="user">
+                    <div>
+                        <div class="name">Juan Pérez</div>
+                        <div class="time">Hace 2 horas</div>
+                    </div>
+                </div>
+
+                <div class="post-text">
+                    Hoy fue un día productivo. Logré avanzar en mis proyectos y ayudar a un amigo con su emprendimiento.
+                </div>
+
+                <img class="post-image" src="https://picsum.photos/600/300" alt="post">
+
+                <div class="post-actions">
+                    <button>👍 Me gusta</button>
+                    <button>💬 Comentar</button>
+                    <button>🔗 Compartir</button>
+                </div>
+            </div>
+
+            <div class="post-card">
+                <div class="post-header">
+                    <img src="https://i.pravatar.cc/101" alt="user">
+                    <div>
+                        <div class="name">María López</div>
+                        <div class="time">Hace 5 horas</div>
+                    </div>
+                </div>
+
+                <div class="post-text">
+                    ¿Alguien conoce grupos de productividad o emprendimiento? Estoy buscando nuevas comunidades.
+                </div>
+
+                <div class="post-actions">
+                    <button>👍 Me gusta</button>
+                    <button>💬 Comentar</button>
+                    <button>🔗 Compartir</button>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+</html>

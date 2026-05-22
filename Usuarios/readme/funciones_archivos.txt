@@ -1,0 +1,19 @@
+usuarios_webserver.py → sirve HTML del módulo usuarios
+usuario_server.py → API de usuarios
+db_usuarios.py → base de datos de usuarios
+
+chat_webserver.py → frontend del chat
+chat_server.py → backend del chat
+
+postgenerales_server.py → posts públicos
+notificaciones_server.py → notificaciones
+
+grupos_webserver.py → frontend de grupos
+grupos_server.py → gestión de grupos
+postgrupos_server.py → posts dentro de grupos
+dbgrupos.py → base de datos de grupos
+
+docker-compose.yml → orquesta todos los servicios
+Dockerfile → build de cada microservicio
+requirements.txt → dependencias
+NGINX.txt → configuración del reverse proxy

@@ -1,0 +1,138 @@
+name: empireyoncar
+
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+      POSTGRES_DB: postgres
+    ports:
+      - "5151:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d postgres -p 5432"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: always
+    networks:
+      - bendicion_net
+
+  usuario_server:
+    build:
+      context: ./Usuarios/bakcend
+    command: python usuario_server.py
+    ports:
+      - "5101:5101"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: always
+    networks:
+      - bendicion_net
+
+  usuarios_webserver:
+    build:
+      context: ./Usuarios/bakcend
+    command: python usuarios_webserver.py
+    ports:
+      - "5100:5100"
+    volumes:
+      - ./Usuarios/frontend:/app/frontend
+    environment:
+      FRONTEND_PATH: /app/frontend
+    depends_on:
+      - usuario_server
+    restart: always
+    networks:
+      - bendicion_net
+
+  grupos_server:
+    build:
+      context: ./Grupos/backend
+    command: python grupos_server.py
+    ports:
+      - "5107:5107"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: always
+    networks:
+      - bendicion_net
+
+  grupos_webserver:
+    build:
+      context: ./Grupos/backend
+    command: python grupos_webserver.py
+    ports:
+      - "5106:5106"
+    volumes:
+      - ./Grupos/frontend:/app/frontend
+    environment:
+      FRONTEND_PATH: /app/frontend
+    depends_on:
+      - grupos_server
+    restart: always
+    networks:
+      - bendicion_net
+
+  chat_server:
+    build:
+      context: ./Usuarios/bakcend
+    command: python chat_server.py
+    ports:
+      - "5102:5102"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: always
+    networks:
+      - bendicion_net
+
+  postgenerales_server:
+    build:
+      context: ./Usuarios/bakcend
+    command: python postgenerales_server.py
+    ports:
+      - "5104:5104"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: always
+    networks:
+      - bendicion_net
+
+  postgrupos_server:
+    build:
+      context: ./Usuarios/bakcend
+    command: python postgrupos_server.py
+    ports:
+      - "5108:5108"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: always
+    networks:
+      - bendicion_net
+
+  notificaciones_server:
+    build:
+      context: ./Usuarios/bakcend
+    command: python notificaciones_server.py
+    ports:
+      - "5105:5105"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: always
+    networks:
+      - bendicion_net
+
+volumes:
+  postgres_data:
+
+networks:
+  bendicion_net:
+    driver: bridge

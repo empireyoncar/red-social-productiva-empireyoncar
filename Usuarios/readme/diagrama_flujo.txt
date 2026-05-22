@@ -1,0 +1,9 @@
+[Usuario] 
+   ↓
+[Nginx Reverse Proxy]
+   ↓
+[Webserver correspondiente]
+   ↓
+[Backend correspondiente]
+   ↓
+[PostgreSQL]

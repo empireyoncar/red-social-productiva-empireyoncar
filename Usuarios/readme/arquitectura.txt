@@ -1,0 +1,31 @@
+Arquitectura general de EmpireYoncar Social
+
+- Usuarios
+  - usuarios_webserver.py (frontend)
+  - usuario_server.py (backend)
+  - db_usuarios.py
+
+- Chat
+  - chat_webserver.py
+  - chat_server.py
+  - db_chat.py (si lo separas)
+
+- Posts Generales
+  - postgenerales_server.py
+  - db_posts.py
+
+- Notificaciones
+  - notificaciones_server.py
+  - db_notificaciones.py
+
+- Grupos
+  - grupos_webserver.py
+  - grupos_server.py
+  - postgrupos_server.py
+  - dbgrupos.py
+
+- Infraestructura
+  - docker-compose.yml
+  - Dockerfile
+  - requirements.txt
+  - NGINX.txt

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Usuarios - Admin</title>
+    <style>
+        body { font-family: Arial; background: #eef3ff; margin: 0; }
+        .nav { background: #1a73e8; padding: 15px; color: white; font-size: 20px; }
+        table { width: 100%; background: white; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 12px; border-bottom: 1px solid #ddd; }
+        button { padding: 8px 12px; border: none; background: #1a73e8; color: white; border-radius: 6px; cursor: pointer; }
+        button.delete { background: red; }
+    </style>
+</head>
+<body>
+
+<div class="nav">Administrar Usuarios</div>
+
+<table>
+    <thead>
+        <tr>
+            <th>ID</th><th>Nombre</th><th>Email</th><th>Verificado</th><th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody id="tabla"></tbody>
+</table>
+
+<script>
+function cargar() {
+    fetch("/admin/usuarios")
+        .then(r => r.json())
+        .then(data => {
+            let html = "";
+            data.forEach(u => {
+                html += `
+                    <tr>
+                        <td>${u.id}</td>
+                        <td>${u.nombres} ${u.apellidos}</td>
+                        <td>${u.email}</td>
+                        <td>${u.verificado}</td>
+                        <td>
+                            <button onclick="verificar(${u.id})">Verificar</button>
+                            <button class="delete" onclick="eliminar(${u.id})">Eliminar</button>
+                        </td>
+                    </tr>
+                `;
+            });
+            document.getElementById("tabla").innerHTML = html;
+        });
+}
+
+function verificar(id) {
+    fetch("/admin/usuario/verificar", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({user_id: id})
+    }).then(() => cargar());
+}
+
+function eliminar(id) {
+    fetch("/admin/usuario/eliminar", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({user_id: id})
+    }).then(() => cargar());
+}
+
+cargar();
+</script>
+
+</body>
+</html>

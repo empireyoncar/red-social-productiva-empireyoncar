@@ -1,89 +1,191 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Registro · Empireyoncar</title>
-  <style>
-    :root{
-      --bg:#0d1117;
-      --panel:#161b22;
-      --border:#30363d;
-      --text:#c9d1d9;
-      --muted:#8b949e;
-      --btn-bg:#238636;
-      --btn-bg-hover:#2ea043;
-      --radius:6px;
-    }
-    *{box-sizing:border-box;font-family:system-ui,Segoe UI,Roboto,Arial;color:var(--text)}
-    body{
-      margin:0;
-      background:var(--bg);
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      min-height:100vh;
-      padding:20px;
-    }
-    .wrap{width:100%;max-width:380px;text-align:center}
-    .logo{
-      width:64px;height:64px;border-radius:50%;background:#fff;margin:0 auto 20px;
-      display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:800;color:#000;
-    }
-    .card{
-      background:var(--panel);border:1px solid var(--border);padding:28px;border-radius:var(--radius);text-align:left;
-    }
-    label{display:block;margin-bottom:6px;font-size:14px;color:var(--text)}
-    input[type="text"],input[type="email"],input[type="password"]{
-      width:100%;padding:10px;border-radius:var(--radius);border:1px solid var(--border);
-      background:#0d1117;color:var(--text);margin-bottom:14px;font-size:14px;
-    }
-    input:focus{outline:none;border-color:#58a6ff;box-shadow:0 0 0 3px rgba(56,139,253,0.3)}
-    .checkbox{display:flex;align-items:center;gap:10px;margin:10px 0 16px;font-size:13px;color:var(--muted)}
-    .btn{
-      width:100%;padding:10px;border:none;border-radius:var(--radius);background:var(--btn-bg);
-      color:#fff;font-weight:600;cursor:pointer;font-size:15px;margin-top:6px;
-    }
-    .btn:hover{background:var(--btn-bg-hover)}
-    .links{margin-top:16px;font-size:13px;text-align:center}
-    .links a{color:#58a6ff;text-decoration:none}
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Empireyoncar Social - Registro</title>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: linear-gradient(135deg, #e8f0ff, #f5f8ff);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .register-container {
+            background: #ffffff;
+            width: 480px;
+            padding: 35px;
+            border-radius: 16px;
+            box-shadow: 0 6px 30px rgba(0,0,0,0.12);
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .title {
+            font-size: 26px;
+            font-weight: bold;
+            color: #1a73e8;
+            text-align: center;
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            font-size: 15px;
+            color: #444;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            display: block;
+            margin-top: 15px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            margin-top: 6px;
+            border-radius: 10px;
+            border: 1px solid #cbd5e1;
+            font-size: 14px;
+            background: #f9fbff;
+            transition: 0.2s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #1a73e8;
+            background: #ffffff;
+            box-shadow: 0 0 6px rgba(26,115,232,0.35);
+        }
+
+        .terms-box {
+            margin-top: 20px;
+            font-size: 13px;
+            color: #333;
+            background: #f0f6ff;
+            padding: 12px;
+            border-radius: 10px;
+            border-left: 4px solid #1a73e8;
+            line-height: 1.4;
+        }
+
+        .terms-box input {
+            width: auto;
+            margin-right: 6px;
+        }
+
+        .btn-register {
+            width: 100%;
+            padding: 14px;
+            background: #1a73e8;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 25px;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        .btn-register:hover {
+            background: #155fc0;
+            transform: translateY(-1px);
+        }
+
+        .login-link {
+            margin-top: 18px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .login-link a {
+            color: #1a73e8;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
+
 <body>
-  <div class="wrap">
-    <div class="logo">E</div>
 
-    <div class="card">
-      <h2 style="text-align:center;margin-bottom:18px">Crear cuenta</h2>
+    <div class="register-container">
 
-      <form method="post" autocomplete="off" novalidate>
-        <label for="name">Nombre completo</label>
-        <input id="name" name="name" type="text" required>
+        <div class="title">Empireyoncar Social</div>
+        <div class="subtitle">Crea tu cuenta productiva</div>
 
-        <label for="username">Nombre de usuario</label>
-        <input id="username" name="username" type="text" required>
+        <form>
 
-        <label for="email">Correo electrónico</label>
-        <input id="email" name="email" type="email" required>
+            <label>Nombres</label>
+            <input type="text" required>
 
-        <label for="password">Contraseña</label>
-        <input id="password" name="password" type="password" required>
+            <label>Apellidos</label>
+            <input type="text" required>
 
-        <label for="confirm">Confirmar contraseña</label>
-        <input id="confirm" name="confirm" type="password" required>
+            <label>Fecha de nacimiento</label>
+            <input type="date" required>
 
-        <label class="checkbox">
-          <input id="terms" name="terms" type="checkbox" required>
-          <span style="color:var(--muted);font-size:13px">Acepto los términos y condiciones</span>
-        </label>
+            <label>Oficio</label>
+            <input type="text" placeholder="Ej: Carpintero, Programador, Estudiante" required>
 
-        <button class="btn" type="submit">Registrarse</button>
-      </form>
+            <label>País</label>
+            <input type="text" required>
+
+            <label>Estado</label>
+            <input type="text" required>
+
+            <label>Ciudad o pueblo</label>
+            <input type="text" required>
+
+            <label>Teléfono WhatsApp (opcional pero necesario para verificación)</label>
+            <input type="tel" placeholder="+34 600 000 000">
+
+            <label>Correo Electrónico</label>
+            <input type="email" required>
+
+            <label>Repite el correo electrónico</label>
+            <input type="email" required>
+
+            <label>Contraseña</label>
+            <input type="password" required>
+
+            <label>Repetir contraseña</label>
+            <input type="password" required>
+
+            <div class="terms-box">
+                <input type="checkbox" required>
+                Acepto los términos y condiciones.  
+                Empireyoncar Social es una red de Social Productividad que busca mejorar la vida cotidiana.  
+                Está prohibido sexualizar contenido, hacer spam o publicar actividades ilícitas.
+            </div>
+
+            <button class="btn-register">Registrar</button>
+
+        </form>
+
+        <div class="login-link">
+            ¿Ya tienes cuenta? <a href="login.html">Inicia sesión</a>
+        </div>
+
     </div>
 
-    <div class="links">
-      <p>¿Ya tienes cuenta? <a href="{{ url_for('login') }}">Inicia sesión</a></p>
-    </div>
-  </div>
 </body>
 </html>

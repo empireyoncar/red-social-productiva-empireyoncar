@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Panel Administrador</title>
+    <style>
+        body { font-family: Arial; background: #eef3ff; margin: 0; }
+        .nav { background: #1a73e8; padding: 15px; color: white; font-size: 20px; }
+        .container { padding: 20px; }
+        .card {
+            background: white; padding: 20px; border-radius: 10px;
+            margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .title { font-size: 22px; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="nav">Panel de Administración</div>
+
+<div class="container">
+    <div class="card">
+        <div class="title">Estadísticas Generales</div>
+        <p><b>Usuarios:</b> <span id="usuarios"></span></p>
+        <p><b>Grupos:</b> <span id="grupos"></span></p>
+        <p><b>Posts de Grupos:</b> <span id="posts"></span></p>
+    </div>
+</div>
+
+<script>
+fetch("/admin/dashboard")
+    .then(r => r.json())
+    .then(d => {
+        document.getElementById("usuarios").textContent = d.usuarios;
+        document.getElementById("grupos").textContent = d.grupos;
+        document.getElementById("posts").textContent = d.posts_grupos;
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notificaciones - Empireyoncar Social</title>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: #f0f4ff;
+        }
+
+        /* NAVBAR */
+        .navbar {
+            width: 100%;
+            background: #1a73e8;
+            padding: 12px 20px;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        .logo {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .nav-links {
+            margin-left: 40px;
+            display: flex;
+        }
+
+        .nav-links a {
+            margin-right: 20px;
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .nav-links a:hover {
+            text-decoration: underline;
+        }
+
+        /* CONTENEDOR PRINCIPAL */
+        .notif-container {
+            width: 600px;
+            margin: 30px auto;
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        .notif-title {
+            font-size: 22px;
+            font-weight: bold;
+            color: #1a73e8;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        /* NOTIFICACIÓN */
+        .notif-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            background: #f7faff;
+            border-left: 4px solid #1a73e8;
+            transition: 0.2s;
+        }
+
+        .notif-item.unread {
+            background: #e8f0ff;
+            border-left-color: #155fc0;
+        }
+
+        .notif-item:hover {
+            background: #eef4ff;
+        }
+
+        .notif-icon {
+            font-size: 24px;
+            margin-right: 15px;
+            color: #1a73e8;
+        }
+
+        .notif-text {
+            flex: 1;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .notif-time {
+            font-size: 12px;
+            color: #777;
+            margin-top: 4px;
+        }
+
+        .notif-actions {
+            margin-left: 10px;
+        }
+
+        .notif-actions button {
+            background: #e8f0ff;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .notif-actions button:hover {
+            background: #d6e4ff;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <div class="navbar">
+        <div class="logo">Empireyoncar Social</div>
+
+        <div class="nav-links">
+            <a href="home.html">Inicio</a>
+            <a href="perfil.html">Perfil</a>
+            <a href="grupos.html">Grupos</a>
+            <a href="chat.html">Chat</a>
+        </div>
+    </div>
+
+    <!-- CONTENEDOR PRINCIPAL -->
+    <div class="notif-container">
+
+        <div class="notif-title">Notificaciones</div>
+
+        <!-- NOTIFICACIÓN 1 -->
+        <div class="notif-item unread">
+            <div class="notif-icon">💬</div>
+            <div class="notif-text">
+                Juan Pérez te envió un mensaje.
+                <div class="notif-time">Hace 2 minutos</div>
+            </div>
+            <div class="notif-actions">
+                <button>Marcar leído</button>
+            </div>
+        </div>
+
+        <!-- NOTIFICACIÓN 2 -->
+        <div class="notif-item">
+            <div class="notif-icon">👍</div>
+            <div class="notif-text">
+                María López le dio Me gusta a tu publicación.
+                <div class="notif-time">Hace 1 hora</div>
+            </div>
+        </div>
+
+        <!-- NOTIFICACIÓN 3 -->
+        <div class="notif-item unread">
+            <div class="notif-icon">👥</div>
+            <div class="notif-text">
+                Nuevo miembro en tu grupo de Productividad.
+                <div class="notif-time">Hace 3 horas</div>
+            </div>
+            <div class="notif-actions">
+                <button>Marcar leído</button>
+            </div>
+        </div>
+
+        <!-- NOTIFICACIÓN 4 -->
+        <div class="notif-item">
+            <div class="notif-icon">🔔</div>
+            <div class="notif-text">
+                Tu solicitud para unirte al grupo fue aprobada.
+                <div class="notif-time">Ayer</div>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>

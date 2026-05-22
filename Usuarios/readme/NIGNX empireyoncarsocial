@@ -1,0 +1,88 @@
+    # ============================================================
+    # FRONTEND USUARIOS
+    # Login, register, home, perfil
+    # ============================================================
+    location /empireyoncarsocial/ {
+        proxy_pass http://127.0.0.1:5100/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    # ============================================================
+    # API USUARIOS
+    # ============================================================
+    location /empireyoncarsocial/usuarios/ {
+        proxy_pass http://127.0.0.1:5101/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    # ============================================================
+    # FRONTEND GRUPOS
+    # ============================================================
+    location /empireyoncarsocial/grupos/ {
+        proxy_pass http://127.0.0.1:5106/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    # ============================================================
+    # API GRUPOS
+    # ============================================================
+    location /empireyoncarsocial/grupos_api/ {
+        proxy_pass http://127.0.0.1:5107/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    # ============================================================
+    # CHAT PRIVADO - API
+    # ============================================================
+    location /empireyoncarsocial/chat_api/ {
+        proxy_pass http://127.0.0.1:5102/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    # ============================================================
+    # POSTS GENERALES - API
+    # ============================================================
+    location /empireyoncarsocial/posts_api/ {
+        proxy_pass http://127.0.0.1:5104/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    # ============================================================
+    # NOTIFICACIONES - API
+    # ============================================================
+    location /empireyoncarsocial/notificaciones_api/ {
+        proxy_pass http://127.0.0.1:5105/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    # ============================================================
+    # POSTS DE GRUPOS - API
+    # ============================================================
+    location /empireyoncarsocial/postgrupos_api/ {
+        proxy_pass http://127.0.0.1:5108/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
