@@ -33,22 +33,22 @@ def index():
     return render_template("login.html")
 
 
-@app.route("/login")
+@app.route("empireyoncarsocial/login")
 def login():
     return render_template("login.html")
 
 
-@app.route("/register")
+@app.route("empireyoncarsocial/register")
 def register():
     return render_template("register.html")
 
 
-@app.route("/home")
+@app.route("empireyoncarsocial/home")
 def home():
     return render_template("home.html")
 
 
-@app.route("/perfil")
+@app.route("empireyoncarsocial/perfil")
 def perfil():
     return render_template("perfil.html")
 

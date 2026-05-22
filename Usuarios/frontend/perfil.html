@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Perfil - Empireyoncar Social</title>
     <link rel="stylesheet" href="/theme.css">
-
     <style>
         body {
             margin: 0;
@@ -14,7 +13,6 @@
             background: #f0f4ff;
         }
 
-        /* NAVBAR */
         .navbar {
             width: 100%;
             background: #1a73e8;
@@ -43,11 +41,6 @@
             font-weight: 500;
         }
 
-        .nav-links a:hover {
-            text-decoration: underline;
-        }
-
-        /* LAYOUT GENERAL */
         .layout {
             display: flex;
             justify-content: center;
@@ -56,7 +49,6 @@
             padding: 0 20px;
         }
 
-        /* COLUMNA CENTRAL (PERFIL) */
         .profile-container {
             width: 600px;
             background: white;
@@ -83,16 +75,21 @@
             color: #333;
         }
 
-        .verified {
-            color: #1a73e8;
-            font-size: 18px;
-            margin-left: 6px;
-        }
-
         .profile-bio {
             margin-top: 10px;
             font-size: 14px;
             color: #555;
+            line-height: 1.5;
+        }
+
+        .profile-details {
+            margin-top: 18px;
+            padding: 14px;
+            border-radius: 12px;
+            background: #f7faff;
+            color: #333;
+            font-size: 14px;
+            line-height: 1.6;
         }
 
         .stats {
@@ -113,23 +110,6 @@
             color: #1a73e8;
         }
 
-        .follow-btn {
-            margin: 20px auto;
-            display: block;
-            padding: 12px 20px;
-            background: #1a73e8;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 15px;
-            cursor: pointer;
-        }
-
-        .follow-btn:hover {
-            background: #155fc0;
-        }
-
-        /* POSTS */
         .post-card {
             background: white;
             padding: 20px;
@@ -154,16 +134,8 @@
         .post-text {
             font-size: 15px;
             color: #333;
-            margin-bottom: 12px;
         }
 
-        .post-image {
-            width: 100%;
-            border-radius: 10px;
-            margin-bottom: 12px;
-        }
-
-        /* COLUMNA DERECHA */
         .right-panel {
             width: 280px;
             display: flex;
@@ -171,70 +143,35 @@
             gap: 20px;
         }
 
-        /* NOTIFICACIONES */
-        .notif-box {
+        .side-box {
             background: white;
             padding: 15px;
             border-radius: 12px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.08);
         }
 
-        .notif-title {
+        .side-title {
             font-size: 16px;
             font-weight: bold;
             color: #1a73e8;
             margin-bottom: 10px;
         }
 
-        .notif-item {
+        .side-item {
             background: #f7faff;
             padding: 10px;
             border-radius: 10px;
             margin-bottom: 10px;
             font-size: 13px;
-        }
-
-        /* CHAT */
-        .chat-box {
-            background: white;
-            padding: 15px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-        }
-
-        .chat-title {
-            font-size: 16px;
-            font-weight: bold;
-            color: #1a73e8;
-            margin-bottom: 10px;
-        }
-
-        .chat-user {
-            display: flex;
-            align-items: center;
-            margin-bottom: 12px;
-            cursor: pointer;
-        }
-
-        .chat-user img {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            margin-right: 10px;
-        }
-
-        .chat-user .name {
-            font-size: 14px;
-            font-weight: bold;
             color: #333;
         }
 
-        /* RESPONSIVE */
         @media (max-width: 1000px) {
             .layout {
                 flex-direction: column;
                 align-items: center;
             }
+
             .right-panel {
                 width: 100%;
                 max-width: 600px;
@@ -242,101 +179,103 @@
         }
     </style>
 </head>
-
 <body>
-
-    <!-- NAVBAR -->
     <div class="navbar">
         <div class="logo">Empireyoncar Social</div>
 
         <div class="nav-links">
-            <a href="/home">Inicio</a>
-            <a href="/grupos">Grupos</a>
-            <a href="/chat">Chat</a>
-            <a href="/notificaciones">Notificaciones</a>
+            <a href="home">Inicio</a>
+            <a href="grupos">Grupos</a>
+            <a href="chat">Chat</a>
+            <a href="notificaciones">Notificaciones</a>
         </div>
     </div>
 
-    <!-- LAYOUT GENERAL -->
     <div class="layout">
-
-        <!-- COLUMNA CENTRAL -->
         <div class="profile-container">
-
             <div class="profile-header">
                 <img src="https://i.pravatar.cc/200" alt="Foto de perfil">
 
-                <div class="profile-name">
-                    Juan Pérez <span class="verified">✔</span>
-                </div>
-
-                <div class="profile-bio">
-                    Emprendedor | Carpintero | Amante de la productividad  
-                    Mejorando cada día.
-                </div>
+                <div class="profile-name" id="profileName">Cargando perfil...</div>
+                <div class="profile-bio" id="profileBio">Consultando tus datos.</div>
             </div>
+
+            <div class="profile-details" id="profileDetails"></div>
 
             <div class="stats">
-                <div><span>120</span>Seguidores</div>
-                <div><span>80</span>Siguiendo</div>
+                <div><span id="seguidores">0</span>Seguidores</div>
+                <div><span id="siguiendo">0</span>Siguiendo</div>
             </div>
-
-            <button class="follow-btn">Seguir</button>
 
             <div class="post-card">
                 <div class="post-header">
-                    <img src="https://i.pravatar.cc/200">
+                    <img src="https://i.pravatar.cc/200" alt="Perfil">
                     <div>
-                        <div class="name">Juan Pérez</div>
-                        <div class="time">Hace 1 día</div>
+                        <div class="name" id="postAuthor">Tu perfil</div>
+                        <div class="time">Perfil conectado</div>
                     </div>
                 </div>
 
                 <div class="post-text">
-                    Hoy terminé un proyecto importante. La productividad es clave para crecer.
+                    Tus publicaciones aparecerán aquí cuando conectemos el feed del usuario.
                 </div>
-
-                <img class="post-image" src="https://picsum.photos/600/300">
             </div>
-
         </div>
 
-        <!-- COLUMNA DERECHA -->
         <div class="right-panel">
-
-            <!-- NOTIFICACIONES -->
-            <div class="notif-box">
-                <div class="notif-title">Notificaciones</div>
-
-                <div class="notif-item">💬 Juan te envió un mensaje</div>
-                <div class="notif-item">👍 María dio like a tu post</div>
-                <div class="notif-item">👥 Nuevo miembro en tu grupo</div>
+            <div class="side-box">
+                <div class="side-title">Notificaciones</div>
+                <div class="side-item">No hay notificaciones cargadas todavía.</div>
             </div>
 
-            <!-- CHAT -->
-            <div class="chat-box">
-                <div class="chat-title">Chat</div>
-
-                <div class="chat-user">
-                    <img src="https://i.pravatar.cc/101">
-                    <div class="name">Juan Pérez</div>
-                </div>
-
-                <div class="chat-user">
-                    <img src="https://i.pravatar.cc/102">
-                    <div class="name">María López</div>
-                </div>
-
-                <div class="chat-user">
-                    <img src="https://i.pravatar.cc/103">
-                    <div class="name">Carlos Mendoza</div>
-                </div>
-
+            <div class="side-box">
+                <div class="side-title">Chat</div>
+                <div class="side-item">Tus chats aparecerán aquí.</div>
             </div>
-
         </div>
-
     </div>
 
+    <script>
+        const userId = localStorage.getItem("user_id");
+
+        async function cargarPerfil() {
+            if (!userId) {
+                window.location.href = "login";
+                return;
+            }
+
+            try {
+                const response = await fetch(`/empireyoncarsocial/usuarios/api/perfil/${userId}`);
+                const user = await response.json();
+
+                if (!response.ok) {
+                    document.getElementById("profileName").textContent = user.error || "No se pudo cargar el perfil";
+                    document.getElementById("profileBio").textContent = "Vuelve a iniciar sesión.";
+                    return;
+                }
+
+                const nombreCompleto = `${user.nombres || ""} ${user.apellidos || ""}`.trim();
+                const verificado = user.verificado ? " ✔" : "";
+                const ubicacion = [user.ciudad, user.estado, user.pais].filter(Boolean).join(", ");
+
+                document.getElementById("profileName").textContent = `${nombreCompleto}${verificado}`;
+                document.getElementById("profileBio").textContent = user.bio || user.oficio || "Sin biografía todavía.";
+                document.getElementById("profileDetails").innerHTML = `
+                    <strong>Email:</strong> ${user.email || "No disponible"}<br>
+                    <strong>Oficio:</strong> ${user.oficio || "No indicado"}<br>
+                    <strong>Ubicación:</strong> ${ubicacion || "No indicada"}<br>
+                    <strong>WhatsApp:</strong> ${user.whatsapp || "No indicado"}
+                `;
+                document.getElementById("seguidores").textContent = user.seguidores ?? 0;
+                document.getElementById("siguiendo").textContent = user.siguiendo ?? 0;
+                document.getElementById("postAuthor").textContent = nombreCompleto || "Tu perfil";
+            } catch {
+                document.getElementById("profileName").textContent = "Error de conexión";
+                document.getElementById("profileBio").textContent = "No se pudo consultar el servidor.";
+            }
+        }
+
+        cargarPerfil();
+    </script>
 </body>
 </html>
