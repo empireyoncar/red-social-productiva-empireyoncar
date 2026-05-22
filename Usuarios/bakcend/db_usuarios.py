@@ -12,7 +12,7 @@ DB_CONFIG = {
     "database": "usuarios_db",
     "user": "admin",
     "password": "admin123",
-    "port": 5432
+    "port": 5151
 }
 
 ensure_database(DB_CONFIG["database"])

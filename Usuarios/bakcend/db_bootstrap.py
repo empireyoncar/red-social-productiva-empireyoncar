@@ -5,7 +5,7 @@ POSTGRES_ADMIN_CONFIG = {
     "database": "postgres",
     "user": "admin",
     "password": "admin123",
-    "port": 5432,
+    "port": 5151,
 }
 
 
