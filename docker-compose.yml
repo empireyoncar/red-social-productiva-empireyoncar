@@ -42,8 +42,10 @@ services:
       - "5100:5100"
     volumes:
       - ./Usuarios/frontend:/app/frontend
+      - ./shared/frontend:/shared/frontend:ro
     environment:
       FRONTEND_PATH: /app/frontend
+      THEME_PATH: /shared/frontend
     depends_on:
       - usuario_server
     restart: always
@@ -71,8 +73,10 @@ services:
       - "5106:5106"
     volumes:
       - ./Grupos/frontend:/app/frontend
+      - ./shared/frontend:/shared/frontend:ro
     environment:
       FRONTEND_PATH: /app/frontend
+      THEME_PATH: /shared/frontend
     depends_on:
       - grupos_server
     restart: always

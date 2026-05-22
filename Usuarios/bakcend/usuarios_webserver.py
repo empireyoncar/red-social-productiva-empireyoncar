@@ -14,6 +14,10 @@ FRONTEND_PATH = os.environ.get(
     "FRONTEND_PATH",
     os.path.normpath(os.path.join(BASE_DIR, "..", "frontend")),
 )
+THEME_PATH = os.environ.get(
+    "THEME_PATH",
+    os.path.normpath(os.path.join(BASE_DIR, "..", "..", "shared", "frontend")),
+)
 
 app.jinja_loader = ChoiceLoader([
     FileSystemLoader(FRONTEND_PATH)
@@ -58,6 +62,11 @@ def perfil():
 def static_files(filename):
     static_dir = os.path.join(FRONTEND_PATH, "static")
     return send_from_directory(static_dir, filename)
+
+
+@app.route("/theme.css")
+def theme_css():
+    return send_from_directory(THEME_PATH, "empireyoncar-theme.css")
 
 
 # ============================================================

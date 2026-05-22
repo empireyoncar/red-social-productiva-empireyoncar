@@ -11,6 +11,10 @@ FRONTEND_PATH = os.environ.get(
     "FRONTEND_PATH",
     os.path.normpath(os.path.join(BASE_DIR, "..", "frontend")),
 )
+THEME_PATH = os.environ.get(
+    "THEME_PATH",
+    os.path.normpath(os.path.join(BASE_DIR, "..", "..", "shared", "frontend")),
+)
 
 app.jinja_loader = ChoiceLoader([FileSystemLoader(FRONTEND_PATH)])
 
@@ -43,6 +47,11 @@ def chat_grupo():
 @app.route("/static/<path:filename>")
 def static_files(filename):
     return send_from_directory(os.path.join(FRONTEND_PATH, "static"), filename)
+
+
+@app.route("/theme.css")
+def theme_css():
+    return send_from_directory(THEME_PATH, "empireyoncar-theme.css")
 
 
 if __name__ == "__main__":
