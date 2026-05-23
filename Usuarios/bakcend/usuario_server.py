@@ -1,7 +1,7 @@
 import os
 import sys
 
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -14,7 +14,10 @@ from db_usuarios import (
     login_usuario,
     obtener_perfil,
     actualizar_bio,
+    actualizar_perfil,
+    guardar_foto_perfil,
     verificar_usuario_admin,
+    PROFILE_UPLOAD_DIR,
 )
 
 app = Flask(__name__)
@@ -69,6 +72,40 @@ def perfil(user_id):
         return jsonify({"error": "Usuario no encontrado"}), 404
 
     return jsonify(user)
+
+
+@app.post("/api/perfil/update")
+def update_profile():
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "JSON invalido o vacio"}), 400
+
+    result = actualizar_perfil(data.get("user_id"), data)
+    if "error" in result:
+        return jsonify(result), 400
+    return jsonify(result)
+
+
+@app.post("/api/perfil/foto")
+def update_profile_photo():
+    user_id = request.form.get("user_id")
+    if not user_id:
+        return jsonify({"error": "user_id es obligatorio"}), 400
+
+    try:
+        user_id = int(user_id)
+    except (TypeError, ValueError):
+        return jsonify({"error": "user_id invalido"}), 400
+
+    result = guardar_foto_perfil(user_id, request.files.get("foto"))
+    if "error" in result:
+        return jsonify(result), 400
+    return jsonify(result)
+
+
+@app.get("/api/perfil/foto/<path:filename>")
+def profile_photo(filename):
+    return send_from_directory(PROFILE_UPLOAD_DIR, filename)
 
 # ============================================================
 # ACTUALIZAR BIO

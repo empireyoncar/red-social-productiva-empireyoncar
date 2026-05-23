@@ -19,6 +19,7 @@ from db_post import (
     list_posts_by_user,
     register_like,
     register_poll_vote,
+    update_post_record,
 )
 
 USER_SERVICE_URL = os.environ.get("USER_SERVICE_URL", "http://usuario_server:5101")
@@ -177,6 +178,45 @@ def create_post_service(data, files=None):
         return {"error": error[0]}, error[1]
 
     post = create_post_record(payload, Json)
+    return {
+        "status": "ok",
+        "post_id": post["id"],
+        "fecha": post["fecha"],
+    }, 200
+
+
+def update_post_service(data, files=None):
+    payload, error = build_post_payload(data, files)
+    if error:
+        return {"error": error[0]}, error[1]
+
+    try:
+        post_id = int(data.get("post_id"))
+    except (TypeError, ValueError):
+        return {"error": "post_id invalido"}, 400
+
+    existing_post = get_post_owner(post_id)
+    if not existing_post:
+        return {"error": "Post no existe"}, 404
+
+    if existing_post["user_id"] != payload["user_id"]:
+        return {"error": "No autorizado"}, 403
+
+    if payload["imagen"] is None:
+        payload["imagen"] = existing_post.get("imagen")
+    if payload["link_url"] is None:
+        payload["link_url"] = existing_post.get("link_url")
+        payload["link_title"] = existing_post.get("link_title")
+        payload["link_description"] = existing_post.get("link_description")
+        payload["link_image"] = existing_post.get("link_image")
+    if payload["poll_question"] is None:
+        payload["poll_question"] = existing_post.get("poll_question")
+        payload["poll_options"] = existing_post.get("poll_options")
+        payload["poll_votes"] = existing_post.get("poll_votes")
+    elif payload["poll_votes"] is None and payload["poll_options"]:
+        payload["poll_votes"] = existing_post.get("poll_votes") or [0] * len(payload["poll_options"])
+
+    post = update_post_record(post_id, payload, Json)
     return {
         "status": "ok",
         "post_id": post["id"],

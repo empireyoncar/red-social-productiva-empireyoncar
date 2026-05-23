@@ -5,7 +5,6 @@ from urllib.parse import urlparse
 from db_post import init_db
 from postgenerales_server import (
     UPLOAD_DIR,
-    build_post_payload,
     create_comment_service,
     create_post_service,
     delete_post_service,
@@ -14,6 +13,7 @@ from postgenerales_server import (
     get_user_posts_service,
     like_post_service,
     link_preview_service,
+    update_post_service,
     vote_poll_service,
 )
 
@@ -50,6 +50,17 @@ def crear_post():
         return jsonify({"error": "Solicitud vacia"}), 400
 
     result, status_code = create_post_service(data, request.files if is_multipart else None)
+    return jsonify(result), status_code
+
+
+@app.post("/api/post/editar")
+def editar_post():
+    is_multipart = request.content_type and "multipart/form-data" in request.content_type
+    data = request.form if is_multipart else (request.get_json(silent=True) or {})
+    if not data:
+        return jsonify({"error": "Solicitud vacia"}), 400
+
+    result, status_code = update_post_service(data, request.files if is_multipart else None)
     return jsonify(result), status_code
 
 

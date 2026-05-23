@@ -27,6 +27,8 @@ services:
     command: python usuario_server.py
     ports:
       - "5101:5101"
+    volumes:
+      - ./Usuarios/uploads:/app/uploads
     depends_on:
       postgres:
         condition: service_healthy

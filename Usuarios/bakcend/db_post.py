@@ -114,6 +114,41 @@ def create_post_record(payload, json_adapter):
     return post
 
 
+def update_post_record(post_id, payload, json_adapter):
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("""
+        UPDATE posts
+        SET contenido = %s,
+            imagen = %s,
+            link_url = %s,
+            link_title = %s,
+            link_description = %s,
+            link_image = %s,
+            poll_question = %s,
+            poll_options = %s,
+            poll_votes = %s
+        WHERE id = %s
+        RETURNING id, fecha;
+    """, (
+        payload["contenido"],
+        payload["imagen"],
+        payload["link_url"],
+        payload["link_title"],
+        payload["link_description"],
+        payload["link_image"],
+        payload["poll_question"],
+        json_adapter(payload["poll_options"]) if payload["poll_options"] else None,
+        json_adapter(payload["poll_votes"]) if payload["poll_votes"] else None,
+        post_id,
+    ))
+    post = cur.fetchone()
+    conn.commit()
+    cur.close()
+    conn.close()
+    return post
+
+
 def list_posts_by_user(user_id):
     conn = get_db()
     cur = conn.cursor()
@@ -238,7 +273,7 @@ def list_comments(post_id):
 def get_post_owner(post_id):
     conn = get_db()
     cur = conn.cursor()
-    cur.execute("SELECT user_id FROM posts WHERE id = %s", (post_id,))
+    cur.execute("SELECT * FROM posts WHERE id = %s", (post_id,))
     post = cur.fetchone()
     cur.close()
     conn.close()

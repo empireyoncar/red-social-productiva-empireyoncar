@@ -336,7 +336,13 @@
     .post-header {
         display: flex;
         align-items: center;
+        justify-content: space-between;
         margin-bottom: 12px;
+    }
+
+    .post-author {
+        display: flex;
+        align-items: center;
     }
 
     .post-header img {
@@ -475,6 +481,47 @@
 
     .post-actions button:hover {
         background: #d6e4ff;
+    }
+
+    .post-menu {
+        position: relative;
+    }
+
+    .menu-trigger {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        border: none;
+        background: #edf4ff;
+        color: var(--brand);
+        cursor: pointer;
+        font-size: 18px;
+    }
+
+    .menu-panel {
+        display: none;
+        position: absolute;
+        top: 42px;
+        right: 0;
+        min-width: 140px;
+        padding: 8px;
+        border-radius: 12px;
+        background: #fff;
+        border: 1px solid var(--line);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.10);
+        z-index: 3;
+    }
+
+    .menu-panel.active { display: grid; gap: 6px; }
+    .menu-panel button {
+        border: none;
+        background: #f6f9ff;
+        color: var(--text);
+        border-radius: 8px;
+        padding: 10px 12px;
+        text-align: left;
+        cursor: pointer;
+        font-family: inherit;
     }
 
     @media (max-width: 980px) {
@@ -703,15 +750,28 @@
             const imageHtml = post.imagen
                 ? `<img class="post-image" src="${escapeHtml(post.imagen)}" alt="post">`
                 : "";
+            const ownPost = Number(userId) === Number(post.user_id);
+            const menuHtml = ownPost ? `
+                <div class="post-menu">
+                    <button class="menu-trigger" type="button" data-menu-trigger data-post-id="${post.id}">⋯</button>
+                    <div class="menu-panel" id="menu-${post.id}">
+                        <button type="button" data-edit-post="${post.id}">Editar</button>
+                        <button type="button" data-delete-post="${post.id}">Eliminar</button>
+                    </div>
+                </div>
+            ` : "";
 
             return `
-                <div class="post-card">
+                <div class="post-card" id="post-${post.id}">
                     <div class="post-header">
-                        <img src="https://i.pravatar.cc/100?u=${escapeHtml(post.user_id || post.id || "user")}" alt="user">
-                        <div>
-                            <div class="name">${escapeHtml(author)}${post.verificado ? " ✔" : ""}</div>
-                            <div class="time">${escapeHtml(formatDate(post.fecha))}</div>
+                        <div class="post-author">
+                            <img src="https://i.pravatar.cc/100?u=${escapeHtml(post.user_id || post.id || "user")}" alt="user">
+                            <div>
+                                <div class="name">${escapeHtml(author)}${post.verificado ? " ✔" : ""}</div>
+                                <div class="time">${escapeHtml(formatDate(post.fecha))}</div>
+                            </div>
                         </div>
+                        ${menuHtml}
                     </div>
 
                     <div class="post-text">${escapeHtml(post.contenido || "")}</div>
@@ -720,9 +780,9 @@
                     ${renderPoll(post)}
 
                     <div class="post-actions">
-                        <button type="button">Me gusta (${post.likes || 0})</button>
-                        <button type="button">Comentar</button>
-                        <button type="button">Compartir</button>
+                        <button type="button" data-like-post="${post.id}">Me gusta (${post.likes || 0})</button>
+                        <button type="button" data-comment-post="${post.id}">Comentar</button>
+                        <button type="button" data-share-post="${post.id}">Compartir</button>
                     </div>
                 </div>
             `;
@@ -941,6 +1001,112 @@
         });
 
         feed.addEventListener("click", async (event) => {
+            const trigger = event.target.closest("[data-menu-trigger]");
+            if (trigger) {
+                const panel = document.getElementById(`menu-${trigger.dataset.postId}`);
+                document.querySelectorAll(".menu-panel.active").forEach((node) => {
+                    if (node !== panel) node.classList.remove("active");
+                });
+                panel.classList.toggle("active");
+                return;
+            }
+
+            const deleteButton = event.target.closest("[data-delete-post]");
+            if (deleteButton) {
+                const postId = Number(deleteButton.dataset.deletePost);
+                if (!confirm("Deseas eliminar esta publicacion?")) return;
+                try {
+                    const response = await fetch("/empireyoncarsocial/posts_api/api/post/eliminar", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ post_id: postId, user_id: Number(userId) })
+                    });
+                    const result = await response.json();
+                    if (!response.ok) throw new Error(result.error || "No se pudo eliminar");
+                    await cargarFeed();
+                } catch {
+                    postMessage.textContent = "No se pudo eliminar la publicacion.";
+                }
+                return;
+            }
+
+            const editButton = event.target.closest("[data-edit-post]");
+            if (editButton) {
+                const postCard = editButton.closest(".post-card");
+                const currentText = postCard.querySelector(".post-text").textContent;
+                const nuevoTexto = window.prompt("Editar publicacion", currentText);
+                if (nuevoTexto === null) return;
+                try {
+                    const formData = new FormData();
+                    formData.append("post_id", Number(editButton.dataset.editPost));
+                    formData.append("user_id", Number(userId));
+                    formData.append("contenido", nuevoTexto.trim());
+                    formData.append("poll_options", JSON.stringify([]));
+                    const response = await fetch("/empireyoncarsocial/posts_api/api/post/editar", {
+                        method: "POST",
+                        body: formData
+                    });
+                    const result = await response.json();
+                    if (!response.ok) throw new Error(result.error || "No se pudo editar");
+                    await cargarFeed();
+                } catch {
+                    postMessage.textContent = "No se pudo editar la publicacion.";
+                }
+                return;
+            }
+
+            const likeButton = event.target.closest("[data-like-post]");
+            if (likeButton) {
+                try {
+                    const response = await fetch("/empireyoncarsocial/posts_api/api/post/like", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ post_id: Number(likeButton.dataset.likePost), user_id: Number(userId) })
+                    });
+                    const result = await response.json();
+                    if (!response.ok) throw new Error(result.error || "No se pudo dar like");
+                    await cargarFeed();
+                } catch {
+                    postMessage.textContent = "No se pudo registrar el me gusta.";
+                }
+                return;
+            }
+
+            const commentButton = event.target.closest("[data-comment-post]");
+            if (commentButton) {
+                const comentario = window.prompt("Escribe tu comentario");
+                if (!comentario) return;
+                try {
+                    const response = await fetch("/empireyoncarsocial/posts_api/api/post/comentar", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            post_id: Number(commentButton.dataset.commentPost),
+                            user_id: Number(userId),
+                            comentario
+                        })
+                    });
+                    const result = await response.json();
+                    if (!response.ok) throw new Error(result.error || "No se pudo comentar");
+                    postMessage.textContent = "Comentario publicado.";
+                } catch {
+                    postMessage.textContent = "No se pudo publicar el comentario.";
+                }
+                return;
+            }
+
+            const shareButton = event.target.closest("[data-share-post]");
+            if (shareButton) {
+                const shareUrl = `${window.location.origin}/empireyoncarsocial/home#post-${shareButton.dataset.sharePost}`;
+                try {
+                    await navigator.clipboard.writeText(shareUrl);
+                    postMessage.textContent = "Enlace copiado para compartir.";
+                } catch {
+                    postMessage.textContent = shareUrl;
+                }
+                return;
+            }
+
             const voteButton = event.target.closest("[data-poll-vote]");
             if (!voteButton) {
                 return;

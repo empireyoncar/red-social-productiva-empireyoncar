@@ -2,6 +2,8 @@ import psycopg2
 from psycopg2.extras import RealDictCursor
 import bcrypt
 from db_bootstrap import ensure_database
+import os
+import uuid
 
 # ============================================================
 # CONFIGURACIÓN DE POSTGRESQL
@@ -16,6 +18,12 @@ DB_CONFIG = {
 }
 
 ensure_database(DB_CONFIG["database"])
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+UPLOAD_ROOT = os.environ.get("USER_UPLOAD_ROOT", os.path.join(BASE_DIR, "uploads"))
+PROFILE_UPLOAD_DIR = os.path.join(UPLOAD_ROOT, "profiles")
+
+os.makedirs(PROFILE_UPLOAD_DIR, exist_ok=True)
 
 def get_db():
     return psycopg2.connect(**DB_CONFIG, cursor_factory=RealDictCursor)
@@ -44,9 +52,14 @@ def init_db():
             verificado BOOLEAN DEFAULT FALSE,
             seguidores INT DEFAULT 0,
             siguiendo INT DEFAULT 0,
-            bio TEXT DEFAULT ''
+            bio TEXT DEFAULT '',
+            foto_url TEXT,
+            last_seen TIMESTAMP DEFAULT NOW()
         );
     """)
+
+    cur.execute("ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS foto_url TEXT;")
+    cur.execute("ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS last_seen TIMESTAMP DEFAULT NOW();")
 
     conn.commit()
     cur.close()
@@ -115,6 +128,12 @@ def login_usuario(email, password):
         return {"error": "Usuario no encontrado"}
 
     if bcrypt.checkpw(password.encode(), user["password"].encode()):
+        conn = get_db()
+        cur = conn.cursor()
+        cur.execute("UPDATE usuarios SET last_seen = NOW() WHERE id = %s", (user["id"],))
+        conn.commit()
+        cur.close()
+        conn.close()
         return {"status": "ok", "user_id": user["id"]}
 
     return {"error": "Contraseña incorrecta"}
@@ -126,7 +145,7 @@ def obtener_perfil(user_id):
 
     cur.execute("""
         SELECT id, nombres, apellidos, nacimiento, oficio, pais, estado, ciudad,
-               whatsapp, email, verificado, seguidores, siguiendo, bio
+               whatsapp, email, verificado, seguidores, siguiendo, bio, foto_url, last_seen
         FROM usuarios WHERE id = %s
     """, (user_id,))
 
@@ -152,6 +171,60 @@ def actualizar_bio(user_id, bio):
     conn.close()
 
     return {"status": "ok"}
+
+
+def actualizar_perfil(user_id, data):
+    if not user_id:
+        return {"error": "user_id es obligatorio"}
+
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("""
+        UPDATE usuarios
+        SET nombres = %s,
+            apellidos = %s,
+            oficio = %s,
+            pais = %s,
+            estado = %s,
+            ciudad = %s,
+            whatsapp = %s,
+            bio = %s,
+            last_seen = NOW()
+        WHERE id = %s
+    """, (
+        data.get("nombres"),
+        data.get("apellidos"),
+        data.get("oficio"),
+        data.get("pais"),
+        data.get("estado"),
+        data.get("ciudad"),
+        data.get("whatsapp"),
+        data.get("bio"),
+        user_id,
+    ))
+    conn.commit()
+    cur.close()
+    conn.close()
+    return {"status": "ok"}
+
+
+def guardar_foto_perfil(user_id, file_storage):
+    if not user_id or not file_storage or not file_storage.filename:
+        return {"error": "Archivo requerido"}
+
+    extension = os.path.splitext(file_storage.filename)[1].lower() or ".jpg"
+    filename = f"{uuid.uuid4().hex}{extension}"
+    final_path = os.path.join(PROFILE_UPLOAD_DIR, filename)
+    file_storage.save(final_path)
+    foto_url = f"/empireyoncarsocial/usuarios/api/perfil/foto/{filename}"
+
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("UPDATE usuarios SET foto_url = %s, last_seen = NOW() WHERE id = %s", (foto_url, user_id))
+    conn.commit()
+    cur.close()
+    conn.close()
+    return {"status": "ok", "foto_url": foto_url}
 
 
 def verificar_usuario_admin(user_id):
