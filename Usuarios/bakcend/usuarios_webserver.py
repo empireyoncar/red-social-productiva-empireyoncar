@@ -57,6 +57,12 @@ def perfil():
     return render_template("perfil.html")
 
 
+@app.route("/buscar")
+@app.route("/empireyoncarsocial/buscar")
+def buscar():
+    return render_template("buscar.html")
+
+
 @app.route("/chat")
 @app.route("/empireyoncarsocial/chat")
 def chat():

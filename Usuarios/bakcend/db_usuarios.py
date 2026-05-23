@@ -60,6 +60,14 @@ def init_db():
 
     cur.execute("ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS foto_url TEXT;")
     cur.execute("ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS last_seen TIMESTAMP DEFAULT NOW();")
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS follows (
+            id SERIAL PRIMARY KEY,
+            follower_id INT NOT NULL,
+            followed_id INT NOT NULL,
+            UNIQUE(follower_id, followed_id)
+        );
+    """)
 
     conn.commit()
     cur.close()
@@ -241,3 +249,62 @@ def verificar_usuario_admin(user_id):
     conn.close()
 
     return {"status": "verificado"}
+
+
+def buscar_usuarios(query, current_user_id=None):
+    conn = get_db()
+    cur = conn.cursor()
+    like_value = f"%{query.strip()}%"
+    cur.execute("""
+        SELECT id, nombres, apellidos, oficio, ciudad, pais, foto_url, verificado, seguidores
+        FROM usuarios
+        WHERE (nombres ILIKE %s OR apellidos ILIKE %s)
+          AND (%s IS NULL OR id <> %s)
+        ORDER BY seguidores DESC, nombres ASC
+        LIMIT 25
+    """, (like_value, like_value, current_user_id, current_user_id))
+    users = cur.fetchall()
+    cur.close()
+    conn.close()
+    return users
+
+
+def seguir_usuario(follower_id, followed_id):
+    if not follower_id or not followed_id or follower_id == followed_id:
+        return {"error": "Solicitud invalida"}
+
+    conn = get_db()
+    cur = conn.cursor()
+    try:
+        cur.execute("""
+            INSERT INTO follows (follower_id, followed_id)
+            VALUES (%s, %s)
+        """, (follower_id, followed_id))
+        cur.execute("UPDATE usuarios SET siguiendo = siguiendo + 1 WHERE id = %s", (follower_id,))
+        cur.execute("UPDATE usuarios SET seguidores = seguidores + 1 WHERE id = %s", (followed_id,))
+        conn.commit()
+    except psycopg2.Error:
+        conn.rollback()
+        cur.close()
+        conn.close()
+        return {"error": "Ya sigues a este usuario"}
+
+    cur.close()
+    conn.close()
+    return {"status": "ok"}
+
+
+def esta_siguiendo(follower_id, followed_id):
+    if not follower_id or not followed_id:
+        return False
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("""
+        SELECT 1
+        FROM follows
+        WHERE follower_id = %s AND followed_id = %s
+    """, (follower_id, followed_id))
+    exists = cur.fetchone() is not None
+    cur.close()
+    conn.close()
+    return exists

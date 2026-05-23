@@ -15,7 +15,10 @@ from db_usuarios import (
     obtener_perfil,
     actualizar_bio,
     actualizar_perfil,
+    buscar_usuarios,
+    esta_siguiendo,
     guardar_foto_perfil,
+    seguir_usuario,
     verificar_usuario_admin,
     PROFILE_UPLOAD_DIR,
 )
@@ -71,7 +74,29 @@ def perfil(user_id):
     if not user:
         return jsonify({"error": "Usuario no encontrado"}), 404
 
+    viewer_id = request.args.get("viewer_id", type=int)
+    user["siguiendo_usuario"] = esta_siguiendo(viewer_id, user_id) if viewer_id else False
     return jsonify(user)
+
+
+@app.get("/api/usuarios/buscar")
+def search_users():
+    query = (request.args.get("q") or "").strip()
+    viewer_id = request.args.get("viewer_id", type=int)
+    if not query:
+        return jsonify([])
+    return jsonify(buscar_usuarios(query, viewer_id))
+
+
+@app.post("/api/usuarios/seguir")
+def follow_user():
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "JSON invalido o vacio"}), 400
+    result = seguir_usuario(data.get("follower_id"), data.get("followed_id"))
+    if "error" in result:
+        return jsonify(result), 400
+    return jsonify(result)
 
 
 @app.post("/api/perfil/update")
