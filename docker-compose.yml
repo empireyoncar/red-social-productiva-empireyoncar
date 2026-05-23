@@ -99,7 +99,7 @@ services:
   postgenerales_server:
     build:
       context: ./Usuarios/bakcend
-    command: python postgenerales_server.py
+    command: python post_server.py
     ports:
       - "5104:5104"
     volumes:

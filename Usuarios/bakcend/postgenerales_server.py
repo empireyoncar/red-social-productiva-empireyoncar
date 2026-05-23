@@ -1,39 +1,33 @@
-from flask import Flask, request, jsonify, send_from_directory
-from flask_cors import CORS
-import psycopg2
-from psycopg2.extras import RealDictCursor, Json
-from db_bootstrap import ensure_database
-from werkzeug.utils import secure_filename
 import json
 import os
 import re
 import uuid
-from urllib.parse import urlparse
+
+import psycopg2
 import requests
+from psycopg2.extras import Json
+from werkzeug.utils import secure_filename
 
-app = Flask(__name__)
-CORS(app)
+from db_post import (
+    create_comment,
+    create_post_record,
+    delete_post_record,
+    get_poll_for_post,
+    get_post_owner,
+    list_comments,
+    list_feed_posts,
+    list_posts_by_user,
+    register_like,
+    register_poll_vote,
+)
 
-DB_CONFIG = {
-    "host": "postgres",
-    "database": "posts_db",
-    "user": "admin",
-    "password": "admin123",
-    "port": 5151
-}
-
-ensure_database(DB_CONFIG["database"])
-
+USER_SERVICE_URL = os.environ.get("USER_SERVICE_URL", "http://usuario_server:5101")
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 UPLOAD_ROOT = os.environ.get("POST_UPLOAD_ROOT", os.path.join(BASE_DIR, "uploads"))
 UPLOAD_DIR = os.path.join(UPLOAD_ROOT, "posts")
 ALLOWED_IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp", ".gif"}
 
 os.makedirs(UPLOAD_DIR, exist_ok=True)
-
-
-def get_db():
-    return psycopg2.connect(**DB_CONFIG, cursor_factory=RealDictCursor)
 
 
 def extract_meta(html, *patterns):
@@ -44,7 +38,7 @@ def extract_meta(html, *patterns):
     return None
 
 
-def fetch_link_preview(url):
+def link_preview_service(url):
     try:
         response = requests.get(
             url,
@@ -106,106 +100,32 @@ def parse_poll_options(raw_options):
     return clean_options[:4]
 
 
-def init_db():
-    conn = get_db()
-    cur = conn.cursor()
-
-    cur.execute("""
-        CREATE TABLE IF NOT EXISTS posts (
-            id SERIAL PRIMARY KEY,
-            user_id INT NOT NULL,
-            contenido TEXT NOT NULL DEFAULT '',
-            imagen TEXT,
-            fecha TIMESTAMP DEFAULT NOW(),
-            likes INT DEFAULT 0,
-            link_url TEXT,
-            link_title TEXT,
-            link_description TEXT,
-            link_image TEXT,
-            poll_question TEXT,
-            poll_options JSONB,
-            poll_votes JSONB
-        );
-    """)
-
-    # Migra instalaciones existentes donde la tabla posts ya fue creada
-    # sin los nuevos campos de enlace y encuesta.
-    cur.execute("ALTER TABLE posts ALTER COLUMN contenido SET DEFAULT '';")
-    cur.execute("ALTER TABLE posts ADD COLUMN IF NOT EXISTS link_url TEXT;")
-    cur.execute("ALTER TABLE posts ADD COLUMN IF NOT EXISTS link_title TEXT;")
-    cur.execute("ALTER TABLE posts ADD COLUMN IF NOT EXISTS link_description TEXT;")
-    cur.execute("ALTER TABLE posts ADD COLUMN IF NOT EXISTS link_image TEXT;")
-    cur.execute("ALTER TABLE posts ADD COLUMN IF NOT EXISTS poll_question TEXT;")
-    cur.execute("ALTER TABLE posts ADD COLUMN IF NOT EXISTS poll_options JSONB;")
-    cur.execute("ALTER TABLE posts ADD COLUMN IF NOT EXISTS poll_votes JSONB;")
-
-    cur.execute("""
-        CREATE TABLE IF NOT EXISTS likes (
-            id SERIAL PRIMARY KEY,
-            user_id INT NOT NULL,
-            post_id INT NOT NULL,
-            UNIQUE(user_id, post_id)
-        );
-    """)
-
-    cur.execute("""
-        CREATE TABLE IF NOT EXISTS comentarios (
-            id SERIAL PRIMARY KEY,
-            post_id INT NOT NULL,
-            user_id INT NOT NULL,
-            comentario TEXT NOT NULL,
-            fecha TIMESTAMP DEFAULT NOW()
-        );
-    """)
-
-    cur.execute("""
-        CREATE TABLE IF NOT EXISTS poll_responses (
-            id SERIAL PRIMARY KEY,
-            post_id INT NOT NULL,
-            user_id INT NOT NULL,
-            option_index INT NOT NULL,
-            UNIQUE(post_id, user_id)
-        );
-    """)
-
-    conn.commit()
-    cur.close()
-    conn.close()
+def fetch_user_profile(user_id):
+    try:
+        response = requests.get(
+            f"{USER_SERVICE_URL}/api/perfil/{int(user_id)}",
+            timeout=3,
+        )
+        if not response.ok:
+            return {}
+        return response.json() or {}
+    except (requests.RequestException, ValueError):
+        return {}
 
 
-init_db()
+def enrich_with_user(post_or_comment):
+    profile = fetch_user_profile(post_or_comment.get("user_id"))
+    post_or_comment["nombres"] = profile.get("nombres") or "Usuario"
+    post_or_comment["apellidos"] = profile.get("apellidos") or ""
+    post_or_comment["verificado"] = bool(profile.get("verificado"))
+    return post_or_comment
 
 
-@app.get("/uploads/<path:filename>")
-def uploaded_post_file(filename):
-    return send_from_directory(UPLOAD_DIR, filename)
-
-
-@app.post("/api/post/link-preview")
-def link_preview():
-    data = request.get_json(silent=True) or {}
-    url = (data.get("url") or "").strip()
-    if not url:
-        return jsonify({"error": "URL requerida"}), 400
-
-    parsed = urlparse(url)
-    if parsed.scheme not in {"http", "https"}:
-        return jsonify({"error": "URL invalida"}), 400
-
-    return jsonify(fetch_link_preview(url))
-
-
-@app.post("/api/post/crear")
-def crear_post():
-    is_multipart = request.content_type and "multipart/form-data" in request.content_type
-    data = request.form if is_multipart else (request.get_json(silent=True) or {})
-    if not data:
-        return jsonify({"error": "Solicitud vacia"}), 400
-
+def build_post_payload(data, files=None):
     try:
         user_id = int(data.get("user_id"))
     except (TypeError, ValueError):
-        return jsonify({"error": "user_id invalido"}), 400
+        return None, ("user_id invalido", 400)
 
     contenido = (data.get("contenido") or "").strip()
     link_url = (data.get("link_url") or "").strip()
@@ -217,266 +137,126 @@ def crear_post():
     poll_votes = [0] * len(poll_options) if poll_options else None
 
     imagen = None
-    if is_multipart and "imagen_archivo" in request.files:
+    if files and "imagen_archivo" in files:
         try:
-            imagen = save_uploaded_image(request.files["imagen_archivo"])
+            imagen = save_uploaded_image(files["imagen_archivo"])
         except ValueError as exc:
-            return jsonify({"error": str(exc)}), 400
+            return None, (str(exc), 400)
     else:
         imagen = (data.get("imagen") or "").strip() or None
 
     if link_url and not link_title and not link_description and not link_image:
-        metadata = fetch_link_preview(link_url)
+        metadata = link_preview_service(link_url)
         link_title = metadata["title"] or ""
         link_description = metadata["description"] or ""
         link_image = metadata["image"] or ""
 
     if poll_question and len(poll_options) < 2:
-        return jsonify({"error": "La encuesta necesita al menos 2 opciones"}), 400
+        return None, ("La encuesta necesita al menos 2 opciones", 400)
 
     if not any([contenido, imagen, link_url, poll_question]):
-        return jsonify({"error": "Debes agregar texto, imagen, enlace o encuesta"}), 400
+        return None, ("Debes agregar texto, imagen, enlace o encuesta", 400)
 
-    conn = get_db()
-    cur = conn.cursor()
+    return {
+        "user_id": user_id,
+        "contenido": contenido,
+        "imagen": imagen,
+        "link_url": link_url or None,
+        "link_title": link_title or None,
+        "link_description": link_description or None,
+        "link_image": link_image or None,
+        "poll_question": poll_question or None,
+        "poll_options": poll_options or None,
+        "poll_votes": poll_votes or None,
+    }, None
 
-    cur.execute("""
-        INSERT INTO posts (
-            user_id, contenido, imagen, link_url, link_title,
-            link_description, link_image, poll_question, poll_options, poll_votes
-        )
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-        RETURNING id, fecha;
-    """, (
-        user_id,
-        contenido,
-        imagen,
-        link_url or None,
-        link_title or None,
-        link_description or None,
-        link_image or None,
-        poll_question or None,
-        Json(poll_options) if poll_options else None,
-        Json(poll_votes) if poll_votes else None,
-    ))
 
-    post = cur.fetchone()
-    conn.commit()
-    cur.close()
-    conn.close()
+def create_post_service(data, files=None):
+    payload, error = build_post_payload(data, files)
+    if error:
+        return {"error": error[0]}, error[1]
 
-    return jsonify({
+    post = create_post_record(payload, Json)
+    return {
         "status": "ok",
         "post_id": post["id"],
-        "fecha": post["fecha"]
-    })
+        "fecha": post["fecha"],
+    }, 200
 
 
-@app.get("/api/post/usuario/<int:user_id>")
-def posts_usuario(user_id):
-    conn = get_db()
-    cur = conn.cursor()
-
-    cur.execute("""
-        SELECT *
-        FROM posts
-        WHERE user_id = %s
-        ORDER BY fecha DESC;
-    """, (user_id,))
-
-    posts = cur.fetchall()
-    cur.close()
-    conn.close()
-
-    return jsonify(posts)
+def get_user_posts_service(user_id):
+    return list_posts_by_user(user_id)
 
 
-@app.get("/api/post/feed/<int:user_id>")
-def feed(user_id):
-    conn = get_db()
-    cur = conn.cursor()
-
-    cur.execute("""
-        SELECT p.*, u.nombres, u.apellidos, u.verificado
-        FROM posts p
-        JOIN usuarios u ON u.id = p.user_id
-        ORDER BY p.fecha DESC
-        LIMIT 50;
-    """)
-
-    posts = cur.fetchall()
-    cur.close()
-    conn.close()
-
-    return jsonify(posts)
+def feed_service(user_id):
+    del user_id
+    posts = list_feed_posts()
+    return [enrich_with_user(post) for post in posts]
 
 
-@app.post("/api/post/poll/vote")
-def votar_encuesta():
-    data = request.get_json(silent=True) or {}
-
+def vote_poll_service(data):
     try:
         user_id = int(data.get("user_id"))
         post_id = int(data.get("post_id"))
         option_index = int(data.get("option_index"))
     except (TypeError, ValueError):
-        return jsonify({"error": "Datos invalidos"}), 400
+        return {"error": "Datos invalidos"}, 400
 
-    conn = get_db()
-    cur = conn.cursor()
-
-    cur.execute("SELECT poll_options, poll_votes FROM posts WHERE id = %s", (post_id,))
-    post = cur.fetchone()
+    post = get_poll_for_post(post_id)
     if not post or not post["poll_options"]:
-        cur.close()
-        conn.close()
-        return jsonify({"error": "Encuesta no encontrada"}), 404
+        return {"error": "Encuesta no encontrada"}, 404
 
     options = post["poll_options"]
     votes = post["poll_votes"] or [0] * len(options)
     if option_index < 0 or option_index >= len(options):
-        cur.close()
-        conn.close()
-        return jsonify({"error": "Opcion invalida"}), 400
-
-    try:
-        cur.execute("""
-            INSERT INTO poll_responses (post_id, user_id, option_index)
-            VALUES (%s, %s, %s)
-        """, (post_id, user_id, option_index))
-    except psycopg2.Error:
-        conn.rollback()
-        cur.close()
-        conn.close()
-        return jsonify({"error": "Ya votaste en esta encuesta"}), 400
+        return {"error": "Opcion invalida"}, 400
 
     votes[option_index] = int(votes[option_index]) + 1
-    cur.execute(
-        "UPDATE posts SET poll_votes = %s WHERE id = %s",
-        (Json(votes), post_id),
-    )
-    conn.commit()
-    cur.close()
-    conn.close()
-
-    return jsonify({"status": "ok", "poll_votes": votes})
-
-
-@app.post("/api/post/like")
-def like_post():
-    data = request.get_json(silent=True) or {}
-
-    user_id = data.get("user_id")
-    post_id = data.get("post_id")
-
-    conn = get_db()
-    cur = conn.cursor()
-
     try:
-        cur.execute("""
-            INSERT INTO likes (user_id, post_id)
-            VALUES (%s, %s)
-        """, (user_id, post_id))
-
-        cur.execute("""
-            UPDATE posts
-            SET likes = likes + 1
-            WHERE id = %s
-        """, (post_id,))
-
-        conn.commit()
+        register_poll_vote(post_id, user_id, option_index, votes, Json)
     except psycopg2.Error:
-        conn.rollback()
-        cur.close()
-        conn.close()
-        return jsonify({"error": "Ya diste like"}), 400
+        return {"error": "Ya votaste en esta encuesta"}, 400
 
-    cur.close()
-    conn.close()
-
-    return jsonify({"status": "ok"})
+    return {"status": "ok", "poll_votes": votes}, 200
 
 
-@app.post("/api/post/comentar")
-def comentar_post():
-    data = request.get_json(silent=True) or {}
+def like_post_service(data):
+    try:
+        register_like(data.get("user_id"), data.get("post_id"))
+    except psycopg2.Error:
+        return {"error": "Ya diste like"}, 400
+    return {"status": "ok"}, 200
 
-    post_id = data.get("post_id")
-    user_id = data.get("user_id")
-    comentario = data.get("comentario")
 
-    conn = get_db()
-    cur = conn.cursor()
-
-    cur.execute("""
-        INSERT INTO comentarios (post_id, user_id, comentario)
-        VALUES (%s, %s, %s)
-        RETURNING id, fecha;
-    """, (post_id, user_id, comentario))
-
-    comentario_db = cur.fetchone()
-    conn.commit()
-    cur.close()
-    conn.close()
-
-    return jsonify({
+def create_comment_service(data):
+    comentario_db = create_comment(
+        data.get("post_id"),
+        data.get("user_id"),
+        data.get("comentario"),
+    )
+    return {
         "status": "ok",
         "comentario_id": comentario_db["id"],
-        "fecha": comentario_db["fecha"]
-    })
+        "fecha": comentario_db["fecha"],
+    }, 200
 
 
-@app.get("/api/post/comentarios/<int:post_id>")
-def obtener_comentarios(post_id):
-    conn = get_db()
-    cur = conn.cursor()
-
-    cur.execute("""
-        SELECT c.*, u.nombres, u.apellidos
-        FROM comentarios c
-        JOIN usuarios u ON u.id = c.user_id
-        WHERE post_id = %s
-        ORDER BY fecha ASC;
-    """, (post_id,))
-
-    comentarios = cur.fetchall()
-    cur.close()
-    conn.close()
-
-    return jsonify(comentarios)
+def get_comments_service(post_id):
+    comentarios = list_comments(post_id)
+    return [enrich_with_user(comentario) for comentario in comentarios]
 
 
-@app.post("/api/post/eliminar")
-def eliminar_post():
-    data = request.get_json(silent=True) or {}
-
+def delete_post_service(data):
     post_id = data.get("post_id")
     user_id = data.get("user_id")
     admin = data.get("admin", False)
 
-    conn = get_db()
-    cur = conn.cursor()
-
-    cur.execute("SELECT user_id FROM posts WHERE id = %s", (post_id,))
-    post = cur.fetchone()
-
+    post = get_post_owner(post_id)
     if not post:
-        cur.close()
-        conn.close()
-        return jsonify({"error": "Post no existe"}), 404
+        return {"error": "Post no existe"}, 404
 
     if post["user_id"] != user_id and not admin:
-        cur.close()
-        conn.close()
-        return jsonify({"error": "No autorizado"}), 403
+        return {"error": "No autorizado"}, 403
 
-    cur.execute("DELETE FROM posts WHERE id = %s", (post_id,))
-    conn.commit()
-    cur.close()
-    conn.close()
-
-    return jsonify({"status": "eliminado"})
-
-
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5104, debug=True)
+    delete_post_record(post_id)
+    return {"status": "eliminado"}, 200
