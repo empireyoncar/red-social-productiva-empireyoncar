@@ -128,6 +128,17 @@ def init_db():
         );
     """)
 
+    # Migra instalaciones existentes donde la tabla posts ya fue creada
+    # sin los nuevos campos de enlace y encuesta.
+    cur.execute("ALTER TABLE posts ALTER COLUMN contenido SET DEFAULT '';")
+    cur.execute("ALTER TABLE posts ADD COLUMN IF NOT EXISTS link_url TEXT;")
+    cur.execute("ALTER TABLE posts ADD COLUMN IF NOT EXISTS link_title TEXT;")
+    cur.execute("ALTER TABLE posts ADD COLUMN IF NOT EXISTS link_description TEXT;")
+    cur.execute("ALTER TABLE posts ADD COLUMN IF NOT EXISTS link_image TEXT;")
+    cur.execute("ALTER TABLE posts ADD COLUMN IF NOT EXISTS poll_question TEXT;")
+    cur.execute("ALTER TABLE posts ADD COLUMN IF NOT EXISTS poll_options JSONB;")
+    cur.execute("ALTER TABLE posts ADD COLUMN IF NOT EXISTS poll_votes JSONB;")
+
     cur.execute("""
         CREATE TABLE IF NOT EXISTS likes (
             id SERIAL PRIMARY KEY,
