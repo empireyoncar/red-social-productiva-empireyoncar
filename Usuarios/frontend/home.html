@@ -524,6 +524,58 @@
         font-family: inherit;
     }
 
+    .comments-box {
+        margin-top: 12px;
+        padding-top: 12px;
+        border-top: 1px solid var(--line);
+    }
+
+    .comment-list {
+        display: grid;
+        gap: 8px;
+        margin-bottom: 12px;
+    }
+
+    .comment-item {
+        padding: 10px 12px;
+        background: #f7faff;
+        border-radius: 10px;
+        font-size: 13px;
+        line-height: 1.45;
+    }
+
+    .comment-author {
+        font-weight: 700;
+        margin-bottom: 4px;
+    }
+
+    .comment-form {
+        display: grid;
+        gap: 8px;
+    }
+
+    .comment-form textarea {
+        width: 100%;
+        min-height: 70px;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 10px 12px;
+        font-family: inherit;
+        resize: vertical;
+    }
+
+    .comment-submit {
+        justify-self: end;
+        border: none;
+        border-radius: 10px;
+        padding: 10px 14px;
+        background: var(--brand);
+        color: #fff;
+        cursor: pointer;
+        font-family: inherit;
+        font-weight: 600;
+    }
+
     @media (max-width: 980px) {
         .main-container {
             flex-direction: column;
@@ -573,8 +625,10 @@
         <div class="navbar-top">
             <div class="logo">Empireyoncar Social</div>
             <div class="nav-links">
-                <a href="perfil">Perfil</a>
-                <a href="grupos">Grupos</a>
+                <a href="/empireyoncarsocial/perfil">Perfil</a>
+                <a href="/empireyoncarsocial/grupos/">Grupos</a>
+                <a href="/empireyoncarsocial/chat">Chat</a>
+                <a href="/empireyoncarsocial/notificaciones">Notificaciones</a>
             </div>
         </div>
 
@@ -750,6 +804,12 @@
             const imageHtml = post.imagen
                 ? `<img class="post-image" src="${escapeHtml(post.imagen)}" alt="post">`
                 : "";
+            const commentsHtml = (post.comments || []).map((comment) => `
+                <div class="comment-item">
+                    <div class="comment-author">${escapeHtml(`${comment.nombres || "Usuario"} ${comment.apellidos || ""}`.trim())}</div>
+                    <div>${escapeHtml(comment.comentario || "")}</div>
+                </div>
+            `).join("");
             const ownPost = Number(userId) === Number(post.user_id);
             const menuHtml = ownPost ? `
                 <div class="post-menu">
@@ -781,8 +841,15 @@
 
                     <div class="post-actions">
                         <button type="button" data-like-post="${post.id}">Me gusta (${post.likes || 0})</button>
-                        <button type="button" data-comment-post="${post.id}">Comentar</button>
                         <button type="button" data-share-post="${post.id}">Compartir</button>
+                    </div>
+
+                    <div class="comments-box">
+                        <div class="comment-list">${commentsHtml || '<div class="comment-item">Todavia no hay comentarios.</div>'}</div>
+                        <form class="comment-form" data-comment-form="${post.id}">
+                            <textarea name="comentario" placeholder="Escribe un comentario"></textarea>
+                            <button class="comment-submit" type="submit">Publicar comentario</button>
+                        </form>
                     </div>
                 </div>
             `;
@@ -913,7 +980,17 @@
                     return;
                 }
 
-                feed.innerHTML = posts.map(renderPost).join("");
+                const postsWithComments = await Promise.all(posts.map(async (post) => {
+                    try {
+                        const commentsResponse = await fetch(`/empireyoncarsocial/posts_api/api/post/comentarios/${post.id}`);
+                        post.comments = commentsResponse.ok ? await commentsResponse.json() : [];
+                    } catch {
+                        post.comments = [];
+                    }
+                    return post;
+                }));
+
+                feed.innerHTML = postsWithComments.map(renderPost).join("");
             } catch {
                 postMessage.textContent = "No se pudo cargar el feed en este momento.";
             }
@@ -1072,23 +1149,27 @@
                 return;
             }
 
-            const commentButton = event.target.closest("[data-comment-post]");
-            if (commentButton) {
-                const comentario = window.prompt("Escribe tu comentario");
+            const commentSubmit = event.target.closest(".comment-submit");
+            if (commentSubmit) {
+                const commentForm = event.target.closest("[data-comment-form]");
+                const textarea = commentForm.querySelector("textarea");
+                const comentario = textarea.value.trim();
                 if (!comentario) return;
                 try {
                     const response = await fetch("/empireyoncarsocial/posts_api/api/post/comentar", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({
-                            post_id: Number(commentButton.dataset.commentPost),
+                            post_id: Number(commentForm.dataset.commentForm),
                             user_id: Number(userId),
                             comentario
                         })
                     });
                     const result = await response.json();
                     if (!response.ok) throw new Error(result.error || "No se pudo comentar");
+                    textarea.value = "";
                     postMessage.textContent = "Comentario publicado.";
+                    await cargarFeed();
                 } catch {
                     postMessage.textContent = "No se pudo publicar el comentario.";
                 }
@@ -1100,7 +1181,7 @@
                 const shareUrl = `${window.location.origin}/empireyoncarsocial/home#post-${shareButton.dataset.sharePost}`;
                 try {
                     await navigator.clipboard.writeText(shareUrl);
-                    postMessage.textContent = "Enlace copiado para compartir.";
+                    postMessage.textContent = "Has copiado el enlace.";
                 } catch {
                     postMessage.textContent = shareUrl;
                 }

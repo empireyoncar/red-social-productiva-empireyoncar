@@ -264,6 +264,117 @@
         .post-link-title { font-weight: 700; margin-bottom: 6px; }
         .post-link-description, .post-link-url { font-size: 13px; color: var(--muted); }
 
+        .post-menu {
+            position: relative;
+        }
+
+        .menu-trigger {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: none;
+            background: #edf4ff;
+            color: var(--brand);
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .menu-panel {
+            display: none;
+            position: absolute;
+            top: 42px;
+            right: 0;
+            min-width: 140px;
+            padding: 8px;
+            border-radius: 12px;
+            background: #fff;
+            border: 1px solid var(--line);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.10);
+            z-index: 3;
+        }
+
+        .menu-panel.active { display: grid; gap: 6px; }
+        .menu-panel button {
+            border: none;
+            background: #f6f9ff;
+            color: var(--text);
+            border-radius: 8px;
+            padding: 10px 12px;
+            text-align: left;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .post-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+
+        .post-actions button {
+            border: none;
+            background: #edf4ff;
+            color: var(--brand);
+            border-radius: 10px;
+            padding: 10px 14px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: 600;
+        }
+
+        .comments-box {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid var(--line);
+        }
+
+        .comment-list {
+            display: grid;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .comment-item {
+            padding: 10px 12px;
+            background: #f7faff;
+            border-radius: 10px;
+            font-size: 13px;
+            line-height: 1.45;
+        }
+
+        .comment-author {
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .comment-form {
+            display: grid;
+            gap: 8px;
+        }
+
+        .comment-form textarea {
+            width: 100%;
+            min-height: 70px;
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            padding: 10px 12px;
+            font-family: inherit;
+            resize: vertical;
+        }
+
+        .comment-submit {
+            justify-self: end;
+            border: none;
+            border-radius: 10px;
+            padding: 10px 14px;
+            background: var(--brand);
+            color: #fff;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: 600;
+        }
+
         .right-panel {
             width: 280px;
             display: flex;
@@ -313,10 +424,10 @@
     <div class="navbar">
         <div class="logo">Empireyoncar Social</div>
         <div class="nav-links">
-            <a href="home">Inicio</a>
-            <a href="grupos">Grupos</a>
-            <a href="chat">Chat</a>
-            <a href="notificaciones">Notificaciones</a>
+            <a href="/empireyoncarsocial/home">Inicio</a>
+            <a href="/empireyoncarsocial/grupos/">Grupos</a>
+            <a href="/empireyoncarsocial/chat">Chat</a>
+            <a href="/empireyoncarsocial/notificaciones">Notificaciones</a>
         </div>
     </div>
 
@@ -414,9 +525,15 @@
                     <div class="post-link-url">${escapeHtml(post.link_url)}</div>
                 </a>
             ` : "";
+            const commentsHtml = (post.comments || []).map((comment) => `
+                <div class="comment-item">
+                    <div class="comment-author">${escapeHtml(`${comment.nombres || "Usuario"} ${comment.apellidos || ""}`.trim())}</div>
+                    <div>${escapeHtml(comment.comentario || "")}</div>
+                </div>
+            `).join("");
 
             return `
-                <div class="post-card">
+                <div class="post-card" id="post-${post.id}">
                     <div class="post-header">
                         <div class="post-author">
                             <img src="${escapeHtml(currentUser?.foto_url || "https://i.pravatar.cc/200")}" alt="Perfil">
@@ -425,10 +542,28 @@
                                 <div class="post-time">${escapeHtml(formatDate(post.fecha))}</div>
                             </div>
                         </div>
+                        <div class="post-menu">
+                            <button class="menu-trigger" type="button" data-menu-trigger data-post-id="${post.id}">⋯</button>
+                            <div class="menu-panel" id="profile-menu-${post.id}">
+                                <button type="button" data-edit-post="${post.id}">Editar</button>
+                                <button type="button" data-delete-post="${post.id}">Eliminar</button>
+                            </div>
+                        </div>
                     </div>
                     <div class="post-text">${escapeHtml(post.contenido || "")}</div>
                     ${imageHtml}
                     ${linkHtml}
+                    <div class="post-actions">
+                        <button type="button" data-like-post="${post.id}">Me gusta (${post.likes || 0})</button>
+                        <button type="button" data-share-post="${post.id}">Compartir</button>
+                    </div>
+                    <div class="comments-box">
+                        <div class="comment-list">${commentsHtml || '<div class="comment-item">Todavia no hay comentarios.</div>'}</div>
+                        <form class="comment-form" data-comment-form="${post.id}">
+                            <textarea name="comentario" placeholder="Escribe un comentario"></textarea>
+                            <button class="comment-submit" type="submit">Publicar comentario</button>
+                        </form>
+                    </div>
                 </div>
             `;
         }
@@ -449,8 +584,17 @@
                 const response = await fetch(`/empireyoncarsocial/posts_api/api/post/usuario/${userId}`);
                 const posts = await response.json();
                 if (!response.ok) throw new Error();
+                const postsWithComments = await Promise.all(posts.map(async (post) => {
+                    try {
+                        const commentsResponse = await fetch(`/empireyoncarsocial/posts_api/api/post/comentarios/${post.id}`);
+                        post.comments = commentsResponse.ok ? await commentsResponse.json() : [];
+                    } catch {
+                        post.comments = [];
+                    }
+                    return post;
+                }));
                 document.getElementById("postsList").innerHTML = posts.length
-                    ? posts.map(renderPost).join("")
+                    ? postsWithComments.map(renderPost).join("")
                     : '<div class="post-card">Todavia no has publicado nada.</div>';
             } catch {
                 document.getElementById("postsList").innerHTML = '<div class="post-card">No se pudieron cargar tus publicaciones.</div>';
@@ -553,6 +697,117 @@
                 await cargarPerfil();
             } catch {
                 profileMessage.textContent = "No se pudo actualizar la foto.";
+            }
+        });
+
+        document.getElementById("postsList").addEventListener("click", async (event) => {
+            const trigger = event.target.closest("[data-menu-trigger]");
+            if (trigger) {
+                const panel = document.getElementById(`profile-menu-${trigger.dataset.postId}`);
+                document.querySelectorAll(".menu-panel.active").forEach((node) => {
+                    if (node !== panel) node.classList.remove("active");
+                });
+                panel.classList.toggle("active");
+                return;
+            }
+
+            const deleteButton = event.target.closest("[data-delete-post]");
+            if (deleteButton) {
+                if (!confirm("Deseas eliminar esta publicacion?")) return;
+                try {
+                    const response = await fetch("/empireyoncarsocial/posts_api/api/post/eliminar", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ post_id: Number(deleteButton.dataset.deletePost), user_id: Number(userId) })
+                    });
+                    const result = await response.json();
+                    if (!response.ok) throw new Error(result.error || "No se pudo eliminar");
+                    await cargarPosts();
+                } catch {
+                    profileMessage.textContent = "No se pudo eliminar la publicacion.";
+                }
+                return;
+            }
+
+            const editButton = event.target.closest("[data-edit-post]");
+            if (editButton) {
+                const postCard = editButton.closest(".post-card");
+                const currentText = postCard.querySelector(".post-text").textContent;
+                const nuevoTexto = window.prompt("Editar publicacion", currentText);
+                if (nuevoTexto === null) return;
+                try {
+                    const formData = new FormData();
+                    formData.append("post_id", Number(editButton.dataset.editPost));
+                    formData.append("user_id", Number(userId));
+                    formData.append("contenido", nuevoTexto.trim());
+                    formData.append("poll_options", JSON.stringify([]));
+                    const response = await fetch("/empireyoncarsocial/posts_api/api/post/editar", {
+                        method: "POST",
+                        body: formData
+                    });
+                    const result = await response.json();
+                    if (!response.ok) throw new Error(result.error || "No se pudo editar");
+                    await cargarPosts();
+                } catch {
+                    profileMessage.textContent = "No se pudo editar la publicacion.";
+                }
+                return;
+            }
+
+            const likeButton = event.target.closest("[data-like-post]");
+            if (likeButton) {
+                try {
+                    const response = await fetch("/empireyoncarsocial/posts_api/api/post/like", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ post_id: Number(likeButton.dataset.likePost), user_id: Number(userId) })
+                    });
+                    const result = await response.json();
+                    if (!response.ok) throw new Error(result.error || "No se pudo dar like");
+                    await cargarPosts();
+                } catch {
+                    profileMessage.textContent = "No se pudo registrar el me gusta.";
+                }
+                return;
+            }
+
+            const shareButton = event.target.closest("[data-share-post]");
+            if (shareButton) {
+                const shareUrl = `${window.location.origin}/empireyoncarsocial/home#post-${shareButton.dataset.sharePost}`;
+                try {
+                    await navigator.clipboard.writeText(shareUrl);
+                    profileMessage.textContent = "Has copiado el enlace.";
+                } catch {
+                    profileMessage.textContent = shareUrl;
+                }
+            }
+        });
+
+        document.getElementById("postsList").addEventListener("submit", async (event) => {
+            const commentForm = event.target.closest("[data-comment-form]");
+            if (!commentForm) return;
+            event.preventDefault();
+            const textarea = commentForm.querySelector("textarea");
+            const comentario = textarea.value.trim();
+            if (!comentario) return;
+
+            try {
+                const response = await fetch("/empireyoncarsocial/posts_api/api/post/comentar", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        post_id: Number(commentForm.dataset.commentForm),
+                        user_id: Number(userId),
+                        comentario
+                    })
+                });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || "No se pudo comentar");
+                textarea.value = "";
+                profileMessage.textContent = "Comentario publicado.";
+                await cargarPosts();
+            } catch {
+                profileMessage.textContent = "No se pudo publicar el comentario.";
             }
         });
 

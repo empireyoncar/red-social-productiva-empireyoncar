@@ -1,4 +1,4 @@
-from flask import Flask, render_template, send_from_directory
+from flask import Flask, render_template, send_from_directory, redirect
 from flask_cors import CORS
 from jinja2 import FileSystemLoader, ChoiceLoader
 import os
@@ -55,6 +55,24 @@ def home():
 @app.route("/empireyoncarsocial/perfil")
 def perfil():
     return render_template("perfil.html")
+
+
+@app.route("/chat")
+@app.route("/empireyoncarsocial/chat")
+def chat():
+    return render_template("chat.html")
+
+
+@app.route("/notificaciones")
+@app.route("/empireyoncarsocial/notificaciones")
+def notificaciones():
+    return render_template("notificaciones.html")
+
+
+@app.route("/grupos")
+@app.route("/empireyoncarsocial/grupos")
+def grupos():
+    return redirect("/empireyoncarsocial/grupos/", code=302)
 
 
 # ============================================================
