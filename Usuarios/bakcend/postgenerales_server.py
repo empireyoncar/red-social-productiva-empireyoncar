@@ -11,7 +11,9 @@ from werkzeug.utils import secure_filename
 from db_post import (
     create_comment,
     create_post_record,
+    delete_comment,
     delete_post_record,
+    get_comment_owner,
     get_poll_for_post,
     get_post_owner,
     list_comments,
@@ -19,6 +21,7 @@ from db_post import (
     list_posts_by_user,
     register_like,
     register_poll_vote,
+    update_comment,
     update_post_record,
 )
 
@@ -119,6 +122,7 @@ def enrich_with_user(post_or_comment):
     post_or_comment["nombres"] = profile.get("nombres") or "Usuario"
     post_or_comment["apellidos"] = profile.get("apellidos") or ""
     post_or_comment["verificado"] = bool(profile.get("verificado"))
+    post_or_comment["foto_url"] = profile.get("foto_url")
     return post_or_comment
 
 
@@ -284,6 +288,42 @@ def create_comment_service(data):
 def get_comments_service(post_id):
     comentarios = list_comments(post_id)
     return [enrich_with_user(comentario) for comentario in comentarios]
+
+
+def update_comment_service(data):
+    comment_id = data.get("comment_id")
+    user_id = data.get("user_id")
+    comentario = (data.get("comentario") or "").strip()
+
+    if not comentario:
+        return {"error": "Comentario vacio"}, 400
+
+    existing_comment = get_comment_owner(comment_id)
+    if not existing_comment:
+        return {"error": "Comentario no existe"}, 404
+    if existing_comment["user_id"] != user_id:
+        return {"error": "No autorizado"}, 403
+
+    comentario_db = update_comment(comment_id, comentario)
+    return {
+        "status": "ok",
+        "comentario_id": comentario_db["id"],
+        "fecha": comentario_db["fecha"],
+    }, 200
+
+
+def delete_comment_service(data):
+    comment_id = data.get("comment_id")
+    user_id = data.get("user_id")
+
+    existing_comment = get_comment_owner(comment_id)
+    if not existing_comment:
+        return {"error": "Comentario no existe"}, 404
+    if existing_comment["user_id"] != user_id:
+        return {"error": "No autorizado"}, 403
+
+    delete_comment(comment_id)
+    return {"status": "eliminado"}, 200
 
 
 def delete_post_service(data):

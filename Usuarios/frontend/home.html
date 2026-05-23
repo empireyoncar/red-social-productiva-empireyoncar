@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Empireyoncar Social - Home</title>
     <link rel="stylesheet" href="/theme.css">
-
     <style>
     :root {
         --bg: #eef4ff;
@@ -19,11 +18,7 @@
         --shadow: 0 10px 30px rgba(26, 64, 122, 0.10);
         --radius: 14px;
     }
-
-    * {
-        box-sizing: border-box;
-    }
-
+    * { box-sizing: border-box; }
     body {
         margin: 0;
         padding: 0;
@@ -33,7 +28,6 @@
             linear-gradient(180deg, #f5f9ff 0%, var(--bg) 52%, #e9f0ff 100%);
         color: var(--text);
     }
-
     .navbar {
         width: 100%;
         background: #1a73e8;
@@ -44,40 +38,11 @@
         z-index: 100;
         box-shadow: 0 2px 8px rgba(0,0,0,0.15);
     }
-
-    .navbar-top {
-        display: flex;
-        align-items: center;
-        justify-content: flex-start;
-    }
-
-    .logo {
-        font-size: 20px;
-        font-weight: bold;
-    }
-
-    .nav-links {
-        display: flex;
-        margin-left: 40px;
-    }
-
-    .nav-links a {
-        margin-right: 20px;
-        color: white;
-        text-decoration: none;
-        font-weight: 500;
-        transition: 0.2s;
-    }
-
-    .nav-links a:hover {
-        text-decoration: underline;
-    }
-
-    .navbar-search {
-        margin-top: 10px;
-        max-width: 320px;
-    }
-
+    .navbar-top { display: flex; align-items: center; justify-content: flex-start; }
+    .logo { font-size: 20px; font-weight: bold; }
+    .nav-links { display: flex; margin-left: 40px; flex-wrap: wrap; gap: 18px; }
+    .nav-links a { color: white; text-decoration: none; font-weight: 500; }
+    .navbar-search { margin-top: 10px; max-width: 320px; }
     .navbar-search input {
         width: 100%;
         padding: 8px 10px;
@@ -85,12 +50,6 @@
         border: none;
         font-size: 14px;
     }
-
-    .navbar-search input:focus {
-        outline: none;
-        box-shadow: 0 0 4px rgba(0,0,0,0.25);
-    }
-
     .main-container {
         display: flex;
         justify-content: center;
@@ -99,13 +58,7 @@
         margin-top: 25px;
         padding: 0 20px 32px;
     }
-
-    .left-panel {
-        width: 360px;
-        position: sticky;
-        top: 120px;
-    }
-
+    .left-panel { width: 360px; position: sticky; top: 120px; }
     .create-post {
         background: var(--panel);
         padding: 16px;
@@ -114,25 +67,9 @@
         display: grid;
         gap: 12px;
     }
-
-    .composer-top {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 12px;
-    }
-
-    .create-post h2 {
-        margin: 0;
-        color: var(--brand);
-        font-size: 18px;
-    }
-
-    .composer-hint {
-        font-size: 12px;
-        color: var(--muted);
-    }
-
+    .composer-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .create-post h2 { margin: 0; color: var(--brand); font-size: 18px; }
+    .composer-hint { font-size: 12px; color: var(--muted); }
     .create-post textarea,
     .create-post input[type="url"],
     .create-post input[type="text"] {
@@ -144,482 +81,120 @@
         color: var(--text);
         background: #fff;
     }
-
-    .create-post textarea {
-        min-height: 88px;
-        padding: 12px;
-        resize: vertical;
-        line-height: 1.45;
-    }
-
-    .create-post input[type="url"],
-    .create-post input[type="text"] {
-        padding: 10px 12px;
-    }
-
-    .toolbar-row {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 10px;
-    }
-
+    .create-post textarea { min-height: 88px; padding: 12px; resize: vertical; line-height: 1.45; }
+    .create-post input[type="url"], .create-post input[type="text"] { padding: 10px 12px; }
+    .toolbar-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     .file-picker {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        min-height: 42px;
-        padding: 10px 12px;
-        border: 1px dashed var(--line);
-        border-radius: 10px;
-        background: var(--panel-soft);
-        color: var(--muted);
-        font-size: 13px;
-        cursor: pointer;
-        text-align: center;
+        display: inline-flex; align-items: center; justify-content: center; min-height: 42px;
+        padding: 10px 12px; border: 1px dashed var(--line); border-radius: 10px;
+        background: var(--panel-soft); color: var(--muted); font-size: 13px; cursor: pointer; text-align: center;
     }
-
-    .file-picker input {
-        display: none;
-    }
-
-    .toggle-row {
-        display: flex;
-        gap: 8px;
-        flex-wrap: wrap;
-    }
-
+    .file-picker input { display: none; }
+    .toggle-row { display: flex; gap: 8px; flex-wrap: wrap; }
     .toggle-btn {
-        border: 1px solid var(--line);
-        background: var(--panel-soft);
-        color: var(--muted);
-        border-radius: 999px;
-        padding: 8px 12px;
-        font-size: 12px;
-        cursor: pointer;
+        border: 1px solid var(--line); background: var(--panel-soft); color: var(--muted);
+        border-radius: 999px; padding: 8px 12px; font-size: 12px; cursor: pointer;
     }
-
-    .toggle-btn.active {
-        background: #e8f0ff;
-        color: var(--brand);
-        border-color: #bfd4fa;
-    }
-
+    .toggle-btn.active { background: #e8f0ff; color: var(--brand); border-color: #bfd4fa; }
     .composer-section {
-        display: none;
-        gap: 10px;
-        padding: 12px;
-        border-radius: 12px;
-        background: var(--panel-soft);
-        border: 1px solid #edf3ff;
+        display: none; gap: 10px; padding: 12px; border-radius: 12px;
+        background: var(--panel-soft); border: 1px solid #edf3ff;
     }
-
-    .composer-section.active {
-        display: grid;
+    .composer-section.active { display: grid; }
+    .poll-option-row { display: grid; grid-template-columns: 1fr auto; gap: 8px; }
+    .mini-btn, .btn-post {
+        border: none; border-radius: 10px; cursor: pointer; transition: 0.2s; font-family: inherit;
     }
-
-    .poll-option-row {
-        display: grid;
-        grid-template-columns: 1fr auto;
-        gap: 8px;
-    }
-
-    .mini-btn,
-    .btn-post {
-        border: none;
-        border-radius: 10px;
-        cursor: pointer;
-        transition: 0.2s;
-        font-family: inherit;
-    }
-
     .mini-btn {
-        padding: 10px 12px;
-        background: #e8f0ff;
-        color: var(--brand);
-        font-size: 13px;
-        font-weight: 600;
+        padding: 10px 12px; background: #e8f0ff; color: var(--brand); font-size: 13px; font-weight: 600;
     }
-
-    .btn-post {
-        width: 100%;
-        padding: 12px 18px;
-        background: var(--brand);
-        color: white;
-        font-size: 15px;
-        font-weight: 600;
-    }
-
-    .mini-btn:hover,
-    .btn-post:hover {
-        background: var(--brand-dark);
-        color: #fff;
-    }
-
-    .btn-post:disabled {
-        background: #8ab4f8;
-        cursor: not-allowed;
-    }
-
-    .form-message {
-        min-height: 18px;
-        font-size: 13px;
-        color: var(--muted);
-    }
-
-    .preview-stack {
-        display: grid;
-        gap: 10px;
-    }
-
-    .image-preview,
-    .link-preview {
-        display: none;
-    }
-
-    .image-preview.active,
-    .link-preview.active {
-        display: block;
-    }
-
+    .btn-post { width: 100%; padding: 12px 18px; background: var(--brand); color: white; font-size: 15px; font-weight: 600; }
+    .mini-btn:hover, .btn-post:hover { background: var(--brand-dark); color: #fff; }
+    .btn-post:disabled { background: #8ab4f8; cursor: not-allowed; }
+    .form-message { min-height: 18px; font-size: 13px; color: var(--muted); }
+    .preview-stack { display: grid; gap: 10px; }
+    .image-preview, .link-preview { display: none; }
+    .image-preview.active, .link-preview.active { display: block; }
     .image-preview img {
-        width: 100%;
-        max-height: 180px;
-        object-fit: cover;
-        border-radius: 12px;
-        border: 1px solid var(--line);
+        width: 100%; max-height: 180px; object-fit: cover; border-radius: 12px; border: 1px solid var(--line);
     }
-
     .link-preview {
-        border: 1px solid var(--line);
-        border-radius: 12px;
-        overflow: hidden;
-        background: #fff;
+        border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: #fff;
     }
-
     .link-preview img {
-        width: 100%;
-        max-height: 140px;
-        object-fit: cover;
-        display: block;
-        background: #dfe9fb;
+        width: 100%; max-height: 140px; object-fit: cover; display: block; background: #dfe9fb;
     }
-
-    .link-preview-body {
-        padding: 12px;
-    }
-
-    .link-preview-title {
-        font-size: 14px;
-        font-weight: 700;
-        margin-bottom: 6px;
-    }
-
-    .link-preview-description {
-        font-size: 13px;
-        color: var(--muted);
-        line-height: 1.45;
-    }
-
-    .feed {
-        width: 620px;
-        display: grid;
-        gap: 18px;
-    }
-
+    .link-preview-body { padding: 12px; }
+    .link-preview-title { font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+    .link-preview-description { font-size: 13px; color: var(--muted); line-height: 1.45; }
+    .feed { width: 720px; display: grid; gap: 16px; }
     .post-card {
-        background: white;
-        padding: 20px;
-        border-radius: var(--radius);
-        box-shadow: var(--shadow);
+        background: white; padding: 18px; border-radius: 14px; box-shadow: 0 4px 15px rgba(0,0,0,0.08);
     }
-
-    .post-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 12px;
-    }
-
-    .post-author {
-        display: flex;
-        align-items: center;
-    }
-
-    .post-header img {
-        width: 45px;
-        height: 45px;
-        border-radius: 50%;
-        margin-right: 12px;
-    }
-
-    .post-header .name {
-        font-weight: bold;
-        color: var(--text);
-    }
-
-    .post-header .time {
-        font-size: 12px;
-        color: var(--muted);
-    }
-
-    .post-text {
-        font-size: 15px;
-        color: var(--text);
-        margin-bottom: 12px;
-        white-space: pre-wrap;
-    }
-
+    .post-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .post-author { display: flex; align-items: center; gap: 12px; }
+    .post-author img { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; background: #dce7fb; }
+    .post-time { font-size: 12px; color: var(--muted); }
+    .post-text { white-space: pre-wrap; line-height: 1.5; }
     .post-image {
-        width: 100%;
-        border-radius: 10px;
-        margin-bottom: 12px;
-        max-height: 420px;
-        object-fit: cover;
-        border: 1px solid var(--line);
+        width: 100%; max-height: 360px; object-fit: cover; border-radius: 12px; margin-top: 12px;
     }
-
     .post-link-card {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) 120px;
-        gap: 12px;
-        border: 1px solid var(--line);
-        border-radius: 12px;
-        overflow: hidden;
-        margin-bottom: 12px;
-        background: var(--panel-soft);
-        text-decoration: none;
-        color: inherit;
+        display: block; text-decoration: none; color: inherit; border: 1px solid var(--line);
+        border-radius: 12px; padding: 12px; margin-top: 12px; background: #f8fbff;
     }
-
-    .post-link-content {
-        padding: 12px;
-    }
-
-    .post-link-title {
-        font-size: 14px;
-        font-weight: 700;
-        margin-bottom: 6px;
-    }
-
-    .post-link-description,
-    .post-link-url {
-        font-size: 13px;
-        color: var(--muted);
-        line-height: 1.45;
-    }
-
-    .post-link-url {
-        margin-top: 8px;
-        word-break: break-word;
-    }
-
-    .post-link-card img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        min-height: 120px;
-        background: #dfe9fb;
-    }
-
-    .poll-box {
-        margin: 12px 0;
-        padding: 14px;
-        border: 1px solid var(--line);
-        border-radius: 12px;
-        background: var(--panel-soft);
-    }
-
-    .poll-question {
-        font-weight: 700;
-        margin-bottom: 10px;
-    }
-
-    .poll-option {
-        margin-bottom: 8px;
-    }
-
-    .poll-vote-btn {
-        width: 100%;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 10px;
-        padding: 10px 12px;
-        background: #fff;
-        border: 1px solid var(--line);
-        border-radius: 10px;
-        cursor: pointer;
-        font-family: inherit;
-    }
-
-    .poll-vote-btn:disabled {
-        cursor: not-allowed;
-        opacity: 0.72;
-    }
-
-    .poll-total {
-        margin-top: 10px;
-        font-size: 12px;
-        color: var(--muted);
-    }
-
-    .post-actions {
-        display: flex;
-        justify-content: space-between;
-        margin-top: 10px;
-    }
-
-    .post-actions button {
-        background: #e8f0ff;
-        border: none;
-        padding: 10px 15px;
-        border-radius: 8px;
-        cursor: pointer;
-        font-size: 14px;
-        transition: 0.2s;
-    }
-
-    .post-actions button:hover {
-        background: #d6e4ff;
-    }
-
-    .post-menu {
-        position: relative;
-    }
-
+    .post-link-title { font-weight: 700; margin-bottom: 6px; }
+    .post-link-description, .post-link-url { font-size: 13px; color: var(--muted); }
+    .post-menu { position: relative; }
     .menu-trigger {
-        width: 36px;
-        height: 36px;
-        border-radius: 50%;
-        border: none;
-        background: #edf4ff;
-        color: var(--brand);
-        cursor: pointer;
-        font-size: 18px;
+        width: 36px; height: 36px; border-radius: 50%; border: none; background: #edf4ff;
+        color: var(--brand); cursor: pointer; font-size: 18px;
     }
-
     .menu-panel {
-        display: none;
-        position: absolute;
-        top: 42px;
-        right: 0;
-        min-width: 140px;
-        padding: 8px;
-        border-radius: 12px;
-        background: #fff;
-        border: 1px solid var(--line);
-        box-shadow: 0 10px 20px rgba(0,0,0,0.10);
-        z-index: 3;
+        display: none; position: absolute; top: 42px; right: 0; min-width: 140px; padding: 8px;
+        border-radius: 12px; background: #fff; border: 1px solid var(--line);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.10); z-index: 3;
     }
-
     .menu-panel.active { display: grid; gap: 6px; }
     .menu-panel button {
-        border: none;
-        background: #f6f9ff;
-        color: var(--text);
-        border-radius: 8px;
-        padding: 10px 12px;
-        text-align: left;
-        cursor: pointer;
-        font-family: inherit;
+        border: none; background: #f6f9ff; color: var(--text); border-radius: 8px;
+        padding: 10px 12px; text-align: left; cursor: pointer; font-family: inherit;
     }
-
-    .comments-box {
-        margin-top: 12px;
-        padding-top: 12px;
-        border-top: 1px solid var(--line);
+    .post-actions { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
+    .post-actions button {
+        border: none; background: #edf4ff; color: var(--brand); border-radius: 10px;
+        padding: 10px 14px; cursor: pointer; font-family: inherit; font-weight: 600;
     }
-
-    .comment-list {
-        display: grid;
-        gap: 8px;
-        margin-bottom: 12px;
+    .comments-box { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); }
+    .comment-list { display: grid; gap: 8px; margin-bottom: 12px; }
+    .comment-item { padding: 10px 12px; background: #f7faff; border-radius: 10px; font-size: 13px; line-height: 1.45; }
+    .comment-row { display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; }
+    .comment-author { font-weight: 700; margin-bottom: 4px; }
+    .comment-menu { position: relative; }
+    .comment-trigger {
+        width: 28px; height: 28px; border-radius: 50%; border: none; background: #edf4ff;
+        color: var(--brand); cursor: pointer; font-size: 14px;
     }
-
-    .comment-item {
-        padding: 10px 12px;
-        background: #f7faff;
-        border-radius: 10px;
-        font-size: 13px;
-        line-height: 1.45;
-    }
-
-    .comment-author {
-        font-weight: 700;
-        margin-bottom: 4px;
-    }
-
-    .comment-form {
-        display: grid;
-        gap: 8px;
-    }
-
+    .comment-form { display: grid; gap: 8px; }
     .comment-form textarea {
-        width: 100%;
-        min-height: 70px;
-        border: 1px solid var(--line);
-        border-radius: 10px;
-        padding: 10px 12px;
-        font-family: inherit;
-        resize: vertical;
+        width: 100%; min-height: 70px; border: 1px solid var(--line); border-radius: 10px;
+        padding: 10px 12px; font-family: inherit; resize: vertical;
     }
-
     .comment-submit {
-        justify-self: end;
-        border: none;
-        border-radius: 10px;
-        padding: 10px 14px;
-        background: var(--brand);
-        color: #fff;
-        cursor: pointer;
-        font-family: inherit;
-        font-weight: 600;
+        justify-self: end; border: none; border-radius: 10px; padding: 10px 14px;
+        background: var(--brand); color: #fff; cursor: pointer; font-family: inherit; font-weight: 600;
     }
-
     @media (max-width: 980px) {
-        .main-container {
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .left-panel {
-            position: static;
-            width: 100%;
-            max-width: 620px;
-        }
-
-        .feed {
-            width: 100%;
-            max-width: 620px;
-        }
-
-        .post-link-card {
-            grid-template-columns: 1fr;
-        }
+        .main-container { flex-direction: column; align-items: center; }
+        .left-panel, .feed { width: 100%; max-width: 720px; position: static; }
     }
-
     @media (max-width: 640px) {
-        .main-container {
-            padding: 0 12px 24px;
-        }
-
-        .navbar {
-            padding: 12px 14px 16px;
-        }
-
-        .nav-links {
-            margin-left: 18px;
-            flex-wrap: wrap;
-            row-gap: 8px;
-        }
-
-        .toolbar-row {
-            grid-template-columns: 1fr;
-        }
+        .main-container { padding: 0 12px 24px; }
+        .toolbar-row { grid-template-columns: 1fr; }
+        .nav-links { margin-left: 18px; }
     }
     </style>
 </head>
-
 <body>
     <div class="navbar">
         <div class="navbar-top">
@@ -631,7 +206,6 @@
                 <a href="/empireyoncarsocial/notificaciones">Notificaciones</a>
             </div>
         </div>
-
         <div class="navbar-search">
             <input type="text" placeholder="Buscar usuarios, hashtags o publicaciones...">
         </div>
@@ -644,22 +218,15 @@
                     <h2>Crear publicacion</h2>
                     <div class="composer-hint">Texto, imagen, link o encuesta</div>
                 </div>
-
                 <textarea id="postContent" placeholder="Comparte una idea, avance o proyecto..."></textarea>
-
                 <div class="toolbar-row">
-                    <label class="file-picker" for="postImageFile">
-                        Subir imagen
-                        <input id="postImageFile" type="file" accept="image/*">
-                    </label>
+                    <label class="file-picker" for="postImageFile">Subir imagen<input id="postImageFile" type="file" accept="image/*"></label>
                     <input id="postLink" type="url" placeholder="Pega un enlace">
                 </div>
-
                 <div class="toggle-row">
                     <button class="toggle-btn" type="button" id="toggleLinkPreview">Vista previa link</button>
                     <button class="toggle-btn" type="button" id="togglePollBuilder">Agregar encuesta</button>
                 </div>
-
                 <div class="composer-section" id="pollBuilder">
                     <input id="pollQuestion" type="text" maxlength="140" placeholder="Pregunta de la encuesta">
                     <div id="pollOptions">
@@ -674,12 +241,8 @@
                     </div>
                     <button class="mini-btn" type="button" id="addPollOptionBtn">Agregar opcion</button>
                 </div>
-
                 <div class="preview-stack">
-                    <div class="image-preview" id="imagePreview">
-                        <img id="imagePreviewImg" alt="Vista previa de imagen">
-                    </div>
-
+                    <div class="image-preview" id="imagePreview"><img id="imagePreviewImg" alt="Vista previa de imagen"></div>
                     <div class="link-preview" id="linkPreview">
                         <img id="linkPreviewImg" alt="Vista previa del enlace">
                         <div class="link-preview-body">
@@ -688,12 +251,10 @@
                         </div>
                     </div>
                 </div>
-
                 <button class="btn-post" type="submit">Publicar</button>
                 <div class="form-message" id="postMessage"></div>
             </form>
         </aside>
-
         <div class="feed" id="feed"></div>
     </div>
 
@@ -717,68 +278,38 @@
         const linkPreviewDescription = document.getElementById("linkPreviewDescription");
         const postMessage = document.getElementById("postMessage");
         const feed = document.getElementById("feed");
-
         const pollState = { open: false };
         let currentLinkMetadata = null;
         let compressedImageFile = null;
 
         function escapeHtml(value) {
             return String(value || "")
-                .replaceAll("&", "&amp;")
-                .replaceAll("<", "&lt;")
-                .replaceAll(">", "&gt;")
-                .replaceAll('"', "&quot;")
-                .replaceAll("'", "&#039;");
+                .replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;")
+                .replaceAll('"', "&quot;").replaceAll("'", "&#039;");
         }
-
         function debounce(fn, delay) {
             let timer = null;
-            return (...args) => {
-                clearTimeout(timer);
-                timer = window.setTimeout(() => fn(...args), delay);
-            };
+            return (...args) => { clearTimeout(timer); timer = window.setTimeout(() => fn(...args), delay); };
         }
-
         function formatDate(value) {
             if (!value) return "Ahora";
             const date = new Date(value);
             if (Number.isNaN(date.getTime())) return "Ahora";
-            return date.toLocaleString("es-ES", {
-                day: "2-digit",
-                month: "short",
-                hour: "2-digit",
-                minute: "2-digit"
-            });
+            return date.toLocaleString("es-ES", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" });
         }
-
-        function totalVotes(post) {
-            return (post.poll_votes || []).reduce((sum, value) => sum + Number(value || 0), 0);
-        }
-
+        function totalVotes(post) { return (post.poll_votes || []).reduce((sum, value) => sum + Number(value || 0), 0); }
         function renderLink(post) {
             if (!post.link_url) return "";
-
-            const imageColumn = post.link_image
-                ? `<img src="${escapeHtml(post.link_image)}" alt="Enlace">`
-                : "";
-
             return `
                 <a class="post-link-card" href="${escapeHtml(post.link_url)}" target="_blank" rel="noreferrer">
-                    <div class="post-link-content">
-                        <div class="post-link-title">${escapeHtml(post.link_title || post.link_url)}</div>
-                        <div class="post-link-description">${escapeHtml(post.link_description || "Sin descripcion disponible.")}</div>
-                        <div class="post-link-url">${escapeHtml(post.link_url)}</div>
-                    </div>
-                    ${imageColumn}
+                    <div class="post-link-title">${escapeHtml(post.link_title || post.link_url)}</div>
+                    <div class="post-link-description">${escapeHtml(post.link_description || "Sin descripcion disponible.")}</div>
+                    <div class="post-link-url">${escapeHtml(post.link_url)}</div>
                 </a>
             `;
         }
-
         function renderPoll(post) {
-            if (!post.poll_question || !post.poll_options || !post.poll_options.length) {
-                return "";
-            }
-
+            if (!post.poll_question || !post.poll_options || !post.poll_options.length) return "";
             const votes = post.poll_votes || new Array(post.poll_options.length).fill(0);
             const total = totalVotes(post);
             const optionsHtml = post.poll_options.map((option, index) => `
@@ -787,29 +318,34 @@
                         <span>${escapeHtml(option)}</span>
                         <span>${Number(votes[index] || 0)} votos</span>
                     </button>
-                </div>
-            `).join("");
-
+                </div>`).join("");
+            return `<div class="poll-box"><div class="poll-question">${escapeHtml(post.poll_question)}</div>${optionsHtml}<div class="poll-total">${total} votos totales</div></div>`;
+        }
+        function renderComment(comment) {
+            const ownComment = Number(userId) === Number(comment.user_id);
+            const commentMenu = ownComment ? `
+                <div class="comment-menu">
+                    <button class="comment-trigger" type="button" data-comment-trigger data-comment-id="${comment.id}">⋯</button>
+                    <div class="menu-panel" id="comment-menu-${comment.id}">
+                        <button type="button" data-edit-comment="${comment.id}">Editar</button>
+                        <button type="button" data-delete-comment="${comment.id}">Eliminar</button>
+                    </div>
+                </div>` : "";
             return `
-                <div class="poll-box">
-                    <div class="poll-question">${escapeHtml(post.poll_question)}</div>
-                    ${optionsHtml}
-                    <div class="poll-total">${total} votos totales</div>
+                <div class="comment-item">
+                    <div class="comment-row">
+                        <div>
+                            <div class="comment-author">${escapeHtml(`${comment.nombres || "Usuario"} ${comment.apellidos || ""}`.trim())}</div>
+                            <div>${escapeHtml(comment.comentario || "")}</div>
+                        </div>
+                        ${commentMenu}
+                    </div>
                 </div>
             `;
         }
-
         function renderPost(post) {
-            const author = `${post.nombres || "Usuario"} ${post.apellidos || ""}`.trim();
-            const imageHtml = post.imagen
-                ? `<img class="post-image" src="${escapeHtml(post.imagen)}" alt="post">`
-                : "";
-            const commentsHtml = (post.comments || []).map((comment) => `
-                <div class="comment-item">
-                    <div class="comment-author">${escapeHtml(`${comment.nombres || "Usuario"} ${comment.apellidos || ""}`.trim())}</div>
-                    <div>${escapeHtml(comment.comentario || "")}</div>
-                </div>
-            `).join("");
+            const imageHtml = post.imagen ? `<img class="post-image" src="${escapeHtml(post.imagen)}" alt="post">` : "";
+            const commentsHtml = (post.comments || []).map(renderComment).join("");
             const ownPost = Number(userId) === Number(post.user_id);
             const menuHtml = ownPost ? `
                 <div class="post-menu">
@@ -818,32 +354,27 @@
                         <button type="button" data-edit-post="${post.id}">Editar</button>
                         <button type="button" data-delete-post="${post.id}">Eliminar</button>
                     </div>
-                </div>
-            ` : "";
-
+                </div>` : "";
             return `
                 <div class="post-card" id="post-${post.id}">
                     <div class="post-header">
                         <div class="post-author">
-                            <img src="https://i.pravatar.cc/100?u=${escapeHtml(post.user_id || post.id || "user")}" alt="user">
+                            <img src="${escapeHtml(post.foto_url || "https://i.pravatar.cc/200")}" alt="Perfil">
                             <div>
-                                <div class="name">${escapeHtml(author)}${post.verificado ? " ✔" : ""}</div>
-                                <div class="time">${escapeHtml(formatDate(post.fecha))}</div>
+                                <div>${escapeHtml(`${post.nombres || "Usuario"} ${post.apellidos || ""}`.trim())}${post.verificado ? " ✔" : ""}</div>
+                                <div class="post-time">${escapeHtml(formatDate(post.fecha))}</div>
                             </div>
                         </div>
                         ${menuHtml}
                     </div>
-
                     <div class="post-text">${escapeHtml(post.contenido || "")}</div>
                     ${imageHtml}
                     ${renderLink(post)}
                     ${renderPoll(post)}
-
                     <div class="post-actions">
                         <button type="button" data-like-post="${post.id}">Me gusta (${post.likes || 0})</button>
                         <button type="button" data-share-post="${post.id}">Compartir</button>
                     </div>
-
                     <div class="comments-box">
                         <div class="comment-list">${commentsHtml || '<div class="comment-item">Todavia no hay comentarios.</div>'}</div>
                         <form class="comment-form" data-comment-form="${post.id}">
@@ -851,10 +382,8 @@
                             <button class="comment-submit" type="submit">Publicar comentario</button>
                         </form>
                     </div>
-                </div>
-            `;
+                </div>`;
         }
-
         function resetLinkPreview() {
             currentLinkMetadata = null;
             linkPreview.classList.remove("active");
@@ -864,70 +393,42 @@
             linkPreviewTitle.textContent = "Vista previa del enlace";
             linkPreviewDescription.textContent = "Agrega un enlace valido para cargar su metadata.";
         }
-
         function applyLinkPreview(metadata) {
             currentLinkMetadata = metadata;
             linkPreview.classList.add("active");
             toggleLinkPreview.classList.add("active");
             linkPreviewTitle.textContent = metadata.title || metadata.url || "Enlace";
             linkPreviewDescription.textContent = metadata.description || "Sin descripcion disponible.";
-
-            if (metadata.image) {
-                linkPreviewImg.src = metadata.image;
-                linkPreviewImg.style.display = "block";
-            } else {
-                linkPreviewImg.style.display = "none";
-                linkPreviewImg.removeAttribute("src");
-            }
+            if (metadata.image) { linkPreviewImg.src = metadata.image; linkPreviewImg.style.display = "block"; }
+            else { linkPreviewImg.style.display = "none"; linkPreviewImg.removeAttribute("src"); }
         }
-
         async function fetchLinkPreview(url) {
             const response = await fetch("/empireyoncarsocial/posts_api/api/post/link-preview", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ url })
+                method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ url })
             });
             const result = await response.json();
-            if (!response.ok) {
-                throw new Error(result.error || "No se pudo analizar el enlace");
-            }
+            if (!response.ok) throw new Error(result.error || "No se pudo analizar el enlace");
             return result;
         }
-
         async function compressImage(file) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
                 reader.onload = () => {
                     const image = new Image();
                     image.onload = () => {
-                        const maxWidth = 1600;
-                        const maxHeight = 1600;
-                        let width = image.width;
-                        let height = image.height;
-
+                        const maxWidth = 1600, maxHeight = 1600;
+                        let width = image.width, height = image.height;
                         if (width > maxWidth || height > maxHeight) {
                             const scale = Math.min(maxWidth / width, maxHeight / height);
-                            width = Math.round(width * scale);
-                            height = Math.round(height * scale);
+                            width = Math.round(width * scale); height = Math.round(height * scale);
                         }
-
                         const canvas = document.createElement("canvas");
-                        canvas.width = width;
-                        canvas.height = height;
+                        canvas.width = width; canvas.height = height;
                         const context = canvas.getContext("2d");
                         context.drawImage(image, 0, 0, width, height);
-
                         canvas.toBlob((blob) => {
-                            if (!blob) {
-                                reject(new Error("No se pudo procesar la imagen"));
-                                return;
-                            }
-
-                            resolve(new File(
-                                [blob],
-                                file.name.replace(/\.[^.]+$/, "") + ".jpg",
-                                { type: "image/jpeg" }
-                            ));
+                            if (!blob) { reject(new Error("No se pudo procesar la imagen")); return; }
+                            resolve(new File([blob], file.name.replace(/\.[^.]+$/, "") + ".jpg", { type: "image/jpeg" }));
                         }, "image/jpeg", 0.82);
                     };
                     image.onerror = () => reject(new Error("Archivo de imagen invalido"));
@@ -937,93 +438,54 @@
                 reader.readAsDataURL(file);
             });
         }
-
         function getPollOptions() {
-            return Array.from(document.querySelectorAll(".poll-option-input"))
-                .map((input) => input.value.trim())
-                .filter(Boolean)
-                .slice(0, 4);
+            return Array.from(document.querySelectorAll(".poll-option-input")).map((input) => input.value.trim()).filter(Boolean).slice(0, 4);
         }
-
         function appendPollOption(value = "") {
             const currentCount = document.querySelectorAll(".poll-option-input").length;
-            if (currentCount >= 4) {
-                postMessage.textContent = "La encuesta admite hasta 4 opciones.";
-                return;
-            }
-
+            if (currentCount >= 4) { postMessage.textContent = "La encuesta admite hasta 4 opciones."; return; }
             const wrapper = document.createElement("div");
             wrapper.className = "poll-option-row";
-            wrapper.innerHTML = `
-                <input class="poll-option-input" type="text" maxlength="80" placeholder="Opcion ${currentCount + 1}" value="${escapeHtml(value)}">
-                <button class="mini-btn" type="button" data-remove-poll-option>Quitar</button>
-            `;
+            wrapper.innerHTML = `<input class="poll-option-input" type="text" maxlength="80" placeholder="Opcion ${currentCount + 1}" value="${escapeHtml(value)}"><button class="mini-btn" type="button" data-remove-poll-option>Quitar</button>`;
             pollOptions.appendChild(wrapper);
         }
-
+        async function loadCommentsForPost(post) {
+            try {
+                const commentsResponse = await fetch(`/empireyoncarsocial/posts_api/api/post/comentarios/${post.id}`);
+                post.comments = commentsResponse.ok ? await commentsResponse.json() : [];
+            } catch { post.comments = []; }
+            return post;
+        }
         async function cargarFeed() {
-            if (!userId) {
-                window.location.href = "login";
-                return;
-            }
-
+            if (!userId) { window.location.href = "login"; return; }
             try {
                 const response = await fetch(`/empireyoncarsocial/posts_api/api/post/feed/${userId}`);
                 const posts = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(posts.error || "No se pudo cargar el feed");
-                }
-
+                if (!response.ok) throw new Error(posts.error || "No se pudo cargar el feed");
                 if (!posts.length) {
                     feed.innerHTML = '<div class="post-card">Todavia no hay publicaciones. Crea la primera desde el panel izquierdo.</div>';
                     return;
                 }
-
-                const postsWithComments = await Promise.all(posts.map(async (post) => {
-                    try {
-                        const commentsResponse = await fetch(`/empireyoncarsocial/posts_api/api/post/comentarios/${post.id}`);
-                        post.comments = commentsResponse.ok ? await commentsResponse.json() : [];
-                    } catch {
-                        post.comments = [];
-                    }
-                    return post;
-                }));
-
+                const postsWithComments = await Promise.all(posts.map(loadCommentsForPost));
                 feed.innerHTML = postsWithComments.map(renderPost).join("");
-            } catch {
-                postMessage.textContent = "No se pudo cargar el feed en este momento.";
-            }
+            } catch { postMessage.textContent = "No se pudo cargar el feed en este momento."; }
         }
-
         togglePollBuilder.addEventListener("click", () => {
             pollState.open = !pollState.open;
             pollBuilder.classList.toggle("active", pollState.open);
             togglePollBuilder.classList.toggle("active", pollState.open);
         });
-
         addPollOptionBtn.addEventListener("click", () => appendPollOption());
-
         pollOptions.addEventListener("click", (event) => {
             const removeButton = event.target.closest("[data-remove-poll-option]");
             if (!removeButton) return;
             const rows = pollOptions.querySelectorAll(".poll-option-row");
-            if (rows.length <= 2) {
-                postMessage.textContent = "La encuesta necesita al menos 2 opciones visibles.";
-                return;
-            }
+            if (rows.length <= 2) { postMessage.textContent = "La encuesta necesita al menos 2 opciones visibles."; return; }
             removeButton.parentElement.remove();
         });
-
         postImageFile.addEventListener("change", async () => {
             const file = postImageFile.files[0];
-            if (!file) {
-                compressedImageFile = null;
-                imagePreview.classList.remove("active");
-                imagePreviewImg.removeAttribute("src");
-                return;
-            }
-
+            if (!file) { compressedImageFile = null; imagePreview.classList.remove("active"); imagePreviewImg.removeAttribute("src"); return; }
             try {
                 compressedImageFile = await compressImage(file);
                 imagePreviewImg.src = URL.createObjectURL(compressedImageFile);
@@ -1035,14 +497,9 @@
                 postMessage.textContent = "No se pudo preparar la imagen.";
             }
         });
-
         const scheduleLinkPreview = debounce(async () => {
             const url = postLink.value.trim();
-            if (!url) {
-                resetLinkPreview();
-                return;
-            }
-
+            if (!url) { resetLinkPreview(); return; }
             try {
                 postMessage.textContent = "Buscando metadata del enlace...";
                 const metadata = await fetchLinkPreview(url);
@@ -1053,60 +510,46 @@
                 postMessage.textContent = "No se pudo cargar la vista previa del enlace.";
             }
         }, 500);
-
         postLink.addEventListener("input", scheduleLinkPreview);
-
         toggleLinkPreview.addEventListener("click", async () => {
-            if (linkPreview.classList.contains("active")) {
-                resetLinkPreview();
-                return;
-            }
-
+            if (linkPreview.classList.contains("active")) { resetLinkPreview(); return; }
             const url = postLink.value.trim();
-            if (!url) {
-                postMessage.textContent = "Primero pega un enlace.";
-                return;
-            }
-
+            if (!url) { postMessage.textContent = "Primero pega un enlace."; return; }
             try {
                 const metadata = await fetchLinkPreview(url);
                 applyLinkPreview(metadata);
                 postMessage.textContent = "";
-            } catch {
-                postMessage.textContent = "No se pudo cargar la vista previa del enlace.";
-            }
+            } catch { postMessage.textContent = "No se pudo cargar la vista previa del enlace."; }
         });
-
         feed.addEventListener("click", async (event) => {
             const trigger = event.target.closest("[data-menu-trigger]");
             if (trigger) {
                 const panel = document.getElementById(`menu-${trigger.dataset.postId}`);
-                document.querySelectorAll(".menu-panel.active").forEach((node) => {
-                    if (node !== panel) node.classList.remove("active");
-                });
+                document.querySelectorAll(".menu-panel.active").forEach((node) => { if (node !== panel) node.classList.remove("active"); });
                 panel.classList.toggle("active");
                 return;
             }
-
+            const commentTrigger = event.target.closest("[data-comment-trigger]");
+            if (commentTrigger) {
+                const panel = document.getElementById(`comment-menu-${commentTrigger.dataset.commentId}`);
+                document.querySelectorAll(".menu-panel.active").forEach((node) => { if (node !== panel) node.classList.remove("active"); });
+                panel.classList.toggle("active");
+                return;
+            }
             const deleteButton = event.target.closest("[data-delete-post]");
             if (deleteButton) {
                 const postId = Number(deleteButton.dataset.deletePost);
                 if (!confirm("Deseas eliminar esta publicacion?")) return;
                 try {
                     const response = await fetch("/empireyoncarsocial/posts_api/api/post/eliminar", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ post_id: postId, user_id: Number(userId) })
+                        method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ post_id: postId, user_id: Number(userId) })
                     });
                     const result = await response.json();
                     if (!response.ok) throw new Error(result.error || "No se pudo eliminar");
                     await cargarFeed();
-                } catch {
-                    postMessage.textContent = "No se pudo eliminar la publicacion.";
-                }
+                } catch { postMessage.textContent = "No se pudo eliminar la publicacion."; }
                 return;
             }
-
             const editButton = event.target.closest("[data-edit-post]");
             if (editButton) {
                 const postCard = editButton.closest(".post-card");
@@ -1119,124 +562,113 @@
                     formData.append("user_id", Number(userId));
                     formData.append("contenido", nuevoTexto.trim());
                     formData.append("poll_options", JSON.stringify([]));
-                    const response = await fetch("/empireyoncarsocial/posts_api/api/post/editar", {
-                        method: "POST",
-                        body: formData
-                    });
+                    const response = await fetch("/empireyoncarsocial/posts_api/api/post/editar", { method: "POST", body: formData });
                     const result = await response.json();
                     if (!response.ok) throw new Error(result.error || "No se pudo editar");
                     await cargarFeed();
-                } catch {
-                    postMessage.textContent = "No se pudo editar la publicacion.";
-                }
+                } catch { postMessage.textContent = "No se pudo editar la publicacion."; }
                 return;
             }
-
             const likeButton = event.target.closest("[data-like-post]");
             if (likeButton) {
                 try {
                     const response = await fetch("/empireyoncarsocial/posts_api/api/post/like", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ post_id: Number(likeButton.dataset.likePost), user_id: Number(userId) })
+                        method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ post_id: Number(likeButton.dataset.likePost), user_id: Number(userId) })
                     });
                     const result = await response.json();
                     if (!response.ok) throw new Error(result.error || "No se pudo dar like");
                     await cargarFeed();
-                } catch {
-                    postMessage.textContent = "No se pudo registrar el me gusta.";
-                }
+                } catch { postMessage.textContent = "No se pudo registrar el me gusta."; }
                 return;
             }
-
-            const commentSubmit = event.target.closest(".comment-submit");
-            if (commentSubmit) {
-                const commentForm = event.target.closest("[data-comment-form]");
-                const textarea = commentForm.querySelector("textarea");
-                const comentario = textarea.value.trim();
-                if (!comentario) return;
-                try {
-                    const response = await fetch("/empireyoncarsocial/posts_api/api/post/comentar", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            post_id: Number(commentForm.dataset.commentForm),
-                            user_id: Number(userId),
-                            comentario
-                        })
-                    });
-                    const result = await response.json();
-                    if (!response.ok) throw new Error(result.error || "No se pudo comentar");
-                    textarea.value = "";
-                    postMessage.textContent = "Comentario publicado.";
-                    await cargarFeed();
-                } catch {
-                    postMessage.textContent = "No se pudo publicar el comentario.";
-                }
-                return;
-            }
-
             const shareButton = event.target.closest("[data-share-post]");
             if (shareButton) {
                 const shareUrl = `${window.location.origin}/empireyoncarsocial/home#post-${shareButton.dataset.sharePost}`;
+                try { await navigator.clipboard.writeText(shareUrl); postMessage.textContent = "Has copiado el enlace."; }
+                catch { postMessage.textContent = shareUrl; }
+                return;
+            }
+            const editCommentButton = event.target.closest("[data-edit-comment]");
+            if (editCommentButton) {
+                const commentItem = editCommentButton.closest(".comment-item");
+                const currentText = commentItem.querySelector(".comment-row > div div:last-child").textContent;
+                const nuevoComentario = window.prompt("Editar comentario", currentText);
+                if (nuevoComentario === null) return;
                 try {
-                    await navigator.clipboard.writeText(shareUrl);
-                    postMessage.textContent = "Has copiado el enlace.";
-                } catch {
-                    postMessage.textContent = shareUrl;
-                }
+                    const response = await fetch("/empireyoncarsocial/posts_api/api/post/comentario/editar", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ comment_id: Number(editCommentButton.dataset.editComment), user_id: Number(userId), comentario: nuevoComentario.trim() })
+                    });
+                    const result = await response.json();
+                    if (!response.ok) throw new Error(result.error || "No se pudo editar");
+                    await cargarFeed();
+                } catch { postMessage.textContent = "No se pudo editar el comentario."; }
                 return;
             }
-
+            const deleteCommentButton = event.target.closest("[data-delete-comment]");
+            if (deleteCommentButton) {
+                if (!confirm("Deseas eliminar este comentario?")) return;
+                try {
+                    const response = await fetch("/empireyoncarsocial/posts_api/api/post/comentario/eliminar", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ comment_id: Number(deleteCommentButton.dataset.deleteComment), user_id: Number(userId) })
+                    });
+                    const result = await response.json();
+                    if (!response.ok) throw new Error(result.error || "No se pudo eliminar");
+                    await cargarFeed();
+                } catch { postMessage.textContent = "No se pudo eliminar el comentario."; }
+                return;
+            }
             const voteButton = event.target.closest("[data-poll-vote]");
-            if (!voteButton) {
-                return;
-            }
-
+            if (!voteButton) return;
             voteButton.disabled = true;
             try {
                 const response = await fetch("/empireyoncarsocial/posts_api/api/post/poll/vote", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        user_id: Number(userId),
-                        post_id: Number(voteButton.dataset.postId),
-                        option_index: Number(voteButton.dataset.optionIndex)
-                    })
+                    method: "POST", headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ user_id: Number(userId), post_id: Number(voteButton.dataset.postId), option_index: Number(voteButton.dataset.optionIndex) })
                 });
                 const result = await response.json();
-                if (!response.ok) {
-                    throw new Error(result.error || "No se pudo registrar el voto");
-                }
+                if (!response.ok) throw new Error(result.error || "No se pudo registrar el voto");
                 await cargarFeed();
             } catch {
                 postMessage.textContent = "No se pudo registrar el voto de la encuesta.";
                 voteButton.disabled = false;
             }
         });
-
+        feed.addEventListener("submit", async (event) => {
+            const commentForm = event.target.closest("[data-comment-form]");
+            if (!commentForm) return;
+            event.preventDefault();
+            const textarea = commentForm.querySelector("textarea");
+            const comentario = textarea.value.trim();
+            if (!comentario) return;
+            try {
+                const response = await fetch("/empireyoncarsocial/posts_api/api/post/comentar", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ post_id: Number(commentForm.dataset.commentForm), user_id: Number(userId), comentario })
+                });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || "No se pudo comentar");
+                textarea.value = "";
+                postMessage.textContent = "Comentario publicado.";
+                await cargarFeed();
+            } catch { postMessage.textContent = "No se pudo publicar el comentario."; }
+        });
         createPostForm.addEventListener("submit", async (event) => {
             event.preventDefault();
-
-            if (!userId) {
-                window.location.href = "login";
-                return;
-            }
-
+            if (!userId) { window.location.href = "login"; return; }
             const contenido = postContent.value.trim();
             const linkUrl = postLink.value.trim();
             const pollQuestionValue = pollQuestion.value.trim();
             const pollOptionsValue = getPollOptions();
-
             if (!contenido && !compressedImageFile && !linkUrl && !pollQuestionValue) {
-                postMessage.textContent = "Agrega contenido antes de publicar.";
-                return;
+                postMessage.textContent = "Agrega contenido antes de publicar."; return;
             }
-
             const button = createPostForm.querySelector(".btn-post");
-            button.disabled = true;
-            postMessage.textContent = "Publicando...";
-
+            button.disabled = true; postMessage.textContent = "Publicando...";
             try {
                 const formData = new FormData();
                 formData.append("user_id", Number(userId));
@@ -1244,27 +676,15 @@
                 formData.append("link_url", linkUrl);
                 formData.append("poll_question", pollQuestionValue);
                 formData.append("poll_options", JSON.stringify(pollOptionsValue));
-
                 if (currentLinkMetadata) {
                     formData.append("link_title", currentLinkMetadata.title || "");
                     formData.append("link_description", currentLinkMetadata.description || "");
                     formData.append("link_image", currentLinkMetadata.image || "");
                 }
-
-                if (compressedImageFile) {
-                    formData.append("imagen_archivo", compressedImageFile, compressedImageFile.name);
-                }
-
-                const response = await fetch("/empireyoncarsocial/posts_api/api/post/crear", {
-                    method: "POST",
-                    body: formData
-                });
-
+                if (compressedImageFile) formData.append("imagen_archivo", compressedImageFile, compressedImageFile.name);
+                const response = await fetch("/empireyoncarsocial/posts_api/api/post/crear", { method: "POST", body: formData });
                 const result = await response.json();
-                if (!response.ok) {
-                    throw new Error(result.error || "No se pudo publicar");
-                }
-
+                if (!response.ok) throw new Error(result.error || "No se pudo publicar");
                 createPostForm.reset();
                 compressedImageFile = null;
                 imagePreview.classList.remove("active");
@@ -1273,21 +693,13 @@
                 pollBuilder.classList.remove("active");
                 togglePollBuilder.classList.remove("active");
                 pollState.open = false;
-                while (pollOptions.children.length > 2) {
-                    pollOptions.lastElementChild.remove();
-                }
-                Array.from(document.querySelectorAll(".poll-option-input")).forEach((input) => {
-                    input.value = "";
-                });
+                while (pollOptions.children.length > 2) pollOptions.lastElementChild.remove();
+                Array.from(document.querySelectorAll(".poll-option-input")).forEach((input) => { input.value = ""; });
                 postMessage.textContent = "Publicacion creada.";
                 await cargarFeed();
-            } catch {
-                postMessage.textContent = "No se pudo crear la publicacion.";
-            } finally {
-                button.disabled = false;
-            }
+            } catch { postMessage.textContent = "No se pudo crear la publicacion."; }
+            finally { button.disabled = false; }
         });
-
         cargarFeed();
     </script>
 </body>

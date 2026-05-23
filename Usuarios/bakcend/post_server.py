@@ -7,12 +7,14 @@ from postgenerales_server import (
     UPLOAD_DIR,
     create_comment_service,
     create_post_service,
+    delete_comment_service,
     delete_post_service,
     feed_service,
     get_comments_service,
     get_user_posts_service,
     like_post_service,
     link_preview_service,
+    update_comment_service,
     update_post_service,
     vote_poll_service,
 )
@@ -98,6 +100,20 @@ def comentar_post():
 @app.get("/api/post/comentarios/<int:post_id>")
 def obtener_comentarios(post_id):
     return jsonify(get_comments_service(post_id))
+
+
+@app.post("/api/post/comentario/editar")
+def editar_comentario():
+    data = request.get_json(silent=True) or {}
+    result, status_code = update_comment_service(data)
+    return jsonify(result), status_code
+
+
+@app.post("/api/post/comentario/eliminar")
+def eliminar_comentario():
+    data = request.get_json(silent=True) or {}
+    result, status_code = delete_comment_service(data)
+    return jsonify(result), status_code
 
 
 @app.post("/api/post/eliminar")

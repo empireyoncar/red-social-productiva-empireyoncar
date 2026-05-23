@@ -255,6 +255,41 @@ def create_comment(post_id, user_id, comentario):
     return comentario_db
 
 
+def get_comment_owner(comment_id):
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM comentarios WHERE id = %s", (comment_id,))
+    comentario = cur.fetchone()
+    cur.close()
+    conn.close()
+    return comentario
+
+
+def update_comment(comment_id, comentario):
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("""
+        UPDATE comentarios
+        SET comentario = %s
+        WHERE id = %s
+        RETURNING id, fecha;
+    """, (comentario, comment_id))
+    comentario_db = cur.fetchone()
+    conn.commit()
+    cur.close()
+    conn.close()
+    return comentario_db
+
+
+def delete_comment(comment_id):
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("DELETE FROM comentarios WHERE id = %s", (comment_id,))
+    conn.commit()
+    cur.close()
+    conn.close()
+
+
 def list_comments(post_id):
     conn = get_db()
     cur = conn.cursor()
