@@ -75,7 +75,80 @@
     .main-container {
         display: flex;
         justify-content: center;
+        align-items: flex-start;
+        gap: 22px;
         margin-top: 25px;
+        padding: 0 20px;
+    }
+
+    .left-panel {
+        width: 320px;
+        position: sticky;
+        top: 120px;
+    }
+
+    .create-post {
+        background: white;
+        padding: 18px;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    }
+
+    .create-post h2 {
+        margin: 0 0 12px;
+        color: #1a73e8;
+        font-size: 18px;
+    }
+
+    .create-post textarea,
+    .create-post input {
+        box-sizing: border-box;
+        width: 100%;
+        border: 1px solid #cbd5e1;
+        border-radius: 10px;
+        font-family: inherit;
+        font-size: 14px;
+    }
+
+    .create-post textarea {
+        min-height: 130px;
+        padding: 12px;
+        resize: vertical;
+    }
+
+    .create-post input {
+        margin-top: 10px;
+        padding: 10px 12px;
+    }
+
+    .btn-post {
+        width: 100%;
+        margin-top: 12px;
+        padding: 12px 18px;
+        background: #1a73e8;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 15px;
+        font-weight: 600;
+        transition: 0.2s;
+    }
+
+    .btn-post:hover {
+        background: #155fc0;
+    }
+
+    .btn-post:disabled {
+        background: #8ab4f8;
+        cursor: not-allowed;
+    }
+
+    .form-message {
+        min-height: 18px;
+        margin-top: 10px;
+        font-size: 13px;
+        color: #555;
     }
 
     .feed {
@@ -144,6 +217,24 @@
     .post-actions button:hover {
         background: #d6e4ff;
     }
+
+    @media (max-width: 980px) {
+        .main-container {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .left-panel {
+            position: static;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .feed {
+            width: 100%;
+            max-width: 600px;
+        }
+    }
 </style>
 </head>
 
@@ -168,8 +259,17 @@
 
     <!-- CONTENIDO PRINCIPAL -->
     <div class="main-container">
+        <aside class="left-panel">
+            <form class="create-post" id="createPostForm">
+                <h2>Crear publicacion</h2>
+                <textarea id="postContent" placeholder="Comparte una idea, avance o proyecto..." required></textarea>
+                <input id="postImage" type="url" placeholder="URL de imagen opcional">
+                <button class="btn-post" type="submit">Publicar</button>
+                <div class="form-message" id="postMessage"></div>
+            </form>
+        </aside>
 
-        <div class="feed">
+        <div class="feed" id="feed">
 
             <!-- POST DE EJEMPLO -->
             <div class="post-card">
@@ -218,5 +318,136 @@
 
     </div>
 
+    <script>
+        const userId = localStorage.getItem("user_id");
+        const createPostForm = document.getElementById("createPostForm");
+        const postContent = document.getElementById("postContent");
+        const postImage = document.getElementById("postImage");
+        const postMessage = document.getElementById("postMessage");
+        const feed = document.getElementById("feed");
+
+        function escapeHtml(value) {
+            return String(value || "")
+                .replaceAll("&", "&amp;")
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;")
+                .replaceAll('"', "&quot;")
+                .replaceAll("'", "&#039;");
+        }
+
+        function formatDate(value) {
+            if (!value) return "Ahora";
+            const date = new Date(value);
+            if (Number.isNaN(date.getTime())) return "Ahora";
+            return date.toLocaleString("es-ES", {
+                day: "2-digit",
+                month: "short",
+                hour: "2-digit",
+                minute: "2-digit"
+            });
+        }
+
+        function renderPost(post) {
+            const author = `${post.nombres || "Usuario"} ${post.apellidos || ""}`.trim();
+            const imageHtml = post.imagen
+                ? `<img class="post-image" src="${escapeHtml(post.imagen)}" alt="post">`
+                : "";
+
+            return `
+                <div class="post-card">
+                    <div class="post-header">
+                        <img src="https://i.pravatar.cc/100?u=${escapeHtml(post.user_id || post.id || "user")}" alt="user">
+                        <div>
+                            <div class="name">${escapeHtml(author)}${post.verificado ? " ✔" : ""}</div>
+                            <div class="time">${escapeHtml(formatDate(post.fecha))}</div>
+                        </div>
+                    </div>
+
+                    <div class="post-text">${escapeHtml(post.contenido)}</div>
+                    ${imageHtml}
+
+                    <div class="post-actions">
+                        <button type="button">Me gusta (${post.likes || 0})</button>
+                        <button type="button">Comentar</button>
+                        <button type="button">Compartir</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function cargarFeed() {
+            if (!userId) {
+                window.location.href = "login";
+                return;
+            }
+
+            try {
+                const response = await fetch(`/empireyoncarsocial/posts_api/api/post/feed/${userId}`);
+                const posts = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(posts.error || "No se pudo cargar el feed");
+                }
+
+                if (!posts.length) {
+                    feed.innerHTML = '<div class="post-card">Todavia no hay publicaciones. Crea la primera desde el panel izquierdo.</div>';
+                    return;
+                }
+
+                feed.innerHTML = posts.map(renderPost).join("");
+            } catch {
+                postMessage.textContent = "No se pudo cargar el feed en este momento.";
+            }
+        }
+
+        createPostForm.addEventListener("submit", async (event) => {
+            event.preventDefault();
+
+            if (!userId) {
+                window.location.href = "login";
+                return;
+            }
+
+            const contenido = postContent.value.trim();
+            const imagen = postImage.value.trim();
+
+            if (!contenido) {
+                postMessage.textContent = "Escribe algo antes de publicar.";
+                return;
+            }
+
+            const button = createPostForm.querySelector("button");
+            button.disabled = true;
+            postMessage.textContent = "Publicando...";
+
+            try {
+                const response = await fetch("/empireyoncarsocial/posts_api/api/post/crear", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        user_id: Number(userId),
+                        contenido,
+                        imagen: imagen || null
+                    })
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.error || "No se pudo publicar");
+                }
+
+                createPostForm.reset();
+                postMessage.textContent = "Publicacion creada.";
+                await cargarFeed();
+            } catch {
+                postMessage.textContent = "No se pudo crear la publicacion.";
+            } finally {
+                button.disabled = false;
+            }
+        });
+
+        cargarFeed();
+    </script>
 </body>
 </html>
