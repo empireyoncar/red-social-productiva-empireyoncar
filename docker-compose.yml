@@ -102,6 +102,8 @@ services:
     command: python postgenerales_server.py
     ports:
       - "5104:5104"
+    volumes:
+      - ./Usuarios/uploads:/app/uploads
     depends_on:
       postgres:
         condition: service_healthy

@@ -7,14 +7,33 @@
     <link rel="stylesheet" href="/theme.css">
 
     <style>
+    :root {
+        --bg: #eef4ff;
+        --panel: #ffffff;
+        --panel-soft: #f7faff;
+        --line: #d7e3f7;
+        --text: #233043;
+        --muted: #617089;
+        --brand: #1a73e8;
+        --brand-dark: #155fc0;
+        --shadow: 0 10px 30px rgba(26, 64, 122, 0.10);
+        --radius: 14px;
+    }
+
+    * {
+        box-sizing: border-box;
+    }
+
     body {
         margin: 0;
         padding: 0;
         font-family: "Segoe UI", Arial, sans-serif;
-        background: #f0f4ff;
+        background:
+            radial-gradient(circle at top left, rgba(26, 115, 232, 0.10), transparent 30%),
+            linear-gradient(180deg, #f5f9ff 0%, var(--bg) 52%, #e9f0ff 100%);
+        color: var(--text);
     }
 
-    /* NAVBAR SUPERIOR */
     .navbar {
         width: 100%;
         background: #1a73e8;
@@ -29,7 +48,7 @@
     .navbar-top {
         display: flex;
         align-items: center;
-        justify-content: flex-start;   /* ANTES: space-between */
+        justify-content: flex-start;
     }
 
     .logo {
@@ -39,11 +58,11 @@
 
     .nav-links {
         display: flex;
-        margin-left: 40px;             /* ACERCA PERFIL/GRUPOS AL LOGO */
+        margin-left: 40px;
     }
 
     .nav-links a {
-        margin-right: 20px;            /* ANTES: margin-left */
+        margin-right: 20px;
         color: white;
         text-decoration: none;
         font-weight: 500;
@@ -78,65 +97,162 @@
         align-items: flex-start;
         gap: 22px;
         margin-top: 25px;
-        padding: 0 20px;
+        padding: 0 20px 32px;
     }
 
     .left-panel {
-        width: 320px;
+        width: 360px;
         position: sticky;
         top: 120px;
     }
 
     .create-post {
-        background: white;
-        padding: 18px;
-        border-radius: 12px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        background: var(--panel);
+        padding: 16px;
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        display: grid;
+        gap: 12px;
+    }
+
+    .composer-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
     }
 
     .create-post h2 {
-        margin: 0 0 12px;
-        color: #1a73e8;
+        margin: 0;
+        color: var(--brand);
         font-size: 18px;
     }
 
+    .composer-hint {
+        font-size: 12px;
+        color: var(--muted);
+    }
+
     .create-post textarea,
-    .create-post input {
-        box-sizing: border-box;
+    .create-post input[type="url"],
+    .create-post input[type="text"] {
         width: 100%;
-        border: 1px solid #cbd5e1;
+        border: 1px solid var(--line);
         border-radius: 10px;
         font-family: inherit;
         font-size: 14px;
+        color: var(--text);
+        background: #fff;
     }
 
     .create-post textarea {
-        min-height: 130px;
+        min-height: 88px;
         padding: 12px;
         resize: vertical;
+        line-height: 1.45;
     }
 
-    .create-post input {
-        margin-top: 10px;
+    .create-post input[type="url"],
+    .create-post input[type="text"] {
         padding: 10px 12px;
+    }
+
+    .toolbar-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
+
+    .file-picker {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 42px;
+        padding: 10px 12px;
+        border: 1px dashed var(--line);
+        border-radius: 10px;
+        background: var(--panel-soft);
+        color: var(--muted);
+        font-size: 13px;
+        cursor: pointer;
+        text-align: center;
+    }
+
+    .file-picker input {
+        display: none;
+    }
+
+    .toggle-row {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .toggle-btn {
+        border: 1px solid var(--line);
+        background: var(--panel-soft);
+        color: var(--muted);
+        border-radius: 999px;
+        padding: 8px 12px;
+        font-size: 12px;
+        cursor: pointer;
+    }
+
+    .toggle-btn.active {
+        background: #e8f0ff;
+        color: var(--brand);
+        border-color: #bfd4fa;
+    }
+
+    .composer-section {
+        display: none;
+        gap: 10px;
+        padding: 12px;
+        border-radius: 12px;
+        background: var(--panel-soft);
+        border: 1px solid #edf3ff;
+    }
+
+    .composer-section.active {
+        display: grid;
+    }
+
+    .poll-option-row {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 8px;
+    }
+
+    .mini-btn,
+    .btn-post {
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: 0.2s;
+        font-family: inherit;
+    }
+
+    .mini-btn {
+        padding: 10px 12px;
+        background: #e8f0ff;
+        color: var(--brand);
+        font-size: 13px;
+        font-weight: 600;
     }
 
     .btn-post {
         width: 100%;
-        margin-top: 12px;
         padding: 12px 18px;
-        background: #1a73e8;
+        background: var(--brand);
         color: white;
-        border: none;
-        border-radius: 10px;
-        cursor: pointer;
         font-size: 15px;
         font-weight: 600;
-        transition: 0.2s;
     }
 
+    .mini-btn:hover,
     .btn-post:hover {
-        background: #155fc0;
+        background: var(--brand-dark);
+        color: #fff;
     }
 
     .btn-post:disabled {
@@ -146,21 +262,75 @@
 
     .form-message {
         min-height: 18px;
-        margin-top: 10px;
         font-size: 13px;
-        color: #555;
+        color: var(--muted);
+    }
+
+    .preview-stack {
+        display: grid;
+        gap: 10px;
+    }
+
+    .image-preview,
+    .link-preview {
+        display: none;
+    }
+
+    .image-preview.active,
+    .link-preview.active {
+        display: block;
+    }
+
+    .image-preview img {
+        width: 100%;
+        max-height: 180px;
+        object-fit: cover;
+        border-radius: 12px;
+        border: 1px solid var(--line);
+    }
+
+    .link-preview {
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        overflow: hidden;
+        background: #fff;
+    }
+
+    .link-preview img {
+        width: 100%;
+        max-height: 140px;
+        object-fit: cover;
+        display: block;
+        background: #dfe9fb;
+    }
+
+    .link-preview-body {
+        padding: 12px;
+    }
+
+    .link-preview-title {
+        font-size: 14px;
+        font-weight: 700;
+        margin-bottom: 6px;
+    }
+
+    .link-preview-description {
+        font-size: 13px;
+        color: var(--muted);
+        line-height: 1.45;
     }
 
     .feed {
-        width: 600px;
+        width: 620px;
+        display: grid;
+        gap: 18px;
     }
 
     .post-card {
         background: white;
         padding: 20px;
-        border-radius: 12px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-        margin-bottom: 20px;
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
     }
 
     .post-header {
@@ -178,24 +348,113 @@
 
     .post-header .name {
         font-weight: bold;
-        color: #333;
+        color: var(--text);
     }
 
     .post-header .time {
         font-size: 12px;
-        color: #777;
+        color: var(--muted);
     }
 
     .post-text {
         font-size: 15px;
-        color: #333;
+        color: var(--text);
         margin-bottom: 12px;
+        white-space: pre-wrap;
     }
 
     .post-image {
         width: 100%;
         border-radius: 10px;
         margin-bottom: 12px;
+        max-height: 420px;
+        object-fit: cover;
+        border: 1px solid var(--line);
+    }
+
+    .post-link-card {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 120px;
+        gap: 12px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        overflow: hidden;
+        margin-bottom: 12px;
+        background: var(--panel-soft);
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .post-link-content {
+        padding: 12px;
+    }
+
+    .post-link-title {
+        font-size: 14px;
+        font-weight: 700;
+        margin-bottom: 6px;
+    }
+
+    .post-link-description,
+    .post-link-url {
+        font-size: 13px;
+        color: var(--muted);
+        line-height: 1.45;
+    }
+
+    .post-link-url {
+        margin-top: 8px;
+        word-break: break-word;
+    }
+
+    .post-link-card img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        min-height: 120px;
+        background: #dfe9fb;
+    }
+
+    .poll-box {
+        margin: 12px 0;
+        padding: 14px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: var(--panel-soft);
+    }
+
+    .poll-question {
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+
+    .poll-option {
+        margin-bottom: 8px;
+    }
+
+    .poll-vote-btn {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 12px;
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        cursor: pointer;
+        font-family: inherit;
+    }
+
+    .poll-vote-btn:disabled {
+        cursor: not-allowed;
+        opacity: 0.72;
+    }
+
+    .poll-total {
+        margin-top: 10px;
+        font-size: 12px;
+        color: var(--muted);
     }
 
     .post-actions {
@@ -227,104 +486,140 @@
         .left-panel {
             position: static;
             width: 100%;
-            max-width: 600px;
+            max-width: 620px;
         }
 
         .feed {
             width: 100%;
-            max-width: 600px;
+            max-width: 620px;
+        }
+
+        .post-link-card {
+            grid-template-columns: 1fr;
         }
     }
-</style>
+
+    @media (max-width: 640px) {
+        .main-container {
+            padding: 0 12px 24px;
+        }
+
+        .navbar {
+            padding: 12px 14px 16px;
+        }
+
+        .nav-links {
+            margin-left: 18px;
+            flex-wrap: wrap;
+            row-gap: 8px;
+        }
+
+        .toolbar-row {
+            grid-template-columns: 1fr;
+        }
+    }
+    </style>
 </head>
 
 <body>
-
-    <!-- NAVBAR -->
     <div class="navbar">
         <div class="navbar-top">
             <div class="logo">Empireyoncar Social</div>
-
             <div class="nav-links">
                 <a href="perfil">Perfil</a>
                 <a href="grupos">Grupos</a>
             </div>
         </div>
 
-        <!-- BUSCADOR DEBAJO DEL LOGO -->
         <div class="navbar-search">
             <input type="text" placeholder="Buscar usuarios, hashtags o publicaciones...">
         </div>
     </div>
 
-    <!-- CONTENIDO PRINCIPAL -->
     <div class="main-container">
         <aside class="left-panel">
             <form class="create-post" id="createPostForm">
-                <h2>Crear publicacion</h2>
-                <textarea id="postContent" placeholder="Comparte una idea, avance o proyecto..." required></textarea>
-                <input id="postImage" type="url" placeholder="URL de imagen opcional">
+                <div class="composer-top">
+                    <h2>Crear publicacion</h2>
+                    <div class="composer-hint">Texto, imagen, link o encuesta</div>
+                </div>
+
+                <textarea id="postContent" placeholder="Comparte una idea, avance o proyecto..."></textarea>
+
+                <div class="toolbar-row">
+                    <label class="file-picker" for="postImageFile">
+                        Subir imagen
+                        <input id="postImageFile" type="file" accept="image/*">
+                    </label>
+                    <input id="postLink" type="url" placeholder="Pega un enlace">
+                </div>
+
+                <div class="toggle-row">
+                    <button class="toggle-btn" type="button" id="toggleLinkPreview">Vista previa link</button>
+                    <button class="toggle-btn" type="button" id="togglePollBuilder">Agregar encuesta</button>
+                </div>
+
+                <div class="composer-section" id="pollBuilder">
+                    <input id="pollQuestion" type="text" maxlength="140" placeholder="Pregunta de la encuesta">
+                    <div id="pollOptions">
+                        <div class="poll-option-row">
+                            <input class="poll-option-input" type="text" maxlength="80" placeholder="Opcion 1">
+                            <button class="mini-btn" type="button" data-remove-poll-option>Quitar</button>
+                        </div>
+                        <div class="poll-option-row">
+                            <input class="poll-option-input" type="text" maxlength="80" placeholder="Opcion 2">
+                            <button class="mini-btn" type="button" data-remove-poll-option>Quitar</button>
+                        </div>
+                    </div>
+                    <button class="mini-btn" type="button" id="addPollOptionBtn">Agregar opcion</button>
+                </div>
+
+                <div class="preview-stack">
+                    <div class="image-preview" id="imagePreview">
+                        <img id="imagePreviewImg" alt="Vista previa de imagen">
+                    </div>
+
+                    <div class="link-preview" id="linkPreview">
+                        <img id="linkPreviewImg" alt="Vista previa del enlace">
+                        <div class="link-preview-body">
+                            <div class="link-preview-title" id="linkPreviewTitle">Vista previa del enlace</div>
+                            <div class="link-preview-description" id="linkPreviewDescription">Agrega un enlace valido para cargar su metadata.</div>
+                        </div>
+                    </div>
+                </div>
+
                 <button class="btn-post" type="submit">Publicar</button>
                 <div class="form-message" id="postMessage"></div>
             </form>
         </aside>
 
-        <div class="feed" id="feed">
-
-            <!-- POST DE EJEMPLO -->
-            <div class="post-card">
-                <div class="post-header">
-                    <img src="https://i.pravatar.cc/100" alt="user">
-                    <div>
-                        <div class="name">Juan Pérez</div>
-                        <div class="time">Hace 2 horas</div>
-                    </div>
-                </div>
-
-                <div class="post-text">
-                    Hoy fue un día productivo. Logré avanzar en mis proyectos y ayudar a un amigo con su emprendimiento.
-                </div>
-
-                <img class="post-image" src="https://picsum.photos/600/300" alt="post">
-
-                <div class="post-actions">
-                    <button>👍 Me gusta</button>
-                    <button>💬 Comentar</button>
-                    <button>🔗 Compartir</button>
-                </div>
-            </div>
-
-            <div class="post-card">
-                <div class="post-header">
-                    <img src="https://i.pravatar.cc/101" alt="user">
-                    <div>
-                        <div class="name">María López</div>
-                        <div class="time">Hace 5 horas</div>
-                    </div>
-                </div>
-
-                <div class="post-text">
-                    ¿Alguien conoce grupos de productividad o emprendimiento? Estoy buscando nuevas comunidades.
-                </div>
-
-                <div class="post-actions">
-                    <button>👍 Me gusta</button>
-                    <button>💬 Comentar</button>
-                    <button>🔗 Compartir</button>
-                </div>
-            </div>
-
-        </div>
-
+        <div class="feed" id="feed"></div>
     </div>
 
     <script>
         const userId = localStorage.getItem("user_id");
         const createPostForm = document.getElementById("createPostForm");
         const postContent = document.getElementById("postContent");
-        const postImage = document.getElementById("postImage");
+        const postImageFile = document.getElementById("postImageFile");
+        const postLink = document.getElementById("postLink");
+        const toggleLinkPreview = document.getElementById("toggleLinkPreview");
+        const togglePollBuilder = document.getElementById("togglePollBuilder");
+        const pollBuilder = document.getElementById("pollBuilder");
+        const pollQuestion = document.getElementById("pollQuestion");
+        const pollOptions = document.getElementById("pollOptions");
+        const addPollOptionBtn = document.getElementById("addPollOptionBtn");
+        const imagePreview = document.getElementById("imagePreview");
+        const imagePreviewImg = document.getElementById("imagePreviewImg");
+        const linkPreview = document.getElementById("linkPreview");
+        const linkPreviewImg = document.getElementById("linkPreviewImg");
+        const linkPreviewTitle = document.getElementById("linkPreviewTitle");
+        const linkPreviewDescription = document.getElementById("linkPreviewDescription");
         const postMessage = document.getElementById("postMessage");
         const feed = document.getElementById("feed");
+
+        const pollState = { open: false };
+        let currentLinkMetadata = null;
+        let compressedImageFile = null;
 
         function escapeHtml(value) {
             return String(value || "")
@@ -333,6 +628,14 @@
                 .replaceAll(">", "&gt;")
                 .replaceAll('"', "&quot;")
                 .replaceAll("'", "&#039;");
+        }
+
+        function debounce(fn, delay) {
+            let timer = null;
+            return (...args) => {
+                clearTimeout(timer);
+                timer = window.setTimeout(() => fn(...args), delay);
+            };
         }
 
         function formatDate(value) {
@@ -345,6 +648,54 @@
                 hour: "2-digit",
                 minute: "2-digit"
             });
+        }
+
+        function totalVotes(post) {
+            return (post.poll_votes || []).reduce((sum, value) => sum + Number(value || 0), 0);
+        }
+
+        function renderLink(post) {
+            if (!post.link_url) return "";
+
+            const imageColumn = post.link_image
+                ? `<img src="${escapeHtml(post.link_image)}" alt="Enlace">`
+                : "";
+
+            return `
+                <a class="post-link-card" href="${escapeHtml(post.link_url)}" target="_blank" rel="noreferrer">
+                    <div class="post-link-content">
+                        <div class="post-link-title">${escapeHtml(post.link_title || post.link_url)}</div>
+                        <div class="post-link-description">${escapeHtml(post.link_description || "Sin descripcion disponible.")}</div>
+                        <div class="post-link-url">${escapeHtml(post.link_url)}</div>
+                    </div>
+                    ${imageColumn}
+                </a>
+            `;
+        }
+
+        function renderPoll(post) {
+            if (!post.poll_question || !post.poll_options || !post.poll_options.length) {
+                return "";
+            }
+
+            const votes = post.poll_votes || new Array(post.poll_options.length).fill(0);
+            const total = totalVotes(post);
+            const optionsHtml = post.poll_options.map((option, index) => `
+                <div class="poll-option">
+                    <button class="poll-vote-btn" type="button" data-poll-vote data-post-id="${post.id}" data-option-index="${index}">
+                        <span>${escapeHtml(option)}</span>
+                        <span>${Number(votes[index] || 0)} votos</span>
+                    </button>
+                </div>
+            `).join("");
+
+            return `
+                <div class="poll-box">
+                    <div class="poll-question">${escapeHtml(post.poll_question)}</div>
+                    ${optionsHtml}
+                    <div class="poll-total">${total} votos totales</div>
+                </div>
+            `;
         }
 
         function renderPost(post) {
@@ -363,8 +714,10 @@
                         </div>
                     </div>
 
-                    <div class="post-text">${escapeHtml(post.contenido)}</div>
+                    <div class="post-text">${escapeHtml(post.contenido || "")}</div>
                     ${imageHtml}
+                    ${renderLink(post)}
+                    ${renderPoll(post)}
 
                     <div class="post-actions">
                         <button type="button">Me gusta (${post.likes || 0})</button>
@@ -373,6 +726,112 @@
                     </div>
                 </div>
             `;
+        }
+
+        function resetLinkPreview() {
+            currentLinkMetadata = null;
+            linkPreview.classList.remove("active");
+            toggleLinkPreview.classList.remove("active");
+            linkPreviewImg.style.display = "none";
+            linkPreviewImg.removeAttribute("src");
+            linkPreviewTitle.textContent = "Vista previa del enlace";
+            linkPreviewDescription.textContent = "Agrega un enlace valido para cargar su metadata.";
+        }
+
+        function applyLinkPreview(metadata) {
+            currentLinkMetadata = metadata;
+            linkPreview.classList.add("active");
+            toggleLinkPreview.classList.add("active");
+            linkPreviewTitle.textContent = metadata.title || metadata.url || "Enlace";
+            linkPreviewDescription.textContent = metadata.description || "Sin descripcion disponible.";
+
+            if (metadata.image) {
+                linkPreviewImg.src = metadata.image;
+                linkPreviewImg.style.display = "block";
+            } else {
+                linkPreviewImg.style.display = "none";
+                linkPreviewImg.removeAttribute("src");
+            }
+        }
+
+        async function fetchLinkPreview(url) {
+            const response = await fetch("/empireyoncarsocial/posts_api/api/post/link-preview", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ url })
+            });
+            const result = await response.json();
+            if (!response.ok) {
+                throw new Error(result.error || "No se pudo analizar el enlace");
+            }
+            return result;
+        }
+
+        async function compressImage(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => {
+                    const image = new Image();
+                    image.onload = () => {
+                        const maxWidth = 1600;
+                        const maxHeight = 1600;
+                        let width = image.width;
+                        let height = image.height;
+
+                        if (width > maxWidth || height > maxHeight) {
+                            const scale = Math.min(maxWidth / width, maxHeight / height);
+                            width = Math.round(width * scale);
+                            height = Math.round(height * scale);
+                        }
+
+                        const canvas = document.createElement("canvas");
+                        canvas.width = width;
+                        canvas.height = height;
+                        const context = canvas.getContext("2d");
+                        context.drawImage(image, 0, 0, width, height);
+
+                        canvas.toBlob((blob) => {
+                            if (!blob) {
+                                reject(new Error("No se pudo procesar la imagen"));
+                                return;
+                            }
+
+                            resolve(new File(
+                                [blob],
+                                file.name.replace(/\.[^.]+$/, "") + ".jpg",
+                                { type: "image/jpeg" }
+                            ));
+                        }, "image/jpeg", 0.82);
+                    };
+                    image.onerror = () => reject(new Error("Archivo de imagen invalido"));
+                    image.src = reader.result;
+                };
+                reader.onerror = () => reject(new Error("No se pudo leer la imagen"));
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function getPollOptions() {
+            return Array.from(document.querySelectorAll(".poll-option-input"))
+                .map((input) => input.value.trim())
+                .filter(Boolean)
+                .slice(0, 4);
+        }
+
+        function appendPollOption(value = "") {
+            const currentCount = document.querySelectorAll(".poll-option-input").length;
+            if (currentCount >= 4) {
+                postMessage.textContent = "La encuesta admite hasta 4 opciones.";
+                return;
+            }
+
+            const wrapper = document.createElement("div");
+            wrapper.className = "poll-option-row";
+            wrapper.innerHTML = `
+                <input class="poll-option-input" type="text" maxlength="80" placeholder="Opcion ${currentCount + 1}" value="${escapeHtml(value)}">
+                <button class="mini-btn" type="button" data-remove-poll-option>Quitar</button>
+            `;
+            pollOptions.appendChild(wrapper);
         }
 
         async function cargarFeed() {
@@ -400,6 +859,115 @@
             }
         }
 
+        togglePollBuilder.addEventListener("click", () => {
+            pollState.open = !pollState.open;
+            pollBuilder.classList.toggle("active", pollState.open);
+            togglePollBuilder.classList.toggle("active", pollState.open);
+        });
+
+        addPollOptionBtn.addEventListener("click", () => appendPollOption());
+
+        pollOptions.addEventListener("click", (event) => {
+            const removeButton = event.target.closest("[data-remove-poll-option]");
+            if (!removeButton) return;
+            const rows = pollOptions.querySelectorAll(".poll-option-row");
+            if (rows.length <= 2) {
+                postMessage.textContent = "La encuesta necesita al menos 2 opciones visibles.";
+                return;
+            }
+            removeButton.parentElement.remove();
+        });
+
+        postImageFile.addEventListener("change", async () => {
+            const file = postImageFile.files[0];
+            if (!file) {
+                compressedImageFile = null;
+                imagePreview.classList.remove("active");
+                imagePreviewImg.removeAttribute("src");
+                return;
+            }
+
+            try {
+                compressedImageFile = await compressImage(file);
+                imagePreviewImg.src = URL.createObjectURL(compressedImageFile);
+                imagePreview.classList.add("active");
+                postMessage.textContent = "Imagen lista para subir.";
+            } catch {
+                compressedImageFile = null;
+                imagePreview.classList.remove("active");
+                postMessage.textContent = "No se pudo preparar la imagen.";
+            }
+        });
+
+        const scheduleLinkPreview = debounce(async () => {
+            const url = postLink.value.trim();
+            if (!url) {
+                resetLinkPreview();
+                return;
+            }
+
+            try {
+                postMessage.textContent = "Buscando metadata del enlace...";
+                const metadata = await fetchLinkPreview(url);
+                applyLinkPreview(metadata);
+                postMessage.textContent = "";
+            } catch {
+                resetLinkPreview();
+                postMessage.textContent = "No se pudo cargar la vista previa del enlace.";
+            }
+        }, 500);
+
+        postLink.addEventListener("input", scheduleLinkPreview);
+
+        toggleLinkPreview.addEventListener("click", async () => {
+            if (linkPreview.classList.contains("active")) {
+                resetLinkPreview();
+                return;
+            }
+
+            const url = postLink.value.trim();
+            if (!url) {
+                postMessage.textContent = "Primero pega un enlace.";
+                return;
+            }
+
+            try {
+                const metadata = await fetchLinkPreview(url);
+                applyLinkPreview(metadata);
+                postMessage.textContent = "";
+            } catch {
+                postMessage.textContent = "No se pudo cargar la vista previa del enlace.";
+            }
+        });
+
+        feed.addEventListener("click", async (event) => {
+            const voteButton = event.target.closest("[data-poll-vote]");
+            if (!voteButton) {
+                return;
+            }
+
+            voteButton.disabled = true;
+            try {
+                const response = await fetch("/empireyoncarsocial/posts_api/api/post/poll/vote", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        user_id: Number(userId),
+                        post_id: Number(voteButton.dataset.postId),
+                        option_index: Number(voteButton.dataset.optionIndex)
+                    })
+                });
+                const result = await response.json();
+                if (!response.ok) {
+                    throw new Error(result.error || "No se pudo registrar el voto");
+                }
+                await cargarFeed();
+            } catch {
+                postMessage.textContent = "No se pudo registrar el voto de la encuesta.";
+                voteButton.disabled = false;
+            }
+        });
+
         createPostForm.addEventListener("submit", async (event) => {
             event.preventDefault();
 
@@ -409,35 +977,61 @@
             }
 
             const contenido = postContent.value.trim();
-            const imagen = postImage.value.trim();
+            const linkUrl = postLink.value.trim();
+            const pollQuestionValue = pollQuestion.value.trim();
+            const pollOptionsValue = getPollOptions();
 
-            if (!contenido) {
-                postMessage.textContent = "Escribe algo antes de publicar.";
+            if (!contenido && !compressedImageFile && !linkUrl && !pollQuestionValue) {
+                postMessage.textContent = "Agrega contenido antes de publicar.";
                 return;
             }
 
-            const button = createPostForm.querySelector("button");
+            const button = createPostForm.querySelector(".btn-post");
             button.disabled = true;
             postMessage.textContent = "Publicando...";
 
             try {
+                const formData = new FormData();
+                formData.append("user_id", Number(userId));
+                formData.append("contenido", contenido);
+                formData.append("link_url", linkUrl);
+                formData.append("poll_question", pollQuestionValue);
+                formData.append("poll_options", JSON.stringify(pollOptionsValue));
+
+                if (currentLinkMetadata) {
+                    formData.append("link_title", currentLinkMetadata.title || "");
+                    formData.append("link_description", currentLinkMetadata.description || "");
+                    formData.append("link_image", currentLinkMetadata.image || "");
+                }
+
+                if (compressedImageFile) {
+                    formData.append("imagen_archivo", compressedImageFile, compressedImageFile.name);
+                }
+
                 const response = await fetch("/empireyoncarsocial/posts_api/api/post/crear", {
                     method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        user_id: Number(userId),
-                        contenido,
-                        imagen: imagen || null
-                    })
+                    body: formData
                 });
 
                 const result = await response.json();
-
                 if (!response.ok) {
                     throw new Error(result.error || "No se pudo publicar");
                 }
 
                 createPostForm.reset();
+                compressedImageFile = null;
+                imagePreview.classList.remove("active");
+                imagePreviewImg.removeAttribute("src");
+                resetLinkPreview();
+                pollBuilder.classList.remove("active");
+                togglePollBuilder.classList.remove("active");
+                pollState.open = false;
+                while (pollOptions.children.length > 2) {
+                    pollOptions.lastElementChild.remove();
+                }
+                Array.from(document.querySelectorAll(".poll-option-input")).forEach((input) => {
+                    input.value = "";
+                });
                 postMessage.textContent = "Publicacion creada.";
                 await cargarFeed();
             } catch {
