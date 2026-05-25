@@ -19,6 +19,7 @@ from db_usuarios import (
     esta_siguiendo,
     guardar_foto_perfil,
     seguir_usuario,
+    actualizar_presencia,
     verificar_usuario_admin,
     PROFILE_UPLOAD_DIR,
 )
@@ -94,6 +95,17 @@ def follow_user():
     if not data:
         return jsonify({"error": "JSON invalido o vacio"}), 400
     result = seguir_usuario(data.get("follower_id"), data.get("followed_id"))
+    if "error" in result:
+        return jsonify(result), 400
+    return jsonify(result)
+
+
+@app.post("/api/presencia")
+def update_presence():
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "JSON invalido o vacio"}), 400
+    result = actualizar_presencia(data.get("user_id"))
     if "error" in result:
         return jsonify(result), 400
     return jsonify(result)

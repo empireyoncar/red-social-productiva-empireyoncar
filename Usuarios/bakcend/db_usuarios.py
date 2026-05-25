@@ -4,6 +4,8 @@ import bcrypt
 from db_bootstrap import ensure_database
 import os
 import uuid
+import json
+from datetime import datetime, timedelta, timezone
 
 # ============================================================
 # CONFIGURACIÓN DE POSTGRESQL
@@ -54,12 +56,14 @@ def init_db():
             siguiendo INT DEFAULT 0,
             bio TEXT DEFAULT '',
             foto_url TEXT,
-            last_seen TIMESTAMP DEFAULT NOW()
+            last_seen TIMESTAMP DEFAULT NOW(),
+            links_json TEXT DEFAULT '[]'
         );
     """)
 
     cur.execute("ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS foto_url TEXT;")
     cur.execute("ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS last_seen TIMESTAMP DEFAULT NOW();")
+    cur.execute("ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS links_json TEXT DEFAULT '[]';")
     cur.execute("""
         CREATE TABLE IF NOT EXISTS follows (
             id SERIAL PRIMARY KEY,
@@ -153,7 +157,7 @@ def obtener_perfil(user_id):
 
     cur.execute("""
         SELECT id, nombres, apellidos, nacimiento, oficio, pais, estado, ciudad,
-               whatsapp, email, verificado, seguidores, siguiendo, bio, foto_url, last_seen
+               whatsapp, email, verificado, seguidores, siguiendo, bio, foto_url, last_seen, links_json
         FROM usuarios WHERE id = %s
     """, (user_id,))
 
@@ -162,7 +166,57 @@ def obtener_perfil(user_id):
     cur.close()
     conn.close()
 
+    if user:
+        user["links"] = parse_links(user.get("links_json"))
+        user["online"] = is_user_online(user.get("last_seen"))
     return user
+
+
+def parse_links(raw_links):
+    if not raw_links:
+        return []
+    try:
+        links = json.loads(raw_links)
+        if isinstance(links, list):
+            return [
+                {
+                    "label": str(item.get("label", "")).strip(),
+                    "url": str(item.get("url", "")).strip(),
+                }
+                for item in links
+                if isinstance(item, dict) and str(item.get("url", "")).strip()
+            ]
+    except (TypeError, ValueError, json.JSONDecodeError):
+        return []
+    return []
+
+
+def normalize_links(links):
+    if not isinstance(links, list):
+        return []
+    normalized = []
+    for item in links[:12]:
+        if not isinstance(item, dict):
+            continue
+        label = str(item.get("label", "")).strip()[:80]
+        url = str(item.get("url", "")).strip()[:300]
+        if not url:
+            continue
+        normalized.append({"label": label or "Enlace", "url": url})
+    return normalized
+
+
+def is_user_online(last_seen):
+    if not last_seen:
+        return False
+    if isinstance(last_seen, str):
+        try:
+            last_seen = datetime.fromisoformat(last_seen)
+        except ValueError:
+            return False
+    if last_seen.tzinfo is None:
+        last_seen = last_seen.replace(tzinfo=timezone.utc)
+    return datetime.now(timezone.utc) - last_seen <= timedelta(minutes=5)
 
 
 def actualizar_bio(user_id, bio):
@@ -187,6 +241,7 @@ def actualizar_perfil(user_id, data):
 
     conn = get_db()
     cur = conn.cursor()
+    links_json = json.dumps(normalize_links(data.get("links")), ensure_ascii=True)
     cur.execute("""
         UPDATE usuarios
         SET nombres = %s,
@@ -197,6 +252,7 @@ def actualizar_perfil(user_id, data):
             ciudad = %s,
             whatsapp = %s,
             bio = %s,
+            links_json = %s,
             last_seen = NOW()
         WHERE id = %s
     """, (
@@ -208,6 +264,7 @@ def actualizar_perfil(user_id, data):
         data.get("ciudad"),
         data.get("whatsapp"),
         data.get("bio"),
+        links_json,
         user_id,
     ))
     conn.commit()
@@ -251,6 +308,18 @@ def verificar_usuario_admin(user_id):
     return {"status": "verificado"}
 
 
+def actualizar_presencia(user_id):
+    if not user_id:
+        return {"error": "user_id es obligatorio"}
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute("UPDATE usuarios SET last_seen = NOW() WHERE id = %s", (user_id,))
+    conn.commit()
+    cur.close()
+    conn.close()
+    return {"status": "ok"}
+
+
 def buscar_usuarios(query, current_user_id=None):
     conn = get_db()
     cur = conn.cursor()
@@ -276,6 +345,24 @@ def seguir_usuario(follower_id, followed_id):
     conn = get_db()
     cur = conn.cursor()
     try:
+        cur.execute("SELECT id FROM usuarios WHERE id = %s", (follower_id,))
+        follower = cur.fetchone()
+        cur.execute("SELECT id FROM usuarios WHERE id = %s", (followed_id,))
+        followed = cur.fetchone()
+        if not follower or not followed:
+            conn.rollback()
+            cur.close()
+            conn.close()
+            return {"error": "Usuario no encontrado"}
+        cur.execute(
+            "SELECT 1 FROM follows WHERE follower_id = %s AND followed_id = %s",
+            (follower_id, followed_id),
+        )
+        if cur.fetchone():
+            conn.rollback()
+            cur.close()
+            conn.close()
+            return {"error": "Ya sigues a este usuario"}
         cur.execute("""
             INSERT INTO follows (follower_id, followed_id)
             VALUES (%s, %s)
@@ -283,6 +370,10 @@ def seguir_usuario(follower_id, followed_id):
         cur.execute("UPDATE usuarios SET siguiendo = siguiendo + 1 WHERE id = %s", (follower_id,))
         cur.execute("UPDATE usuarios SET seguidores = seguidores + 1 WHERE id = %s", (followed_id,))
         conn.commit()
+        cur.execute("SELECT seguidores FROM usuarios WHERE id = %s", (followed_id,))
+        seguidores = cur.fetchone()["seguidores"]
+        cur.execute("SELECT siguiendo FROM usuarios WHERE id = %s", (follower_id,))
+        siguiendo = cur.fetchone()["siguiendo"]
     except psycopg2.Error:
         conn.rollback()
         cur.close()
@@ -291,7 +382,7 @@ def seguir_usuario(follower_id, followed_id):
 
     cur.close()
     conn.close()
-    return {"status": "ok"}
+    return {"status": "ok", "seguidores": seguidores, "siguiendo": siguiendo}
 
 
 def esta_siguiendo(follower_id, followed_id):
