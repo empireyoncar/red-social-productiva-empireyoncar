@@ -47,6 +47,38 @@
         .profile-bio { margin: 0 0 12px; color: var(--muted); line-height: 1.5; }
         .profile-meta { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; margin-top: 12px; }
         .meta-item { padding: 10px 12px; border-radius: 12px; background: #f7faff; font-size: 14px; }
+        .profile-links {
+            display: grid;
+            gap: 10px;
+            margin-top: 14px;
+        }
+        .profile-links-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--brand);
+        }
+        .profile-link-item {
+            display: grid;
+            gap: 6px;
+            padding: 12px;
+            border-radius: 12px;
+            background: #f7faff;
+            border: 1px solid var(--line);
+        }
+        .profile-link-name {
+            font-weight: 700;
+        }
+        .profile-link-description {
+            font-size: 13px;
+            color: var(--muted);
+            line-height: 1.45;
+        }
+        .profile-link-item a {
+            color: var(--brand);
+            text-decoration: none;
+            overflow-wrap: anywhere;
+            font-size: 13px;
+        }
         .actions-col { display: grid; gap: 10px; align-content: start; }
         .stats { display: flex; gap: 16px; margin: 20px 0; }
         .stats div { min-width: 120px; text-align: center; background: #f7faff; padding: 12px; border-radius: 12px; }
@@ -131,6 +163,7 @@
                     <h1 id="profileName">Cargando perfil...</h1>
                     <p class="profile-bio" id="profileBio">Consultando tus datos.</p>
                     <div class="profile-meta" id="profileDetails"></div>
+                    <div class="profile-links" id="profileLinks"></div>
                 </div>
                 <div class="actions-col">
                     <label class="ghost-btn" for="photoInput" id="photoLabel">Subir o cambiar foto</label>
@@ -197,6 +230,24 @@
 
         function getProfileName(user) {
             return `${user.nombres || "Usuario"} ${user.apellidos || ""}`.trim();
+        }
+
+        function renderProfileLinks(links) {
+            const container = document.getElementById("profileLinks");
+            if (!Array.isArray(links) || !links.length) {
+                container.innerHTML = "";
+                return;
+            }
+            container.innerHTML = `
+                <div class="profile-links-title">Enlaces</div>
+                ${links.map((link) => `
+                    <div class="profile-link-item">
+                        <div class="profile-link-name">${escapeHtml(link.label || "Enlace")}</div>
+                        <div class="profile-link-description">${escapeHtml(link.description || "Sin descripcion.")}</div>
+                        <a href="${escapeHtml(link.url || "#")}" target="_blank" rel="noreferrer">${escapeHtml(link.url || "")}</a>
+                    </div>
+                `).join("")}
+            `;
         }
 
         function createLinkRow(link = {}) {
@@ -280,6 +331,7 @@
                     <div class="meta-item"><strong>Oficio:</strong> ${escapeHtml(user.oficio || "No indicado")}</div>
                     <div class="meta-item"><strong>Ubicacion:</strong> ${escapeHtml(ubicacion || "No indicada")}</div>
                     <div class="meta-item"><strong>WhatsApp:</strong> ${escapeHtml(user.whatsapp || "No indicado")}</div>`;
+                renderProfileLinks(user.links || []);
                 document.getElementById("seguidores").textContent = user.seguidores ?? 0;
                 document.getElementById("siguiendo").textContent = user.siguiendo ?? 0;
                 document.getElementById("profileAvatar").src = user.foto_url || "https://i.pravatar.cc/200";
