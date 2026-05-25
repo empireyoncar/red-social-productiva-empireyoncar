@@ -229,7 +229,8 @@ def update_post_service(data, files=None):
 
 
 def get_user_posts_service(user_id):
-    return list_posts_by_user(user_id)
+    posts = list_posts_by_user(user_id)
+    return [enrich_with_user(post) for post in posts]
 
 
 def feed_service(user_id):
@@ -319,7 +320,8 @@ def delete_comment_service(data):
     existing_comment = get_comment_owner(comment_id)
     if not existing_comment:
         return {"error": "Comentario no existe"}, 404
-    if existing_comment["user_id"] != user_id:
+    post = get_post_owner(existing_comment["post_id"])
+    if existing_comment["user_id"] != user_id and (not post or post["user_id"] != user_id):
         return {"error": "No autorizado"}, 403
 
     delete_comment(comment_id)

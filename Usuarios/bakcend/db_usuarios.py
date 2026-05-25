@@ -181,6 +181,7 @@ def parse_links(raw_links):
             return [
                 {
                     "label": str(item.get("label", "")).strip(),
+                    "description": str(item.get("description", "")).strip(),
                     "url": str(item.get("url", "")).strip(),
                 }
                 for item in links
@@ -199,10 +200,11 @@ def normalize_links(links):
         if not isinstance(item, dict):
             continue
         label = str(item.get("label", "")).strip()[:80]
+        description = str(item.get("description", "")).strip()[:220]
         url = str(item.get("url", "")).strip()[:300]
         if not url:
             continue
-        normalized.append({"label": label or "Enlace", "url": url})
+        normalized.append({"label": label or "Enlace", "description": description, "url": url})
     return normalized
 
 
