@@ -55,6 +55,34 @@
         .profile-form.active { display: grid; }
         .profile-form input, .profile-form textarea { width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); font-family: inherit; }
         .profile-form textarea { grid-column: 1 / -1; min-height: 90px; resize: vertical; }
+        .links-editor {
+            grid-column: 1 / -1;
+            display: grid;
+            gap: 10px;
+            padding: 14px;
+            border-radius: 12px;
+            background: #f3f8ff;
+            border: 1px solid var(--line);
+        }
+        .links-editor-title { font-weight: 700; color: var(--brand); }
+        .link-row {
+            display: grid;
+            gap: 8px;
+            padding: 10px;
+            border-radius: 12px;
+            background: #fff;
+            border: 1px solid var(--line);
+        }
+        .mini-btn {
+            border: none;
+            border-radius: 10px;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: 600;
+            background: #edf4ff;
+            color: var(--brand);
+        }
         .form-actions { grid-column: 1 / -1; display: flex; gap: 10px; justify-content: flex-end; }
         .publications-box {
             margin-top: 22px;
@@ -125,6 +153,11 @@
                 <input id="editEstado" type="text" placeholder="Estado">
                 <input id="editCiudad" type="text" placeholder="Ciudad">
                 <textarea id="editBio" placeholder="Biografia"></textarea>
+                <div class="links-editor">
+                    <div class="links-editor-title">Enlaces</div>
+                    <div id="linksRows"></div>
+                    <button class="mini-btn" id="addLinkBtn" type="button">Agregar enlace</button>
+                </div>
                 <div class="form-actions">
                     <button class="ghost-btn" id="cancelEditBtn" type="button">Cancelar</button>
                     <button class="btn" type="submit">Guardar cambios</button>
@@ -133,7 +166,7 @@
             <div class="publications-box">
                 <h2 id="postsHeading">Mis publicaciones</h2>
                 <p id="postsDescription">Abre una vista dedicada con todas tus publicaciones, comentarios y acciones del feed.</p>
-                <a class="btn" id="openPostsPageLink" href="/empireyoncarsocial/mispublicaciones">Ir a mis publicaciones</a>
+                <a class="btn" id="openPostsPageLink" href="/empireyoncarsocial/mispublicaciones/">Ir a mis publicaciones</a>
             </div>
         </div>
     </div>
@@ -147,6 +180,7 @@
         const photoInput = document.getElementById("photoInput");
         const followBtn = document.getElementById("followBtn");
         const openPostsPageLink = document.getElementById("openPostsPageLink");
+        const linksRows = document.getElementById("linksRows");
         let currentUser = null;
         let presenceTimer = null;
 
@@ -163,6 +197,32 @@
 
         function getProfileName(user) {
             return `${user.nombres || "Usuario"} ${user.apellidos || ""}`.trim();
+        }
+
+        function createLinkRow(link = {}) {
+            const row = document.createElement("div");
+            row.className = "link-row";
+            row.innerHTML = `
+                <input class="link-name-input" type="text" maxlength="80" placeholder="Nombre" value="${escapeHtml(link.label || "")}">
+                <textarea class="link-description-input" maxlength="220" placeholder="Descripcion">${escapeHtml(link.description || "")}</textarea>
+                <input class="link-url-input" type="url" maxlength="300" placeholder="Enlace" value="${escapeHtml(link.url || "")}">
+                <button class="mini-btn" type="button" data-remove-link>Quitar</button>
+            `;
+            linksRows.appendChild(row);
+        }
+
+        function setLinksInForm(links) {
+            linksRows.innerHTML = "";
+            const source = Array.isArray(links) && links.length ? links : [{}];
+            source.forEach((link) => createLinkRow(link));
+        }
+
+        function getLinksFromForm() {
+            return Array.from(linksRows.querySelectorAll(".link-row")).map((row) => ({
+                label: row.querySelector(".link-name-input").value.trim(),
+                description: row.querySelector(".link-description-input").value.trim(),
+                url: row.querySelector(".link-url-input").value.trim()
+            })).filter((link) => link.label || link.description || link.url).filter((link) => link.url);
         }
 
         function updatePresenceUi(user) {
@@ -197,6 +257,7 @@
             document.getElementById("editEstado").value = user.estado || "";
             document.getElementById("editCiudad").value = user.ciudad || "";
             document.getElementById("editBio").value = user.bio || "";
+            setLinksInForm(user.links || []);
         }
 
         async function cargarPerfil() {
@@ -227,7 +288,7 @@
                 document.getElementById("postsDescription").textContent = isOwnProfile
                     ? "Abre una vista dedicada con todas tus publicaciones, comentarios y acciones del feed."
                     : "Abre una vista dedicada para ver todas las publicaciones de este perfil.";
-                openPostsPageLink.href = `/empireyoncarsocial/mispublicaciones?user_id=${viewedUserId}`;
+                openPostsPageLink.href = `/empireyoncarsocial/mispublicaciones/?user_id=${viewedUserId}`;
                 openPostsPageLink.textContent = isOwnProfile ? "Ir a mis publicaciones" : "Ver publicaciones";
                 fillForm(user);
                 document.getElementById("toggleEditBtn").hidden = !isOwnProfile;
@@ -255,6 +316,23 @@
             if (currentUser) fillForm(currentUser);
         });
 
+        document.getElementById("addLinkBtn").addEventListener("click", () => {
+            createLinkRow();
+        });
+
+        linksRows.addEventListener("click", (event) => {
+            const removeButton = event.target.closest("[data-remove-link]");
+            if (!removeButton) return;
+            const rows = linksRows.querySelectorAll(".link-row");
+            if (rows.length === 1) {
+                rows[0].querySelector(".link-name-input").value = "";
+                rows[0].querySelector(".link-description-input").value = "";
+                rows[0].querySelector(".link-url-input").value = "";
+                return;
+            }
+            removeButton.closest(".link-row").remove();
+        });
+
         profileForm.addEventListener("submit", async (event) => {
             event.preventDefault();
             const payload = {
@@ -266,7 +344,8 @@
                 pais: document.getElementById("editPais").value.trim(),
                 estado: document.getElementById("editEstado").value.trim(),
                 ciudad: document.getElementById("editCiudad").value.trim(),
-                bio: document.getElementById("editBio").value.trim()
+                bio: document.getElementById("editBio").value.trim(),
+                links: getLinksFromForm()
             };
             profileMessage.textContent = "Guardando...";
             try {

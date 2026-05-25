@@ -64,7 +64,9 @@ def buscar():
 
 
 @app.route("/mispublicaciones")
+@app.route("/mispublicaciones/")
 @app.route("/empireyoncarsocial/mispublicaciones")
+@app.route("/empireyoncarsocial/mispublicaciones/")
 def mis_publicaciones():
     return render_template("mispublicaciones.html")
 
