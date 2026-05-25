@@ -23,31 +23,11 @@
         .logo { font-size: 20px; font-weight: bold; }
         .nav-links { margin-left: 40px; display: flex; flex-wrap: wrap; gap: 18px; }
         .nav-links a { color: white; text-decoration: none; font-weight: 500; }
-        .layout { display: grid; grid-template-columns: 280px minmax(0, 720px) 280px; justify-content: center; margin-top: 25px; gap: 20px; padding: 0 20px 30px; }
-        .left-panel, .profile-container, .right-panel { min-width: 0; }
+        .layout { display: flex; justify-content: center; margin-top: 25px; gap: 20px; padding: 0 20px 30px; }
+        .profile-container { min-width: 0; width: 100%; max-width: 720px; }
         .profile-container { background: var(--panel); padding: 24px; border-radius: 16px; box-shadow: 0 10px 30px rgba(24,59,112,0.10); }
-        .side-box { background: white; padding: 16px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
-        .side-title { font-size: 16px; font-weight: 700; color: var(--brand); margin-bottom: 12px; }
-        .side-item, .status-message { background: #f7faff; padding: 10px; border-radius: 10px; font-size: 13px; color: var(--text); }
-        .left-panel, .right-panel { display: grid; gap: 20px; align-content: start; }
-        .links-list { display: grid; gap: 10px; }
-        .link-item { display: grid; gap: 8px; padding: 12px; border-radius: 12px; background: #f7faff; border: 1px solid var(--line); }
-        .link-label { font-weight: 700; }
-        .link-description { font-size: 13px; color: var(--muted); line-height: 1.45; }
-        .link-item a { color: var(--brand); text-decoration: none; overflow-wrap: anywhere; font-size: 13px; }
-        .link-actions { display: flex; gap: 8px; flex-wrap: wrap; }
-        .link-empty { font-size: 13px; color: var(--muted); background: #f7faff; border-radius: 12px; padding: 12px; }
-        .links-form { display: none; gap: 10px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); }
-        .links-form.active { display: grid; }
-        .links-form input, .links-form textarea {
-            width: 100%;
-            padding: 10px 12px;
-            border-radius: 10px;
-            border: 1px solid var(--line);
-            font-family: inherit;
-        }
-        .links-form textarea { min-height: 90px; resize: vertical; }
-        .mini-btn, .btn, .ghost-btn {
+        .status-message { background: #f7faff; padding: 10px; border-radius: 10px; font-size: 13px; color: var(--text); }
+        .btn, .ghost-btn {
             border: none;
             border-radius: 10px;
             padding: 10px 14px;
@@ -58,7 +38,6 @@
         .btn { background: var(--brand); color: white; }
         .btn:hover { background: var(--brand-dark); }
         .ghost-btn { background: #edf4ff; color: var(--brand); }
-        .mini-btn { background: #edf4ff; color: var(--brand); padding: 8px 10px; font-size: 12px; }
         .profile-hero { display: grid; grid-template-columns: auto 1fr auto; gap: 18px; align-items: center; }
         .avatar-wrap { position: relative; width: 128px; height: 128px; }
         .avatar-wrap img { width: 128px; height: 128px; border-radius: 50%; border: 4px solid var(--brand); object-fit: cover; background: #dce7fb; }
@@ -77,41 +56,22 @@
         .profile-form input, .profile-form textarea { width: 100%; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--line); font-family: inherit; }
         .profile-form textarea { grid-column: 1 / -1; min-height: 90px; resize: vertical; }
         .form-actions { grid-column: 1 / -1; display: flex; gap: 10px; justify-content: flex-end; }
-        .section-title { margin: 22px 0 12px; font-size: 18px; color: var(--brand); }
-        .posts-list { display: grid; gap: 16px; }
-        .post-card { background: white; padding: 18px; border-radius: 14px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
-        .post-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-        .post-author { display: flex; align-items: center; gap: 12px; }
-        .post-author img { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; background: #dce7fb; }
-        .post-time { font-size: 12px; color: var(--muted); }
-        .post-text { white-space: pre-wrap; line-height: 1.5; }
-        .post-image { width: 100%; max-height: 360px; object-fit: cover; border-radius: 12px; margin-top: 12px; }
-        .post-link-card { display: block; text-decoration: none; color: inherit; border: 1px solid var(--line); border-radius: 12px; padding: 12px; margin-top: 12px; background: #f8fbff; }
-        .post-link-title { font-weight: 700; margin-bottom: 6px; }
-        .post-link-description, .post-link-url { font-size: 13px; color: var(--muted); }
-        .post-menu, .comment-menu { position: relative; }
-        .menu-trigger, .comment-trigger { border: none; background: #edf4ff; color: var(--brand); cursor: pointer; border-radius: 50%; }
-        .menu-trigger { width: 36px; height: 36px; font-size: 18px; }
-        .comment-trigger { width: 28px; height: 28px; font-size: 14px; }
-        .menu-panel { display: none; position: absolute; top: 42px; right: 0; min-width: 140px; padding: 8px; border-radius: 12px; background: #fff; border: 1px solid var(--line); box-shadow: 0 10px 20px rgba(0,0,0,0.10); z-index: 3; }
-        .menu-panel.active { display: grid; gap: 6px; }
-        .menu-panel button { border: none; background: #f6f9ff; color: var(--text); border-radius: 8px; padding: 10px 12px; text-align: left; cursor: pointer; font-family: inherit; }
-        .post-actions { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
-        .post-actions button { border: none; background: #edf4ff; color: var(--brand); border-radius: 10px; padding: 10px 14px; cursor: pointer; font-family: inherit; font-weight: 600; }
-        .comments-box { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); }
-        .comment-list { display: grid; gap: 8px; margin-bottom: 12px; }
-        .comment-item { padding: 10px 12px; background: #f7faff; border-radius: 10px; font-size: 13px; line-height: 1.45; }
-        .comment-row { display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; }
-        .comment-author { font-weight: 700; margin-bottom: 4px; }
-        .comment-form { display: grid; gap: 8px; }
-        .comment-form textarea { width: 100%; min-height: 70px; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; font-family: inherit; resize: vertical; }
-        .comment-submit { justify-self: end; border: none; border-radius: 10px; padding: 10px 14px; background: var(--brand); color: #fff; cursor: pointer; font-family: inherit; font-weight: 600; }
+        .publications-box {
+            margin-top: 22px;
+            padding: 18px;
+            border-radius: 14px;
+            background: #f8fbff;
+            border: 1px solid var(--line);
+            display: grid;
+            gap: 12px;
+        }
+        .publications-box h2 { margin: 0; color: var(--brand); font-size: 18px; }
+        .publications-box p { margin: 0; color: var(--muted); line-height: 1.5; }
         @media (max-width: 1200px) {
-            .layout { grid-template-columns: minmax(0, 720px) 280px; }
-            .left-panel { grid-column: 1 / -1; }
+            .layout { padding: 0 20px 30px; }
         }
         @media (max-width: 1000px) {
-            .layout { grid-template-columns: 1fr; align-items: start; }
+            .layout { align-items: start; }
             .profile-hero { grid-template-columns: 1fr; text-align: center; }
             .avatar-wrap { margin: 0 auto; }
             .actions-col { justify-content: center; }
@@ -133,22 +93,6 @@
         </div>
     </div>
     <div class="layout">
-        <aside class="left-panel">
-            <div class="side-box">
-                <div class="side-title">Enlaces</div>
-                <div class="links-list" id="linksList"></div>
-                <div class="links-form" id="linksForm">
-                    <input id="linkNameInput" type="text" maxlength="80" placeholder="Nombre del enlace">
-                    <textarea id="linkDescriptionInput" maxlength="220" placeholder="Descripcion del enlace"></textarea>
-                    <input id="linkUrlInput" type="url" maxlength="300" placeholder="https://...">
-                    <div style="display:flex;gap:8px;flex-wrap:wrap;">
-                        <button class="btn" id="publishLinkBtn" type="button">Publicar enlace</button>
-                        <button class="ghost-btn" id="cancelLinkBtn" type="button">Cancelar</button>
-                    </div>
-                </div>
-                <button class="mini-btn" id="openLinkFormBtn" type="button" style="margin-top:12px;display:none;">Agregar enlace</button>
-            </div>
-        </aside>
         <div class="profile-container">
             <div class="profile-hero">
                 <div class="avatar-wrap">
@@ -186,19 +130,12 @@
                     <button class="btn" type="submit">Guardar cambios</button>
                 </div>
             </form>
-            <h2 class="section-title" id="postsHeading">Mis publicaciones</h2>
-            <div class="posts-list" id="postsList"><div class="post-card">Cargando publicaciones...</div></div>
+            <div class="publications-box">
+                <h2 id="postsHeading">Mis publicaciones</h2>
+                <p id="postsDescription">Abre una vista dedicada con todas tus publicaciones, comentarios y acciones del feed.</p>
+                <a class="btn" id="openPostsPageLink" href="/empireyoncarsocial/mispublicaciones">Ir a mis publicaciones</a>
+            </div>
         </div>
-        <aside class="right-panel">
-            <div class="side-box">
-                <div class="side-title">Notificaciones</div>
-                <div class="side-item">Tus alertas importantes apareceran aqui.</div>
-            </div>
-            <div class="side-box">
-                <div class="side-title">Estado</div>
-                <div class="side-item" id="profileState">Consultando presencia...</div>
-            </div>
-        </aside>
     </div>
     <script>
         const currentUserId = Number(localStorage.getItem("user_id") || 0);
@@ -209,12 +146,9 @@
         const profileMessage = document.getElementById("profileMessage");
         const photoInput = document.getElementById("photoInput");
         const followBtn = document.getElementById("followBtn");
-        const linksForm = document.getElementById("linksForm");
-        const openLinkFormBtn = document.getElementById("openLinkFormBtn");
-        const publishLinkBtn = document.getElementById("publishLinkBtn");
+        const openPostsPageLink = document.getElementById("openPostsPageLink");
         let currentUser = null;
         let presenceTimer = null;
-        let editingLinkIndex = null;
 
         function escapeHtml(value) {
             return String(value || "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;");
@@ -231,70 +165,10 @@
             return `${user.nombres || "Usuario"} ${user.apellidos || ""}`.trim();
         }
 
-        function getCurrentLinks() {
-            return Array.isArray(currentUser?.links) ? [...currentUser.links] : [];
-        }
-
-        function setLinkFormValues(link = {}) {
-            document.getElementById("linkNameInput").value = link.label || "";
-            document.getElementById("linkDescriptionInput").value = link.description || "";
-            document.getElementById("linkUrlInput").value = link.url || "";
-        }
-
-        function toggleLinkForm(show) {
-            linksForm.classList.toggle("active", show && isOwnProfile);
-            openLinkFormBtn.style.display = isOwnProfile && !show ? "inline-flex" : "none";
-            if (!show) {
-                editingLinkIndex = null;
-                setLinkFormValues();
-                publishLinkBtn.textContent = "Publicar enlace";
-            }
-        }
-
-        async function saveLinks(links) {
-            const payload = {
-                user_id: Number(currentUserId),
-                nombres: document.getElementById("editNombres").value.trim() || currentUser.nombres || "",
-                apellidos: document.getElementById("editApellidos").value.trim() || currentUser.apellidos || "",
-                oficio: document.getElementById("editOficio").value.trim() || currentUser.oficio || "",
-                whatsapp: document.getElementById("editWhatsapp").value.trim() || currentUser.whatsapp || "",
-                pais: document.getElementById("editPais").value.trim() || currentUser.pais || "",
-                estado: document.getElementById("editEstado").value.trim() || currentUser.estado || "",
-                ciudad: document.getElementById("editCiudad").value.trim() || currentUser.ciudad || "",
-                bio: document.getElementById("editBio").value.trim() || currentUser.bio || "",
-                links
-            };
-            const response = await fetch("/empireyoncarsocial/usuarios/api/perfil/update", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload)
-            });
-            const result = await response.json();
-            if (!response.ok) throw new Error(result.error || "No se pudo guardar");
-        }
-
-        function renderLinks(links) {
-            const list = document.getElementById("linksList");
-            if (!Array.isArray(links) || !links.length) {
-                list.innerHTML = '<div class="link-empty">Todavia no hay enlaces publicados.</div>';
-                toggleLinkForm(false);
-                return;
-            }
-            list.innerHTML = links.map((link, index) => `
-                <div class="link-item">
-                    <div class="link-label">${escapeHtml(link.label || "Enlace")}</div>
-                    <div class="link-description">${escapeHtml(link.description || "Sin descripcion.")}</div>
-                    <a href="${escapeHtml(link.url || "#")}" target="_blank" rel="noreferrer">${escapeHtml(link.url || "")}</a>
-                    ${isOwnProfile ? `<div class="link-actions"><button class="mini-btn" type="button" data-edit-link="${index}">Editar enlace</button><button class="mini-btn" type="button" data-delete-link="${index}">Quitar enlace</button></div>` : ""}
-                </div>
-            `).join("");
-        }
-
         function updatePresenceUi(user) {
             const online = Boolean(user && user.online);
             const dot = document.getElementById("onlineDot");
             dot.classList.toggle("online", online);
-            document.getElementById("profileState").textContent = online ? "Usuario en linea." : "Usuario desconectado.";
         }
 
         async function pingPresence() {
@@ -314,75 +188,6 @@
             presenceTimer = setInterval(pingPresence, 60000);
         }
 
-        function renderComment(comment, post) {
-            const ownComment = currentUserId === Number(comment.user_id);
-            const ownsPost = currentUserId === Number(post.user_id);
-            const canDelete = ownComment || ownsPost;
-            const authorName = `${comment.nombres || "Usuario"} ${comment.apellidos || ""}`.trim();
-            const menuHtml = canDelete ? `
-                <div class="comment-menu">
-                    <button class="comment-trigger" type="button" data-comment-trigger data-comment-id="${comment.id}">&#8942;</button>
-                    <div class="menu-panel" id="comment-menu-${comment.id}">
-                        ${ownComment ? `<button type="button" data-edit-comment="${comment.id}">Editar</button>` : ""}
-                        <button type="button" data-delete-comment="${comment.id}">Eliminar</button>
-                    </div>
-                </div>` : "";
-            return `
-                <div class="comment-item">
-                    <div class="comment-row">
-                        <div>
-                            <div class="comment-author"><a href="/empireyoncarsocial/perfil?user_id=${comment.user_id}" style="color:inherit;text-decoration:none;">${escapeHtml(authorName)}</a></div>
-                            <div>${escapeHtml(comment.comentario || "")}</div>
-                        </div>
-                        ${menuHtml}
-                    </div>
-                </div>`;
-        }
-
-        function renderPost(post) {
-            const imageHtml = post.imagen ? `<img class="post-image" src="${escapeHtml(post.imagen)}" alt="post">` : "";
-            const linkHtml = post.link_url ? `<a class="post-link-card" href="${escapeHtml(post.link_url)}" target="_blank" rel="noreferrer"><div class="post-link-title">${escapeHtml(post.link_title || post.link_url)}</div><div class="post-link-description">${escapeHtml(post.link_description || "Sin descripcion disponible.")}</div><div class="post-link-url">${escapeHtml(post.link_url)}</div></a>` : "";
-            const commentsHtml = (post.comments || []).map((comment) => renderComment(comment, post)).join("");
-            const ownPost = currentUserId === Number(post.user_id);
-            const displayName = `${post.nombres || currentUser?.nombres || "Usuario"} ${post.apellidos || currentUser?.apellidos || ""}`.trim();
-            const displayPhoto = post.foto_url || currentUser?.foto_url || "https://i.pravatar.cc/200";
-            const menuHtml = ownPost ? `
-                <div class="post-menu">
-                    <button class="menu-trigger" type="button" data-menu-trigger data-post-id="${post.id}">&#8942;</button>
-                    <div class="menu-panel" id="profile-menu-${post.id}">
-                        <button type="button" data-edit-post="${post.id}">Editar</button>
-                        <button type="button" data-delete-post="${post.id}">Eliminar</button>
-                    </div>
-                </div>` : "";
-            return `
-                <div class="post-card" id="post-${post.id}">
-                    <div class="post-header">
-                        <div class="post-author">
-                            <img src="${escapeHtml(displayPhoto)}" alt="Perfil">
-                            <div>
-                                <div><a href="/empireyoncarsocial/perfil?user_id=${post.user_id}" style="color:inherit;text-decoration:none;font-weight:700;">${escapeHtml(displayName)}${post.verificado ? " ✔" : ""}</a></div>
-                                <div class="post-time">${escapeHtml(formatDate(post.fecha))}</div>
-                            </div>
-                        </div>
-                        ${menuHtml}
-                    </div>
-                    <div class="post-text">${escapeHtml(post.contenido || "")}</div>
-                    ${imageHtml}
-                    ${linkHtml}
-                    <div class="post-actions">
-                        <button type="button" data-like-post="${post.id}">Me gusta (${post.likes || 0})</button>
-                        <button type="button" data-share-post="${post.id}">Compartir</button>
-                    </div>
-                    <div class="comments-box">
-                        <div class="comment-list">${commentsHtml || '<div class="comment-item">Todavia no hay comentarios.</div>'}</div>
-                        <form class="comment-form" data-comment-form="${post.id}">
-                            <textarea name="comentario" placeholder="Escribe un comentario"></textarea>
-                            <button class="comment-submit" type="submit">Publicar comentario</button>
-                        </form>
-                    </div>
-                </div>`;
-        }
-
         function fillForm(user) {
             document.getElementById("editNombres").value = user.nombres || "";
             document.getElementById("editApellidos").value = user.apellidos || "";
@@ -392,26 +197,6 @@
             document.getElementById("editEstado").value = user.estado || "";
             document.getElementById("editCiudad").value = user.ciudad || "";
             document.getElementById("editBio").value = user.bio || "";
-        }
-
-        async function cargarPosts() {
-            try {
-                const response = await fetch(`/empireyoncarsocial/posts_api/api/post/usuario/${viewedUserId}`);
-                const posts = await response.json();
-                if (!response.ok) throw new Error();
-                const postsWithComments = await Promise.all(posts.map(async (post) => {
-                    try {
-                        const commentsResponse = await fetch(`/empireyoncarsocial/posts_api/api/post/comentarios/${post.id}`);
-                        post.comments = commentsResponse.ok ? await commentsResponse.json() : [];
-                    } catch {
-                        post.comments = [];
-                    }
-                    return post;
-                }));
-                document.getElementById("postsList").innerHTML = posts.length ? postsWithComments.map(renderPost).join("") : '<div class="post-card">Todavia no hay publicaciones.</div>';
-            } catch {
-                document.getElementById("postsList").innerHTML = '<div class="post-card">No se pudieron cargar las publicaciones.</div>';
-            }
         }
 
         async function cargarPerfil() {
@@ -438,13 +223,15 @@
                 document.getElementById("siguiendo").textContent = user.siguiendo ?? 0;
                 document.getElementById("profileAvatar").src = user.foto_url || "https://i.pravatar.cc/200";
                 updatePresenceUi(user);
-                renderLinks(user.links || []);
                 document.getElementById("postsHeading").textContent = isOwnProfile ? "Mis publicaciones" : "Publicaciones";
+                document.getElementById("postsDescription").textContent = isOwnProfile
+                    ? "Abre una vista dedicada con todas tus publicaciones, comentarios y acciones del feed."
+                    : "Abre una vista dedicada para ver todas las publicaciones de este perfil.";
+                openPostsPageLink.href = `/empireyoncarsocial/mispublicaciones?user_id=${viewedUserId}`;
+                openPostsPageLink.textContent = isOwnProfile ? "Ir a mis publicaciones" : "Ver publicaciones";
                 fillForm(user);
                 document.getElementById("toggleEditBtn").hidden = !isOwnProfile;
                 document.getElementById("photoLabel").hidden = !isOwnProfile;
-                openLinkFormBtn.style.display = isOwnProfile ? "inline-flex" : "none";
-                toggleLinkForm(false);
                 profileForm.classList.remove("active");
                 if (!isOwnProfile) {
                     followBtn.hidden = false;
@@ -453,7 +240,6 @@
                 } else {
                     followBtn.hidden = true;
                 }
-                await cargarPosts();
             } catch {
                 document.getElementById("profileName").textContent = "Error de conexion";
                 document.getElementById("profileBio").textContent = "No se pudo consultar el servidor.";
@@ -469,69 +255,6 @@
             if (currentUser) fillForm(currentUser);
         });
 
-        openLinkFormBtn.addEventListener("click", () => {
-            editingLinkIndex = null;
-            setLinkFormValues();
-            publishLinkBtn.textContent = "Publicar enlace";
-            toggleLinkForm(true);
-        });
-
-        document.getElementById("cancelLinkBtn").addEventListener("click", () => {
-            toggleLinkForm(false);
-        });
-
-        publishLinkBtn.addEventListener("click", async () => {
-            const label = document.getElementById("linkNameInput").value.trim();
-            const description = document.getElementById("linkDescriptionInput").value.trim();
-            const url = document.getElementById("linkUrlInput").value.trim();
-            if (!label || !url) {
-                profileMessage.textContent = "El enlace necesita nombre y URL.";
-                return;
-            }
-            const links = getCurrentLinks();
-            const linkPayload = { label, description, url };
-            if (editingLinkIndex === null) {
-                links.push(linkPayload);
-            } else {
-                links[editingLinkIndex] = linkPayload;
-            }
-            profileMessage.textContent = editingLinkIndex === null ? "Publicando enlace..." : "Guardando enlace...";
-            try {
-                await saveLinks(links);
-                profileMessage.textContent = editingLinkIndex === null ? "Enlace publicado." : "Enlace actualizado.";
-                await cargarPerfil();
-            } catch {
-                profileMessage.textContent = "No se pudo guardar el enlace.";
-            }
-        });
-
-        document.getElementById("linksList").addEventListener("click", async (event) => {
-            const editButton = event.target.closest("[data-edit-link]");
-            if (editButton) {
-                const index = Number(editButton.dataset.editLink);
-                const link = getCurrentLinks()[index];
-                if (!link) return;
-                editingLinkIndex = index;
-                setLinkFormValues(link);
-                publishLinkBtn.textContent = "Guardar enlace";
-                toggleLinkForm(true);
-                return;
-            }
-            const deleteButton = event.target.closest("[data-delete-link]");
-            if (!deleteButton) return;
-            const index = Number(deleteButton.dataset.deleteLink);
-            const links = getCurrentLinks();
-            links.splice(index, 1);
-            profileMessage.textContent = "Quitando enlace...";
-            try {
-                await saveLinks(links);
-                profileMessage.textContent = "Enlace eliminado.";
-                await cargarPerfil();
-            } catch {
-                profileMessage.textContent = "No se pudo quitar el enlace.";
-            }
-        });
-
         profileForm.addEventListener("submit", async (event) => {
             event.preventDefault();
             const payload = {
@@ -543,8 +266,7 @@
                 pais: document.getElementById("editPais").value.trim(),
                 estado: document.getElementById("editEstado").value.trim(),
                 ciudad: document.getElementById("editCiudad").value.trim(),
-                bio: document.getElementById("editBio").value.trim(),
-                links: getCurrentLinks()
+                bio: document.getElementById("editBio").value.trim()
             };
             profileMessage.textContent = "Guardando...";
             try {
@@ -596,132 +318,6 @@
             } catch (error) {
                 profileMessage.textContent = error.message || "No se pudo seguir a este usuario.";
             }
-        });
-
-        document.getElementById("postsList").addEventListener("click", async (event) => {
-            const trigger = event.target.closest("[data-menu-trigger]");
-            if (trigger) {
-                const panel = document.getElementById(`profile-menu-${trigger.dataset.postId}`);
-                document.querySelectorAll(".menu-panel.active").forEach((node) => { if (node !== panel) node.classList.remove("active"); });
-                panel.classList.toggle("active");
-                return;
-            }
-            const commentTrigger = event.target.closest("[data-comment-trigger]");
-            if (commentTrigger) {
-                const panel = document.getElementById(`comment-menu-${commentTrigger.dataset.commentId}`);
-                document.querySelectorAll(".menu-panel.active").forEach((node) => { if (node !== panel) node.classList.remove("active"); });
-                panel.classList.toggle("active");
-                return;
-            }
-            const deleteButton = event.target.closest("[data-delete-post]");
-            if (deleteButton) {
-                if (!confirm("Deseas eliminar esta publicacion?")) return;
-                try {
-                    const response = await fetch("/empireyoncarsocial/posts_api/api/post/eliminar", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ post_id: Number(deleteButton.dataset.deletePost), user_id: Number(currentUserId) })
-                    });
-                    if (!response.ok) throw new Error();
-                    await cargarPosts();
-                } catch {}
-                return;
-            }
-            const editButton = event.target.closest("[data-edit-post]");
-            if (editButton) {
-                const postCard = document.getElementById(`post-${editButton.dataset.editPost}`);
-                const currentText = postCard.querySelector(".post-text").textContent;
-                const nuevoContenido = prompt("Editar publicacion", currentText);
-                if (nuevoContenido === null) return;
-                try {
-                    const response = await fetch("/empireyoncarsocial/posts_api/api/post/editar", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ post_id: Number(editButton.dataset.editPost), user_id: Number(currentUserId), contenido: nuevoContenido.trim() })
-                    });
-                    if (!response.ok) throw new Error();
-                    await cargarPosts();
-                } catch {}
-                return;
-            }
-            const likeButton = event.target.closest("[data-like-post]");
-            if (likeButton) {
-                try {
-                    const response = await fetch("/empireyoncarsocial/posts_api/api/post/like", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ post_id: Number(likeButton.dataset.likePost), user_id: Number(currentUserId) })
-                    });
-                    if (!response.ok) throw new Error();
-                    await cargarPosts();
-                } catch {}
-                return;
-            }
-            const shareButton = event.target.closest("[data-share-post]");
-            if (shareButton) {
-                const shareUrl = `${window.location.origin}/empireyoncarsocial/perfil?user_id=${viewedUserId}#post-${shareButton.dataset.sharePost}`;
-                try {
-                    await navigator.clipboard.writeText(shareUrl);
-                    profileMessage.textContent = "Has copiado el enlace.";
-                } catch {
-                    profileMessage.textContent = shareUrl;
-                }
-                return;
-            }
-            const editCommentButton = event.target.closest("[data-edit-comment]");
-            if (editCommentButton) {
-                const commentItem = editCommentButton.closest(".comment-item");
-                const currentText = commentItem.querySelector(".comment-row > div div:last-child").textContent;
-                const nuevoComentario = prompt("Editar comentario", currentText);
-                if (nuevoComentario === null) return;
-                try {
-                    const response = await fetch("/empireyoncarsocial/posts_api/api/post/comentario/editar", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ comment_id: Number(editCommentButton.dataset.editComment), user_id: Number(currentUserId), comentario: nuevoComentario.trim() })
-                    });
-                    if (!response.ok) throw new Error();
-                    await cargarPosts();
-                } catch {}
-                return;
-            }
-            const deleteCommentButton = event.target.closest("[data-delete-comment]");
-            if (deleteCommentButton) {
-                if (!confirm("Deseas eliminar este comentario?")) return;
-                try {
-                    const response = await fetch("/empireyoncarsocial/posts_api/api/post/comentario/eliminar", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ comment_id: Number(deleteCommentButton.dataset.deleteComment), user_id: Number(currentUserId) })
-                    });
-                    if (!response.ok) throw new Error();
-                    await cargarPosts();
-                } catch {}
-            }
-        });
-
-        document.getElementById("postsList").addEventListener("submit", async (event) => {
-            const form = event.target.closest("[data-comment-form]");
-            if (!form) return;
-            event.preventDefault();
-            const textarea = form.querySelector("textarea");
-            const comentario = textarea.value.trim();
-            if (!comentario) return;
-            try {
-                const response = await fetch("/empireyoncarsocial/posts_api/api/post/comentar", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ post_id: Number(form.dataset.commentForm), user_id: Number(currentUserId), comentario })
-                });
-                if (!response.ok) throw new Error();
-                textarea.value = "";
-                await cargarPosts();
-            } catch {}
-        });
-
-        document.addEventListener("click", (event) => {
-            if (event.target.closest(".post-menu, .comment-menu")) return;
-            document.querySelectorAll(".menu-panel.active").forEach((panel) => panel.classList.remove("active"));
         });
 
         document.addEventListener("visibilitychange", () => {

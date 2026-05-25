@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis publicaciones - Empireyoncar Social</title>
+    <link rel="stylesheet" href="/theme.css">
+    <style>
+        :root {
+            --brand: #1a73e8;
+            --brand-dark: #155fc0;
+            --bg: #eff5ff;
+            --panel: #fff;
+            --line: #dce8fb;
+            --text: #243247;
+            --muted: #697b96;
+        }
+        * { box-sizing: border-box; }
+        body { margin: 0; font-family: "Segoe UI", Arial, sans-serif; background: linear-gradient(180deg, #f6f9ff 0%, var(--bg) 100%); color: var(--text); }
+        .navbar { width: 100%; background: var(--brand); padding: 12px 20px; color: white; display: flex; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+        .logo { font-size: 20px; font-weight: bold; }
+        .nav-links { margin-left: 40px; display: flex; flex-wrap: wrap; gap: 18px; }
+        .nav-links a { color: white; text-decoration: none; font-weight: 500; }
+        .page { max-width: 920px; margin: 24px auto; padding: 0 20px 30px; display: grid; gap: 18px; }
+        .hero, .post-card { background: var(--panel); border-radius: 16px; box-shadow: 0 8px 24px rgba(24,59,112,0.10); }
+        .hero { padding: 20px; display: grid; gap: 14px; }
+        .hero-top { display: flex; justify-content: space-between; gap: 16px; align-items: center; flex-wrap: wrap; }
+        .hero-main { display: flex; align-items: center; gap: 14px; }
+        .hero-main img { width: 72px; height: 72px; border-radius: 50%; object-fit: cover; background: #dce7fb; }
+        .hero h1 { margin: 0; color: var(--brand); font-size: 26px; }
+        .hero p { margin: 4px 0 0; color: var(--muted); }
+        .hero-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+        .btn, .ghost-btn {
+            border: none;
+            border-radius: 10px;
+            padding: 10px 14px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: 600;
+            text-decoration: none;
+        }
+        .btn { background: var(--brand); color: white; }
+        .ghost-btn { background: #edf4ff; color: var(--brand); }
+        .posts-list { display: grid; gap: 16px; }
+        .post-card { padding: 18px; }
+        .post-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+        .post-author { display: flex; align-items: center; gap: 12px; }
+        .post-author img { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; background: #dce7fb; }
+        .post-time { font-size: 12px; color: var(--muted); }
+        .post-text { white-space: pre-wrap; line-height: 1.5; }
+        .post-image { width: 100%; max-height: 360px; object-fit: cover; border-radius: 12px; margin-top: 12px; }
+        .post-link-card { display: block; text-decoration: none; color: inherit; border: 1px solid var(--line); border-radius: 12px; padding: 12px; margin-top: 12px; background: #f8fbff; }
+        .post-link-title { font-weight: 700; margin-bottom: 6px; }
+        .post-link-description, .post-link-url { font-size: 13px; color: var(--muted); }
+        .post-menu, .comment-menu { position: relative; }
+        .menu-trigger, .comment-trigger { border: none; background: #edf4ff; color: var(--brand); cursor: pointer; border-radius: 50%; }
+        .menu-trigger { width: 36px; height: 36px; font-size: 18px; }
+        .comment-trigger { width: 28px; height: 28px; font-size: 14px; }
+        .menu-panel { display: none; position: absolute; top: 42px; right: 0; min-width: 140px; padding: 8px; border-radius: 12px; background: #fff; border: 1px solid var(--line); box-shadow: 0 10px 20px rgba(0,0,0,0.10); z-index: 3; }
+        .menu-panel.active { display: grid; gap: 6px; }
+        .menu-panel button { border: none; background: #f6f9ff; color: var(--text); border-radius: 8px; padding: 10px 12px; text-align: left; cursor: pointer; font-family: inherit; }
+        .post-actions { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
+        .post-actions button { border: none; background: #edf4ff; color: var(--brand); border-radius: 10px; padding: 10px 14px; cursor: pointer; font-family: inherit; font-weight: 600; }
+        .comments-box { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); }
+        .comment-list { display: grid; gap: 8px; margin-bottom: 12px; }
+        .comment-item { padding: 10px 12px; background: #f7faff; border-radius: 10px; font-size: 13px; line-height: 1.45; }
+        .comment-row { display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; }
+        .comment-author { font-weight: 700; margin-bottom: 4px; }
+        .comment-form { display: grid; gap: 8px; }
+        .comment-form textarea { width: 100%; min-height: 70px; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; font-family: inherit; resize: vertical; }
+        .comment-submit { justify-self: end; border: none; border-radius: 10px; padding: 10px 14px; background: var(--brand); color: #fff; cursor: pointer; font-family: inherit; font-weight: 600; }
+        @media (max-width: 640px) {
+            .hero-top { align-items: flex-start; }
+            .hero-main { align-items: flex-start; }
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div class="logo">Empireyoncar Social</div>
+        <div class="nav-links">
+            <a href="/empireyoncarsocial/home">Inicio</a>
+            <a href="/empireyoncarsocial/buscar">Buscar</a>
+            <a href="/empireyoncarsocial/perfil">Perfil</a>
+            <a href="/empireyoncarsocial/grupos/">Grupos</a>
+            <a href="/empireyoncarsocial/chat">Chat</a>
+            <a href="/empireyoncarsocial/notificaciones">Notificaciones</a>
+        </div>
+    </div>
+    <div class="page">
+        <section class="hero">
+            <div class="hero-top">
+                <div class="hero-main">
+                    <img id="heroAvatar" src="https://i.pravatar.cc/200" alt="Perfil">
+                    <div>
+                        <h1 id="pageTitle">Mis publicaciones</h1>
+                        <p id="pageSubtitle">Cargando publicaciones...</p>
+                    </div>
+                </div>
+                <div class="hero-actions">
+                    <a class="ghost-btn" id="backToProfileLink" href="/empireyoncarsocial/perfil">Volver al perfil</a>
+                </div>
+            </div>
+        </section>
+        <div class="posts-list" id="postsList"><div class="post-card">Cargando publicaciones...</div></div>
+    </div>
+    <script>
+        const currentUserId = Number(localStorage.getItem("user_id") || 0);
+        const params = new URLSearchParams(window.location.search);
+        const viewedUserId = Number(params.get("user_id") || currentUserId || 0);
+        const isOwnProfile = currentUserId === viewedUserId;
+        const postsList = document.getElementById("postsList");
+        let currentUser = null;
+
+        function escapeHtml(value) {
+            return String(value || "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;");
+        }
+
+        function formatDate(value) {
+            if (!value) return "Ahora";
+            const date = new Date(value);
+            if (Number.isNaN(date.getTime())) return "Ahora";
+            return date.toLocaleString("es-ES", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" });
+        }
+
+        function getProfileName(user) {
+            return `${user.nombres || "Usuario"} ${user.apellidos || ""}`.trim();
+        }
+
+        function renderComment(comment, post) {
+            const ownComment = currentUserId === Number(comment.user_id);
+            const ownsPost = currentUserId === Number(post.user_id);
+            const canDelete = ownComment || ownsPost;
+            const authorName = `${comment.nombres || "Usuario"} ${comment.apellidos || ""}`.trim();
+            const menuHtml = canDelete ? `
+                <div class="comment-menu">
+                    <button class="comment-trigger" type="button" data-comment-trigger data-comment-id="${comment.id}">&#8942;</button>
+                    <div class="menu-panel" id="comment-menu-${comment.id}">
+                        ${ownComment ? `<button type="button" data-edit-comment="${comment.id}">Editar</button>` : ""}
+                        <button type="button" data-delete-comment="${comment.id}">Eliminar</button>
+                    </div>
+                </div>` : "";
+            return `
+                <div class="comment-item">
+                    <div class="comment-row">
+                        <div>
+                            <div class="comment-author"><a href="/empireyoncarsocial/perfil?user_id=${comment.user_id}" style="color:inherit;text-decoration:none;">${escapeHtml(authorName)}</a></div>
+                            <div>${escapeHtml(comment.comentario || "")}</div>
+                        </div>
+                        ${menuHtml}
+                    </div>
+                </div>`;
+        }
+
+        function renderPost(post) {
+            const imageHtml = post.imagen ? `<img class="post-image" src="${escapeHtml(post.imagen)}" alt="post">` : "";
+            const linkHtml = post.link_url ? `<a class="post-link-card" href="${escapeHtml(post.link_url)}" target="_blank" rel="noreferrer"><div class="post-link-title">${escapeHtml(post.link_title || post.link_url)}</div><div class="post-link-description">${escapeHtml(post.link_description || "Sin descripcion disponible.")}</div><div class="post-link-url">${escapeHtml(post.link_url)}</div></a>` : "";
+            const commentsHtml = (post.comments || []).map((comment) => renderComment(comment, post)).join("");
+            const ownPost = currentUserId === Number(post.user_id);
+            const displayName = `${post.nombres || currentUser?.nombres || "Usuario"} ${post.apellidos || currentUser?.apellidos || ""}`.trim();
+            const displayPhoto = post.foto_url || currentUser?.foto_url || "https://i.pravatar.cc/200";
+            const menuHtml = ownPost ? `
+                <div class="post-menu">
+                    <button class="menu-trigger" type="button" data-menu-trigger data-post-id="${post.id}">&#8942;</button>
+                    <div class="menu-panel" id="menu-${post.id}">
+                        <button type="button" data-edit-post="${post.id}">Editar</button>
+                        <button type="button" data-delete-post="${post.id}">Eliminar</button>
+                    </div>
+                </div>` : "";
+            return `
+                <div class="post-card" id="post-${post.id}">
+                    <div class="post-header">
+                        <div class="post-author">
+                            <img src="${escapeHtml(displayPhoto)}" alt="Perfil">
+                            <div>
+                                <div><a href="/empireyoncarsocial/perfil?user_id=${post.user_id}" style="color:inherit;text-decoration:none;font-weight:700;">${escapeHtml(displayName)}${post.verificado ? " ✔" : ""}</a></div>
+                                <div class="post-time">${escapeHtml(formatDate(post.fecha))}</div>
+                            </div>
+                        </div>
+                        ${menuHtml}
+                    </div>
+                    <div class="post-text">${escapeHtml(post.contenido || "")}</div>
+                    ${imageHtml}
+                    ${linkHtml}
+                    <div class="post-actions">
+                        <button type="button" data-like-post="${post.id}">Me gusta (${post.likes || 0})</button>
+                        <button type="button" data-share-post="${post.id}">Compartir</button>
+                    </div>
+                    <div class="comments-box">
+                        <div class="comment-list">${commentsHtml || '<div class="comment-item">Todavia no hay comentarios.</div>'}</div>
+                        <form class="comment-form" data-comment-form="${post.id}">
+                            <textarea name="comentario" placeholder="Escribe un comentario"></textarea>
+                            <button class="comment-submit" type="submit">Publicar comentario</button>
+                        </form>
+                    </div>
+                </div>`;
+        }
+
+        async function cargarPerfil() {
+            if (!currentUserId) {
+                window.location.href = "login";
+                return;
+            }
+            try {
+                const response = await fetch(`/empireyoncarsocial/usuarios/api/perfil/${viewedUserId}?viewer_id=${currentUserId}`);
+                const user = await response.json();
+                if (!response.ok) throw new Error();
+                currentUser = user;
+                document.getElementById("heroAvatar").src = user.foto_url || "https://i.pravatar.cc/200";
+                document.getElementById("pageTitle").textContent = isOwnProfile ? "Mis publicaciones" : `Publicaciones de ${getProfileName(user)}`;
+                document.getElementById("pageSubtitle").textContent = isOwnProfile
+                    ? "Aqui puedes ver y gestionar todas tus publicaciones."
+                    : `Explora todas las publicaciones de ${getProfileName(user)}.`;
+                document.getElementById("backToProfileLink").href = `/empireyoncarsocial/perfil?user_id=${viewedUserId}`;
+            } catch {
+                document.getElementById("pageSubtitle").textContent = "No se pudo cargar el perfil.";
+            }
+        }
+
+        async function cargarPosts() {
+            try {
+                const response = await fetch(`/empireyoncarsocial/posts_api/api/post/usuario/${viewedUserId}`);
+                const posts = await response.json();
+                if (!response.ok) throw new Error();
+                const postsWithComments = await Promise.all(posts.map(async (post) => {
+                    try {
+                        const commentsResponse = await fetch(`/empireyoncarsocial/posts_api/api/post/comentarios/${post.id}`);
+                        post.comments = commentsResponse.ok ? await commentsResponse.json() : [];
+                    } catch {
+                        post.comments = [];
+                    }
+                    return post;
+                }));
+                postsList.innerHTML = posts.length ? postsWithComments.map(renderPost).join("") : '<div class="post-card">Todavia no hay publicaciones.</div>';
+            } catch {
+                postsList.innerHTML = '<div class="post-card">No se pudieron cargar las publicaciones.</div>';
+            }
+        }
+
+        postsList.addEventListener("click", async (event) => {
+            const trigger = event.target.closest("[data-menu-trigger]");
+            if (trigger) {
+                const panel = document.getElementById(`menu-${trigger.dataset.postId}`);
+                document.querySelectorAll(".menu-panel.active").forEach((node) => { if (node !== panel) node.classList.remove("active"); });
+                panel.classList.toggle("active");
+                return;
+            }
+            const commentTrigger = event.target.closest("[data-comment-trigger]");
+            if (commentTrigger) {
+                const panel = document.getElementById(`comment-menu-${commentTrigger.dataset.commentId}`);
+                document.querySelectorAll(".menu-panel.active").forEach((node) => { if (node !== panel) node.classList.remove("active"); });
+                panel.classList.toggle("active");
+                return;
+            }
+            const deleteButton = event.target.closest("[data-delete-post]");
+            if (deleteButton) {
+                if (!confirm("Deseas eliminar esta publicacion?")) return;
+                try {
+                    const response = await fetch("/empireyoncarsocial/posts_api/api/post/eliminar", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ post_id: Number(deleteButton.dataset.deletePost), user_id: Number(currentUserId) })
+                    });
+                    if (!response.ok) throw new Error();
+                    await cargarPosts();
+                } catch {}
+                return;
+            }
+            const editButton = event.target.closest("[data-edit-post]");
+            if (editButton) {
+                const postCard = document.getElementById(`post-${editButton.dataset.editPost}`);
+                const currentText = postCard.querySelector(".post-text").textContent;
+                const nuevoContenido = prompt("Editar publicacion", currentText);
+                if (nuevoContenido === null) return;
+                try {
+                    const response = await fetch("/empireyoncarsocial/posts_api/api/post/editar", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ post_id: Number(editButton.dataset.editPost), user_id: Number(currentUserId), contenido: nuevoContenido.trim() })
+                    });
+                    if (!response.ok) throw new Error();
+                    await cargarPosts();
+                } catch {}
+                return;
+            }
+            const likeButton = event.target.closest("[data-like-post]");
+            if (likeButton) {
+                try {
+                    const response = await fetch("/empireyoncarsocial/posts_api/api/post/like", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ post_id: Number(likeButton.dataset.likePost), user_id: Number(currentUserId) })
+                    });
+                    if (!response.ok) throw new Error();
+                    await cargarPosts();
+                } catch {}
+                return;
+            }
+            const shareButton = event.target.closest("[data-share-post]");
+            if (shareButton) {
+                const shareUrl = `${window.location.origin}/empireyoncarsocial/mispublicaciones?user_id=${viewedUserId}#post-${shareButton.dataset.sharePost}`;
+                try {
+                    await navigator.clipboard.writeText(shareUrl);
+                    alert("Has copiado el enlace.");
+                } catch {
+                    alert(shareUrl);
+                }
+                return;
+            }
+            const editCommentButton = event.target.closest("[data-edit-comment]");
+            if (editCommentButton) {
+                const commentItem = editCommentButton.closest(".comment-item");
+                const currentText = commentItem.querySelector(".comment-row > div div:last-child").textContent;
+                const nuevoComentario = prompt("Editar comentario", currentText);
+                if (nuevoComentario === null) return;
+                try {
+                    const response = await fetch("/empireyoncarsocial/posts_api/api/post/comentario/editar", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ comment_id: Number(editCommentButton.dataset.editComment), user_id: Number(currentUserId), comentario: nuevoComentario.trim() })
+                    });
+                    if (!response.ok) throw new Error();
+                    await cargarPosts();
+                } catch {}
+                return;
+            }
+            const deleteCommentButton = event.target.closest("[data-delete-comment]");
+            if (deleteCommentButton) {
+                if (!confirm("Deseas eliminar este comentario?")) return;
+                try {
+                    const response = await fetch("/empireyoncarsocial/posts_api/api/post/comentario/eliminar", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ comment_id: Number(deleteCommentButton.dataset.deleteComment), user_id: Number(currentUserId) })
+                    });
+                    if (!response.ok) throw new Error();
+                    await cargarPosts();
+                } catch {}
+            }
+        });
+
+        postsList.addEventListener("submit", async (event) => {
+            const form = event.target.closest("[data-comment-form]");
+            if (!form) return;
+            event.preventDefault();
+            const textarea = form.querySelector("textarea");
+            const comentario = textarea.value.trim();
+            if (!comentario) return;
+            try {
+                const response = await fetch("/empireyoncarsocial/posts_api/api/post/comentar", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ post_id: Number(form.dataset.commentForm), user_id: Number(currentUserId), comentario })
+                });
+                if (!response.ok) throw new Error();
+                textarea.value = "";
+                await cargarPosts();
+            } catch {}
+        });
+
+        document.addEventListener("click", (event) => {
+            if (event.target.closest(".post-menu, .comment-menu")) return;
+            document.querySelectorAll(".menu-panel.active").forEach((panel) => panel.classList.remove("active"));
+        });
+
+        cargarPerfil();
+        cargarPosts();
+    </script>
+</body>
+</html>

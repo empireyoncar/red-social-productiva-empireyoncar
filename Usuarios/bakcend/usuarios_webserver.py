@@ -63,6 +63,12 @@ def buscar():
     return render_template("buscar.html")
 
 
+@app.route("/mispublicaciones")
+@app.route("/empireyoncarsocial/mispublicaciones")
+def mis_publicaciones():
+    return render_template("mispublicaciones.html")
+
+
 @app.route("/chat")
 @app.route("/empireyoncarsocial/chat")
 def chat():
