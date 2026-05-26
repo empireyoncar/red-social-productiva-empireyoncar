@@ -6,55 +6,176 @@
     <title>Casa del grupo</title>
     <link rel="stylesheet" href="/theme.css">
     <style>
-        :root { --brand:#1a73e8; --brand-dark:#155fc0; --bg:#eef5ff; --panel:#fff; --line:#d8e5fb; --text:#233247; --muted:#697b96; }
-        * { box-sizing:border-box; }
-        body { margin:0; font-family:"Segoe UI", Arial, sans-serif; background:linear-gradient(180deg,#f8fbff 0%,var(--bg) 100%); color:var(--text); }
-        .navbar { width:100%; background:var(--brand); padding:12px 20px; color:white; display:flex; align-items:center; box-shadow:0 2px 8px rgba(0,0,0,0.15); }
+        :root {
+            --bg: #eef4ff;
+            --panel: #ffffff;
+            --panel-soft: #f7faff;
+            --line: #d7e3f7;
+            --text: #233043;
+            --muted: #617089;
+            --brand: #1a73e8;
+            --brand-dark: #155fc0;
+            --shadow: 0 10px 30px rgba(26, 64, 122, 0.10);
+            --radius: 14px;
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: "Segoe UI", Arial, sans-serif;
+            background:
+                radial-gradient(circle at top left, rgba(26, 115, 232, 0.10), transparent 30%),
+                linear-gradient(180deg, #f5f9ff 0%, var(--bg) 52%, #e9f0ff 100%);
+            color: var(--text);
+        }
+        .navbar {
+            width: 100%;
+            background: var(--brand);
+            padding: 12px 20px 16px;
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+        .navbar-top { display:flex; align-items:center; justify-content:flex-start; }
         .logo { font-size:20px; font-weight:bold; }
-        .nav-links { margin-left:40px; display:flex; gap:18px; flex-wrap:wrap; }
+        .nav-links { display:flex; margin-left:40px; gap:18px; flex-wrap:wrap; }
         .nav-links a { color:white; text-decoration:none; font-weight:500; }
-        .page { max-width:1180px; margin:28px auto; padding:0 20px 30px; display:grid; grid-template-columns:minmax(0,1fr) 300px; gap:20px; }
-        .panel, .post-card { background:var(--panel); border-radius:16px; box-shadow:0 8px 24px rgba(20,57,110,0.10); }
+        .page { max-width:1240px; margin:24px auto; padding:0 20px 30px; display:grid; grid-template-columns:minmax(0,1fr) 300px; gap:20px; }
+        .main-stack { display:grid; gap:18px; }
+        .panel, .post-card, .create-post { background:var(--panel); border-radius:16px; box-shadow:var(--shadow); }
         .panel { padding:20px; }
         .banner { height:220px; border-radius:14px; background:linear-gradient(135deg,#1a73e8,#4ca0ff); background-size:cover; background-position:center; margin-bottom:18px; }
         .group-info { display:grid; gap:12px; }
         .group-meta { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
         .meta-box { background:#f7faff; border-radius:12px; padding:12px; }
-        .composer textarea, .composer input, .composer textarea, .panel input { width:100%; padding:12px 14px; border:1px solid var(--line); border-radius:12px; font-family:inherit; }
-        .composer textarea { min-height:120px; resize:vertical; }
-        .btn, .ghost-btn { border:none; border-radius:12px; padding:12px 16px; cursor:pointer; font-family:inherit; font-weight:600; text-decoration:none; }
-        .btn { background:var(--brand); color:#fff; }
-        .ghost-btn { background:#edf4ff; color:var(--brand); }
-        .toolbar { display:flex; gap:10px; flex-wrap:wrap; }
-        .post-list { display:grid; gap:16px; margin-top:18px; }
+        .create-post {
+            padding:16px;
+            display:grid;
+            gap:12px;
+        }
+        .composer-top { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+        .create-post h2 { margin:0; color:var(--brand); font-size:18px; }
+        .composer-hint { font-size:12px; color:var(--muted); }
+        .create-post textarea,
+        .create-post input[type="url"],
+        .create-post input[type="text"] {
+            width:100%;
+            border:1px solid var(--line);
+            border-radius:10px;
+            font-family:inherit;
+            font-size:14px;
+            color:var(--text);
+            background:#fff;
+        }
+        .create-post textarea { min-height:88px; padding:12px; resize:vertical; line-height:1.45; }
+        .create-post input[type="url"], .create-post input[type="text"] { padding:10px 12px; }
+        .toolbar-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+        .file-picker {
+            display:inline-flex; align-items:center; justify-content:center; min-height:42px;
+            padding:10px 12px; border:1px dashed var(--line); border-radius:10px;
+            background:var(--panel-soft); color:var(--muted); font-size:13px; cursor:pointer; text-align:center;
+        }
+        .file-picker input { display:none; }
+        .toggle-row { display:flex; gap:8px; flex-wrap:wrap; }
+        .toggle-btn {
+            border:1px solid var(--line); background:var(--panel-soft); color:var(--muted);
+            border-radius:999px; padding:8px 12px; font-size:12px; cursor:pointer;
+        }
+        .toggle-btn.active { background:#e8f0ff; color:var(--brand); border-color:#bfd4fa; }
+        .composer-section {
+            display:none; gap:10px; padding:12px; border-radius:12px;
+            background:var(--panel-soft); border:1px solid #edf3ff;
+        }
+        .composer-section.active { display:grid; }
+        .poll-option-row { display:grid; grid-template-columns:1fr auto; gap:8px; }
+        .mini-btn, .btn-post {
+            border:none; border-radius:10px; cursor:pointer; transition:0.2s; font-family:inherit;
+        }
+        .mini-btn { padding:10px 12px; background:#e8f0ff; color:var(--brand); font-size:13px; font-weight:600; }
+        .btn-post { width:100%; padding:12px 18px; background:var(--brand); color:white; font-size:15px; font-weight:600; }
+        .mini-btn:hover, .btn-post:hover { background:var(--brand-dark); color:#fff; }
+        .btn-post:disabled { background:#8ab4f8; cursor:not-allowed; }
+        .form-message, .message { min-height:18px; font-size:13px; color:var(--muted); }
+        .preview-stack { display:grid; gap:10px; }
+        .image-preview, .link-preview { display:none; }
+        .image-preview.active, .link-preview.active { display:block; }
+        .image-preview img {
+            width:100%; max-height:180px; object-fit:cover; border-radius:12px; border:1px solid var(--line);
+        }
+        .link-preview { border:1px solid var(--line); border-radius:12px; overflow:hidden; background:#fff; }
+        .link-preview img { width:100%; max-height:140px; object-fit:cover; display:block; background:#dfe9fb; }
+        .link-preview-body { padding:12px; }
+        .link-preview-title { font-size:14px; font-weight:700; margin-bottom:6px; }
+        .link-preview-description { font-size:13px; color:var(--muted); line-height:1.45; }
+        .post-list { display:grid; gap:16px; }
         .post-card { padding:18px; }
-        .post-author { display:flex; align-items:center; gap:12px; margin-bottom:10px; }
-        .avatar { width:44px; height:44px; border-radius:50%; background:#dce7fb; display:grid; place-items:center; font-weight:700; color:var(--brand); }
+        .post-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+        .post-author { display:flex; align-items:center; gap:12px; }
+        .post-author img {
+            width:44px; height:44px; border-radius:50%; object-fit:cover; background:#dce7fb;
+        }
         .post-time { font-size:12px; color:var(--muted); }
         .post-text { white-space:pre-wrap; line-height:1.5; }
+        .post-image { width:100%; max-height:360px; object-fit:cover; border-radius:12px; margin-top:12px; }
+        .post-link-card {
+            display:block; text-decoration:none; color:inherit; border:1px solid var(--line);
+            border-radius:12px; padding:12px; margin-top:12px; background:#f8fbff;
+        }
+        .post-link-title { font-weight:700; margin-bottom:6px; }
+        .post-link-description, .post-link-url { font-size:13px; color:var(--muted); }
         .post-actions { display:flex; gap:10px; margin-top:12px; flex-wrap:wrap; }
+        .post-actions button, .ghost-btn, .btn {
+            border:none; background:#edf4ff; color:var(--brand); border-radius:10px;
+            padding:10px 14px; cursor:pointer; font-family:inherit; font-weight:600; text-decoration:none;
+        }
+        .btn { background:var(--brand); color:#fff; border-radius:12px; }
+        .ghost-btn { border-radius:12px; }
+        .comments-box { margin-top:12px; padding-top:12px; border-top:1px solid var(--line); }
+        .comment-list { display:grid; gap:8px; margin-bottom:12px; }
+        .comment-item { padding:10px 12px; background:#f7faff; border-radius:10px; font-size:13px; line-height:1.45; }
+        .comment-form { display:grid; gap:8px; }
+        .comment-form textarea {
+            width:100%; min-height:70px; border:1px solid var(--line); border-radius:10px;
+            padding:10px 12px; font-family:inherit; resize:vertical;
+        }
+        .comment-submit {
+            justify-self:end; border:none; border-radius:10px; padding:10px 14px;
+            background:var(--brand); color:#fff; cursor:pointer; font-family:inherit; font-weight:600;
+        }
         .sidebar { display:grid; gap:20px; align-content:start; }
         .admin-actions { display:grid; gap:10px; }
-        .message { min-height:18px; color:var(--muted); font-size:13px; }
-        @media (max-width:980px) { .page,.group-meta { grid-template-columns:1fr; } }
+        .poll-box { margin-top:12px; display:grid; gap:8px; padding:12px; border-radius:12px; background:#f7faff; border:1px solid var(--line); }
+        .poll-question { font-weight:700; }
+        .poll-vote-btn {
+            width:100%; display:flex; justify-content:space-between; gap:12px; border:none;
+            padding:10px 12px; border-radius:10px; background:#e8f0ff; color:var(--brand); cursor:pointer; font-family:inherit;
+        }
+        .poll-total { font-size:12px; color:var(--muted); }
+        @media (max-width:980px) {
+            .page, .group-meta { grid-template-columns:1fr; }
+            .toolbar-row { grid-template-columns:1fr; }
+        }
     </style>
 </head>
 <body>
     <div class="navbar">
-        <div class="logo">Empireyoncar Social</div>
-        <div class="nav-links">
-            <a href="/empireyoncarsocial/grupos/">Grupos</a>
-            <a href="/empireyoncarsocial/home">Inicio</a>
-            <a href="/empireyoncarsocial/perfil">Perfil</a>
+        <div class="navbar-top">
+            <div class="logo">Empireyoncar Social</div>
+            <div class="nav-links">
+                <a href="/empireyoncarsocial/grupos/">Grupos</a>
+                <a href="/empireyoncarsocial/home">Inicio</a>
+                <a href="/empireyoncarsocial/perfil">Perfil</a>
+            </div>
         </div>
     </div>
+
     <div class="page">
-        <div>
+        <div class="main-stack">
             <section class="panel">
                 <div class="banner" id="groupBanner"></div>
                 <div class="group-info">
                     <h1 id="groupName">Cargando grupo...</h1>
-                    <p id="groupShortDescription"></p>
                     <div class="group-meta">
                         <div class="meta-box"><strong>Descripcion larga</strong><div id="groupLongDescription"></div></div>
                         <div class="meta-box"><strong>Reglas del grupo</strong><div id="groupRules"></div></div>
@@ -63,16 +184,52 @@
                     </div>
                 </div>
             </section>
-            <section class="panel composer" style="margin-top:20px;">
-                <h2>Crear post</h2>
-                <textarea id="postContent" placeholder="Comparte una idea con la comunidad"></textarea>
-                <div class="toolbar" style="margin-top:12px;">
-                    <button class="btn" id="publishPostBtn" type="button">Publicar</button>
-                    <div class="message" id="postMessage"></div>
+
+            <form class="create-post" id="createPostForm">
+                <div class="composer-top">
+                    <h2>Crear publicacion</h2>
+                    <div class="composer-hint">Texto, imagen, link o encuesta</div>
                 </div>
-            </section>
+                <textarea id="postContent" placeholder="Comparte una idea, avance o proyecto con la comunidad..."></textarea>
+                <div class="toolbar-row">
+                    <label class="file-picker" for="postImageFile">Subir imagen<input id="postImageFile" type="file" accept="image/*"></label>
+                    <input id="postLink" type="url" placeholder="Pega un enlace">
+                </div>
+                <div class="toggle-row">
+                    <button class="toggle-btn" type="button" id="toggleLinkPreview">Vista previa link</button>
+                    <button class="toggle-btn" type="button" id="togglePollBuilder">Agregar encuesta</button>
+                </div>
+                <div class="composer-section" id="pollBuilder">
+                    <input id="pollQuestion" type="text" maxlength="140" placeholder="Pregunta de la encuesta">
+                    <div id="pollOptions">
+                        <div class="poll-option-row">
+                            <input class="poll-option-input" type="text" maxlength="80" placeholder="Opcion 1">
+                            <button class="mini-btn" type="button" data-remove-poll-option>Quitar</button>
+                        </div>
+                        <div class="poll-option-row">
+                            <input class="poll-option-input" type="text" maxlength="80" placeholder="Opcion 2">
+                            <button class="mini-btn" type="button" data-remove-poll-option>Quitar</button>
+                        </div>
+                    </div>
+                    <button class="mini-btn" type="button" id="addPollOptionBtn">Agregar opcion</button>
+                </div>
+                <div class="preview-stack">
+                    <div class="image-preview" id="imagePreview"><img id="imagePreviewImg" alt="Vista previa de imagen"></div>
+                    <div class="link-preview" id="linkPreview">
+                        <img id="linkPreviewImg" alt="Vista previa del enlace">
+                        <div class="link-preview-body">
+                            <div class="link-preview-title" id="linkPreviewTitle">Vista previa del enlace</div>
+                            <div class="link-preview-description" id="linkPreviewDescription">Agrega un enlace valido para cargar su metadata.</div>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn-post" type="submit">Publicar</button>
+                <div class="form-message" id="postMessage"></div>
+            </form>
+
             <div class="post-list" id="postList"></div>
         </div>
+
         <aside class="sidebar">
             <section class="panel">
                 <h2>Miembros</h2>
@@ -86,31 +243,242 @@
                     <a class="ghost-btn" id="viewRequestsBtn" href="#">Ver solicitudes de ingreso</a>
                     <a class="ghost-btn" id="manageMembersBtn" href="#">Expulsar miembros</a>
                     <button class="ghost-btn" id="pinPostBtn" type="button">Fijar publicacion</button>
+                    <button class="ghost-btn" id="deleteGroupBtn" type="button">Eliminar grupo</button>
                     <input id="bannerInput" type="file" accept="image/*">
                 </div>
             </section>
         </aside>
     </div>
+
     <script>
         const params = new URLSearchParams(window.location.search);
         const groupId = params.get("group_id");
         const currentUserId = Number(localStorage.getItem("user_id") || 1);
-        const currentUserName = localStorage.getItem("user_name") || "Administrador";
+        let currentUserName = localStorage.getItem("user_name") || "";
+        const createPostForm = document.getElementById("createPostForm");
+        const postContent = document.getElementById("postContent");
+        const postImageFile = document.getElementById("postImageFile");
+        const postLink = document.getElementById("postLink");
+        const toggleLinkPreview = document.getElementById("toggleLinkPreview");
+        const togglePollBuilder = document.getElementById("togglePollBuilder");
+        const pollBuilder = document.getElementById("pollBuilder");
+        const pollQuestion = document.getElementById("pollQuestion");
+        const pollOptions = document.getElementById("pollOptions");
+        const addPollOptionBtn = document.getElementById("addPollOptionBtn");
+        const imagePreview = document.getElementById("imagePreview");
+        const imagePreviewImg = document.getElementById("imagePreviewImg");
+        const linkPreview = document.getElementById("linkPreview");
+        const linkPreviewImg = document.getElementById("linkPreviewImg");
+        const linkPreviewTitle = document.getElementById("linkPreviewTitle");
+        const linkPreviewDescription = document.getElementById("linkPreviewDescription");
+        const postMessage = document.getElementById("postMessage");
+        const postList = document.getElementById("postList");
+        const pollState = { open: false };
+        let currentLinkMetadata = null;
+        let compressedImageData = null;
         let group = null;
 
         function getGroups() { return JSON.parse(localStorage.getItem("empire_groups") || "[]"); }
         function saveGroups(groups) { localStorage.setItem("empire_groups", JSON.stringify(groups)); }
         function getGroup() { return getGroups().find((item) => item.id === groupId); }
         function initials(name) { return (name || "U").split(" ").map((part) => part[0]).join("").slice(0, 2).toUpperCase(); }
-
+        function getDisplayName() {
+            const first = (localStorage.getItem("user_first_name") || "").trim();
+            const last = (localStorage.getItem("user_last_name") || "").trim();
+            return `${first} ${last}`.trim() || currentUserName || "Administrador";
+        }
+        async function hydrateCurrentUserName() {
+            if (!currentUserId) return;
+            try {
+                const response = await fetch(`/empireyoncarsocial/usuarios/api/perfil/${currentUserId}`);
+                if (!response.ok) return;
+                const user = await response.json();
+                const first = (user.nombres || "").trim();
+                const last = (user.apellidos || "").trim();
+                const combined = `${first} ${last}`.trim();
+                if (first) localStorage.setItem("user_first_name", first);
+                if (last) localStorage.setItem("user_last_name", last);
+                if (combined) {
+                    localStorage.setItem("user_name", combined);
+                    currentUserName = combined;
+                }
+            } catch {}
+        }
+        function migrateGroupIdentity(targetGroup) {
+            if (!targetGroup) return targetGroup;
+            const displayName = getDisplayName();
+            if (Number(targetGroup.creador_id) === currentUserId && (!targetGroup.creador || targetGroup.creador === "Administrador")) {
+                targetGroup.creador = displayName;
+            }
+            targetGroup.admins = (targetGroup.admins || []).map((adminName) =>
+                adminName === "Administrador" && Number(targetGroup.creador_id) === currentUserId ? displayName : adminName
+            );
+            (targetGroup.members || []).forEach((member) => {
+                if (Number(member.id) === currentUserId && (!member.nombre || member.nombre === "Administrador")) {
+                    member.nombre = displayName;
+                }
+            });
+            return targetGroup;
+        }
+        function escapeHtml(value) {
+            return String(value || "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;");
+        }
+        function debounce(fn, delay) {
+            let timer = null;
+            return (...args) => { clearTimeout(timer); timer = window.setTimeout(() => fn(...args), delay); };
+        }
+        function formatDate(value) {
+            if (!value) return "Ahora";
+            const date = new Date(value);
+            if (Number.isNaN(date.getTime())) return "Ahora";
+            return date.toLocaleString("es-ES", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" });
+        }
+        function totalVotes(post) { return (post.poll_votes || []).reduce((sum, value) => sum + Number(value || 0), 0); }
+        function resetLinkPreview() {
+            currentLinkMetadata = null;
+            linkPreview.classList.remove("active");
+            toggleLinkPreview.classList.remove("active");
+            linkPreviewImg.style.display = "none";
+            linkPreviewImg.removeAttribute("src");
+            linkPreviewTitle.textContent = "Vista previa del enlace";
+            linkPreviewDescription.textContent = "Agrega un enlace valido para cargar su metadata.";
+        }
+        function applyLinkPreview(metadata) {
+            currentLinkMetadata = metadata;
+            linkPreview.classList.add("active");
+            toggleLinkPreview.classList.add("active");
+            linkPreviewTitle.textContent = metadata.title || metadata.url || "Enlace";
+            linkPreviewDescription.textContent = metadata.description || "Sin descripcion disponible.";
+            if (metadata.image) { linkPreviewImg.src = metadata.image; linkPreviewImg.style.display = "block"; }
+            else { linkPreviewImg.style.display = "none"; linkPreviewImg.removeAttribute("src"); }
+        }
+        async function fetchLinkPreview(url) {
+            return {
+                url,
+                title: url.replace(/^https?:\/\//, "").slice(0, 60),
+                description: "Vista previa simple del enlace compartido en la comunidad.",
+                image: null
+            };
+        }
+        async function compressImage(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => {
+                    const image = new Image();
+                    image.onload = () => {
+                        const maxWidth = 1600, maxHeight = 1600;
+                        let width = image.width, height = image.height;
+                        if (width > maxWidth || height > maxHeight) {
+                            const scale = Math.min(maxWidth / width, maxHeight / height);
+                            width = Math.round(width * scale);
+                            height = Math.round(height * scale);
+                        }
+                        const canvas = document.createElement("canvas");
+                        canvas.width = width;
+                        canvas.height = height;
+                        const context = canvas.getContext("2d");
+                        context.drawImage(image, 0, 0, width, height);
+                        const result = canvas.toDataURL("image/jpeg", 0.82);
+                        resolve(result);
+                    };
+                    image.onerror = () => reject(new Error("No se pudo procesar la imagen"));
+                    image.src = reader.result;
+                };
+                reader.onerror = () => reject(new Error("No se pudo leer la imagen"));
+                reader.readAsDataURL(file);
+            });
+        }
+        function getPollOptions() {
+            return Array.from(document.querySelectorAll(".poll-option-input")).map((input) => input.value.trim()).filter(Boolean).slice(0, 4);
+        }
+        function renderLink(post) {
+            if (!post.link_url) return "";
+            return `
+                <a class="post-link-card" href="${escapeHtml(post.link_url)}" target="_blank" rel="noreferrer">
+                    <div class="post-link-title">${escapeHtml(post.link_title || post.link_url)}</div>
+                    <div class="post-link-description">${escapeHtml(post.link_description || "Sin descripcion disponible.")}</div>
+                    <div class="post-link-url">${escapeHtml(post.link_url)}</div>
+                </a>
+            `;
+        }
+        function renderPoll(post) {
+            if (!post.poll_question || !post.poll_options || !post.poll_options.length) return "";
+            const votes = post.poll_votes || new Array(post.poll_options.length).fill(0);
+            const total = totalVotes(post);
+            const optionsHtml = post.poll_options.map((option, index) => `
+                <div class="poll-option">
+                    <button class="poll-vote-btn" type="button" data-poll-vote data-post-id="${post.id}" data-option-index="${index}">
+                        <span>${escapeHtml(option)}</span>
+                        <span>${Number(votes[index] || 0)} votos</span>
+                    </button>
+                </div>`).join("");
+            return `<div class="poll-box"><div class="poll-question">${escapeHtml(post.poll_question)}</div>${optionsHtml}<div class="poll-total">${total} votos totales</div></div>`;
+        }
+        function renderComment(comment) {
+            return `
+                <div class="comment-item">
+                    <div class="comment-author">${escapeHtml(comment.author || "Usuario")}</div>
+                    <div>${escapeHtml(comment.comentario || "")}</div>
+                </div>
+            `;
+        }
+        function renderPost(post) {
+            const imageHtml = post.imagen ? `<img class="post-image" src="${escapeHtml(post.imagen)}" alt="post">` : "";
+            const commentsHtml = (post.comments || []).map(renderComment).join("");
+            const photo = post.foto_url || `https://i.pravatar.cc/120?u=${encodeURIComponent(post.author || "grupo")}`;
+            return `
+                <article class="post-card" id="post-${post.id}">
+                    <div class="post-header">
+                        <div class="post-author">
+                            <img src="${escapeHtml(photo)}" alt="Perfil">
+                            <div>
+                                <div><strong>${escapeHtml(post.author || "Usuario")}</strong>${group.fixed_post_id === post.id ? " | Fijada" : ""}</div>
+                                <div class="post-time">${escapeHtml(post.fecha)}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="post-text">${escapeHtml(post.contenido || "")}</div>
+                    ${imageHtml}
+                    ${renderLink(post)}
+                    ${renderPoll(post)}
+                    <div class="post-actions">
+                        <button type="button">Me gusta (${post.likes || 0})</button>
+                        <button type="button">Compartir</button>
+                    </div>
+                    <div class="comments-box">
+                        <div class="comment-list">${commentsHtml || '<div class="comment-item">Todavia no hay comentarios.</div>'}</div>
+                        <form class="comment-form" data-comment-form="${post.id}">
+                            <textarea name="comentario" placeholder="Escribe un comentario"></textarea>
+                            <button class="comment-submit" type="submit">Publicar comentario</button>
+                        </form>
+                    </div>
+                </article>
+            `;
+        }
+        function addPollOption(value = "") {
+            if (pollOptions.querySelectorAll(".poll-option-row").length >= 4) return;
+            const row = document.createElement("div");
+            row.className = "poll-option-row";
+            row.innerHTML = `
+                <input class="poll-option-input" type="text" maxlength="80" placeholder="Opcion">
+                <button class="mini-btn" type="button" data-remove-poll-option>Quitar</button>
+            `;
+            row.querySelector("input").value = value;
+            pollOptions.appendChild(row);
+        }
         function renderGroup() {
-            group = getGroup();
+            group = migrateGroupIdentity(getGroup());
             if (!group) {
                 document.getElementById("groupName").textContent = "Grupo no encontrado";
                 return;
             }
+            const groups = getGroups();
+            const target = groups.find((item) => item.id === group.id);
+            if (target) {
+                Object.assign(target, group);
+                saveGroups(groups);
+            }
             document.getElementById("groupName").textContent = group.nombre;
-            document.getElementById("groupShortDescription").textContent = group.descripcion;
             document.getElementById("groupLongDescription").textContent = group.descripcion_larga || group.descripcion;
             document.getElementById("groupRules").textContent = group.reglas || "Sin reglas definidas.";
             document.getElementById("groupTags").textContent = `${group.categoria || "General"} | ${(group.etiquetas || []).join(", ") || "Sin etiquetas"}`;
@@ -118,68 +486,145 @@
             document.getElementById("groupBanner").style.backgroundImage = group.banner ? `url('${group.banner}')` : "linear-gradient(135deg,#1a73e8,#4ca0ff)";
             document.getElementById("membersSummary").textContent = `${(group.members || []).length} miembro(s) registrados.`;
             document.getElementById("viewMembersBtn").href = `/empireyoncarsocial/grupos/miembros-grupo?group_id=${group.id}`;
-            const isAdmin = Number(group.creador_id) === currentUserId || (group.admins || []).includes(currentUserName);
+            const isAdmin = Number(group.creador_id) === currentUserId || (group.admins || []).includes(getDisplayName());
             document.getElementById("adminPanel").style.display = isAdmin ? "grid" : "none";
             document.getElementById("editGroupBtn").href = `/empireyoncarsocial/grupos/grupo-admin?group_id=${group.id}`;
             document.getElementById("viewRequestsBtn").href = `/empireyoncarsocial/grupos/grupo-admin?group_id=${group.id}#solicitudes`;
             document.getElementById("manageMembersBtn").href = `/empireyoncarsocial/grupos/grupo-admin?group_id=${group.id}#miembros`;
-            renderPosts();
+            const posts = group.posts || [];
+            postList.innerHTML = posts.length ? posts.map(renderPost).join("") : '<div class="panel">Todavia no hay publicaciones en esta comunidad.</div>';
         }
 
-        function renderPosts() {
-            const list = document.getElementById("postList");
-            const posts = group.posts || [];
-            if (!posts.length) {
-                list.innerHTML = '<div class="panel">Todavia no hay publicaciones en esta comunidad.</div>';
+        togglePollBuilder.addEventListener("click", () => {
+            pollState.open = !pollState.open;
+            pollBuilder.classList.toggle("active", pollState.open);
+            togglePollBuilder.classList.toggle("active", pollState.open);
+        });
+
+        addPollOptionBtn.addEventListener("click", () => addPollOption());
+        pollOptions.addEventListener("click", (event) => {
+            const button = event.target.closest("[data-remove-poll-option]");
+            if (!button) return;
+            const rows = pollOptions.querySelectorAll(".poll-option-row");
+            if (rows.length > 2) button.closest(".poll-option-row").remove();
+        });
+
+        postImageFile.addEventListener("change", async () => {
+            const file = postImageFile.files[0];
+            if (!file) {
+                compressedImageData = null;
+                imagePreview.classList.remove("active");
                 return;
             }
-            list.innerHTML = posts.map((post) => `
-                <article class="post-card">
-                    <div class="post-author">
-                        <div class="avatar">${initials(post.author)}</div>
-                        <div>
-                            <div><strong>${post.author}</strong>${group.fixed_post_id === post.id ? " | Fijada" : ""}</div>
-                            <div class="post-time">${post.fecha}</div>
-                        </div>
-                    </div>
-                    <div class="post-text">${post.contenido}</div>
-                    <div class="post-actions">
-                        <button class="ghost-btn" type="button">Me gusta</button>
-                        <button class="ghost-btn" type="button">Comentar</button>
-                        <button class="ghost-btn" type="button">Compartir</button>
-                    </div>
-                </article>
-            `).join("");
-        }
+            try {
+                compressedImageData = await compressImage(file);
+                imagePreviewImg.src = compressedImageData;
+                imagePreview.classList.add("active");
+            } catch {
+                postMessage.textContent = "No se pudo procesar la imagen.";
+            }
+        });
 
-        document.getElementById("publishPostBtn").addEventListener("click", () => {
-            const contenido = document.getElementById("postContent").value.trim();
-            if (!group || !contenido) return;
+        postLink.addEventListener("input", debounce(async () => {
+            const url = postLink.value.trim();
+            if (!url) {
+                resetLinkPreview();
+                return;
+            }
+            try {
+                const metadata = await fetchLinkPreview(url);
+                applyLinkPreview(metadata);
+            } catch {
+                resetLinkPreview();
+            }
+        }, 400));
+
+        toggleLinkPreview.addEventListener("click", () => {
+            const url = postLink.value.trim();
+            if (!url || !currentLinkMetadata) return;
+            const active = linkPreview.classList.toggle("active");
+            toggleLinkPreview.classList.toggle("active", active);
+        });
+
+        createPostForm.addEventListener("submit", async (event) => {
+            event.preventDefault();
+            if (!group) return;
+            const contenido = postContent.value.trim();
+            const linkUrl = postLink.value.trim();
+            const pollQuestionValue = pollQuestion.value.trim();
+            const pollOptionsValue = getPollOptions();
+            if (!contenido && !compressedImageData && !linkUrl && !pollQuestionValue) {
+                postMessage.textContent = "Debes agregar texto, imagen, enlace o encuesta.";
+                return;
+            }
+            if (pollQuestionValue && pollOptionsValue.length < 2) {
+                postMessage.textContent = "La encuesta necesita al menos 2 opciones.";
+                return;
+            }
             const groups = getGroups();
             const target = groups.find((item) => item.id === group.id);
             target.posts = target.posts || [];
             target.posts.unshift({
                 id: `post-${Date.now()}`,
-                author: currentUserName,
-                fecha: new Date().toLocaleString("es-ES"),
-                contenido
+                author: getDisplayName(),
+                user_id: currentUserId,
+                fecha: formatDate(new Date().toISOString()),
+                contenido,
+                imagen: compressedImageData,
+                link_url: linkUrl || null,
+                link_title: currentLinkMetadata?.title || null,
+                link_description: currentLinkMetadata?.description || null,
+                poll_question: pollQuestionValue || null,
+                poll_options: pollOptionsValue.length ? pollOptionsValue : null,
+                poll_votes: pollOptionsValue.length ? new Array(pollOptionsValue.length).fill(0) : null,
+                likes: 0,
+                comments: []
             });
             saveGroups(groups);
-            document.getElementById("postContent").value = "";
-            document.getElementById("postMessage").textContent = "Publicacion creada.";
+            createPostForm.reset();
+            compressedImageData = null;
+            currentLinkMetadata = null;
+            imagePreview.classList.remove("active");
+            imagePreviewImg.removeAttribute("src");
+            resetLinkPreview();
+            pollBuilder.classList.remove("active");
+            togglePollBuilder.classList.remove("active");
+            pollState.open = false;
+            pollOptions.innerHTML = "";
+            addPollOption("");
+            addPollOption("");
+            postMessage.textContent = "Publicacion creada.";
+            renderGroup();
+        });
+
+        postList.addEventListener("submit", (event) => {
+            const form = event.target.closest("[data-comment-form]");
+            if (!form || !group) return;
+            event.preventDefault();
+            const textarea = form.querySelector("textarea");
+            const comentario = textarea.value.trim();
+            if (!comentario) return;
+            const groups = getGroups();
+            const target = groups.find((item) => item.id === group.id);
+            const post = (target.posts || []).find((item) => item.id === form.dataset.commentForm);
+            if (!post) return;
+            post.comments = post.comments || [];
+            post.comments.push({ author: getDisplayName(), comentario });
+            saveGroups(groups);
+            textarea.value = "";
             renderGroup();
         });
 
         document.getElementById("pinPostBtn").addEventListener("click", () => {
             if (!group || !(group.posts || []).length) {
-                document.getElementById("postMessage").textContent = "No hay publicaciones para fijar.";
+                postMessage.textContent = "No hay publicaciones para fijar.";
                 return;
             }
             const groups = getGroups();
             const target = groups.find((item) => item.id === group.id);
             target.fixed_post_id = target.posts[0].id;
             saveGroups(groups);
-            document.getElementById("postMessage").textContent = "Se fijo la publicacion mas reciente.";
+            postMessage.textContent = "Se fijo la publicacion mas reciente.";
             renderGroup();
         });
 
@@ -197,7 +642,25 @@
             reader.readAsDataURL(file);
         });
 
-        renderGroup();
+        document.getElementById("deleteGroupBtn").addEventListener("click", () => {
+            if (!group || Number(group.creador_id) !== currentUserId) {
+                postMessage.textContent = "Solo el creador puede eliminar el grupo.";
+                return;
+            }
+            if (!confirm("Deseas eliminar este grupo?")) return;
+            const groups = getGroups().filter((item) => item.id !== group.id);
+            saveGroups(groups);
+            window.location.href = "/empireyoncarsocial/grupos/";
+        });
+
+        addPollOption("");
+        addPollOption("");
+        async function initPage() {
+            await hydrateCurrentUserName();
+            renderGroup();
+        }
+
+        initPage();
     </script>
 </body>
 </html>

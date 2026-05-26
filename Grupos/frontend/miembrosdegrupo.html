@@ -33,9 +33,49 @@
         const params = new URLSearchParams(window.location.search);
         const groupId = params.get("group_id");
         function getGroups() { return JSON.parse(localStorage.getItem("empire_groups") || "[]"); }
+        function saveGroups(groups) { localStorage.setItem("empire_groups", JSON.stringify(groups)); }
         function initials(name) { return (name || "U").split(" ").map((part) => part[0]).join("").slice(0, 2).toUpperCase(); }
-        const group = getGroups().find((item) => item.id === groupId);
-        if (group) {
+        const currentUserId = Number(localStorage.getItem("user_id") || 1);
+        let currentUserName = localStorage.getItem("user_name") || "";
+        function getDisplayName() {
+            const first = (localStorage.getItem("user_first_name") || "").trim();
+            const last = (localStorage.getItem("user_last_name") || "").trim();
+            return `${first} ${last}`.trim() || currentUserName || "Administrador";
+        }
+        async function hydrateCurrentUserName() {
+            if (!currentUserId) return;
+            try {
+                const response = await fetch(`/empireyoncarsocial/usuarios/api/perfil/${currentUserId}`);
+                if (!response.ok) return;
+                const user = await response.json();
+                const first = (user.nombres || "").trim();
+                const last = (user.apellidos || "").trim();
+                const combined = `${first} ${last}`.trim();
+                if (first) localStorage.setItem("user_first_name", first);
+                if (last) localStorage.setItem("user_last_name", last);
+                if (combined) {
+                    localStorage.setItem("user_name", combined);
+                    currentUserName = combined;
+                }
+            } catch {}
+        }
+        function render() {
+            const groups = getGroups();
+            const group = groups.find((item) => item.id === groupId);
+            if (!group) return;
+            const displayName = getDisplayName();
+            let changed = false;
+            (group.members || []).forEach((member) => {
+                if (Number(member.id) === currentUserId && (!member.nombre || member.nombre === "Administrador")) {
+                    member.nombre = displayName;
+                    changed = true;
+                }
+            });
+            if (Number(group.creador_id) === currentUserId && (!group.creador || group.creador === "Administrador")) {
+                group.creador = displayName;
+                changed = true;
+            }
+            if (changed) saveGroups(groups);
             document.getElementById("title").textContent = `Miembros de ${group.nombre}`;
             document.getElementById("summary").textContent = `${(group.members || []).length} miembro(s)`;
             document.getElementById("backLink").href = `/empireyoncarsocial/grupos/grupo?group_id=${group.id}`;
@@ -45,12 +85,17 @@
                         <div class="avatar">${initials(member.nombre)}</div>
                         <div>
                             <div><strong>${member.nombre}</strong></div>
-                            <div class="role">${member.role === "admin" ? "Administrador" : "Miembro"}</div>
+                            <div class="role">${Number(member.id) === Number(group.creador_id) ? "Creador administrador" : member.role === "admin" ? "Administrador" : "Miembro"}</div>
                         </div>
                     </div>
                 </div>
             `).join("");
         }
+        async function initPage() {
+            await hydrateCurrentUserName();
+            render();
+        }
+        initPage();
     </script>
 </body>
 </html>

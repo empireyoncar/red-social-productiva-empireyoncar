@@ -64,8 +64,7 @@
                 </div>
                 <form class="create-group-form" id="createGroupForm">
                     <input id="groupName" type="text" placeholder="Nombre del grupo">
-                    <textarea id="groupDescription" placeholder="Descripcion corta del grupo"></textarea>
-                    <textarea id="groupLongDescription" placeholder="Descripcion larga del grupo"></textarea>
+                    <textarea id="groupLongDescription" placeholder="Descripcion del grupo"></textarea>
                     <input id="groupRules" type="text" placeholder="Reglas del grupo">
                     <input id="groupCategory" type="text" placeholder="Categoria">
                     <input id="groupTags" type="text" placeholder="Etiquetas separadas por coma">
@@ -88,7 +87,7 @@
     </div>
     <script>
         const currentUserId = Number(localStorage.getItem("user_id") || 1);
-        const currentUserName = localStorage.getItem("user_name") || "Administrador";
+        let currentUserName = localStorage.getItem("user_name") || "";
 
         const defaultGroups = [
             {
@@ -113,9 +112,61 @@
             }
         ];
 
+        function getDisplayName() {
+            const first = (localStorage.getItem("user_first_name") || "").trim();
+            const last = (localStorage.getItem("user_last_name") || "").trim();
+            const combined = `${first} ${last}`.trim();
+            return combined || currentUserName || "Administrador";
+        }
+
+        async function hydrateCurrentUserName() {
+            if (!currentUserId) return;
+            try {
+                const response = await fetch(`/empireyoncarsocial/usuarios/api/perfil/${currentUserId}`);
+                if (!response.ok) return;
+                const user = await response.json();
+                const first = (user.nombres || "").trim();
+                const last = (user.apellidos || "").trim();
+                const combined = `${first} ${last}`.trim();
+                if (first) localStorage.setItem("user_first_name", first);
+                if (last) localStorage.setItem("user_last_name", last);
+                if (combined) {
+                    localStorage.setItem("user_name", combined);
+                    currentUserName = combined;
+                }
+            } catch {}
+        }
+
+        function migrateGroupNames(groups) {
+            const displayName = getDisplayName();
+            let changed = false;
+            groups.forEach((group) => {
+                if (Number(group.creador_id) === currentUserId && (!group.creador || group.creador === "Administrador")) {
+                    group.creador = displayName;
+                    changed = true;
+                }
+                group.admins = (group.admins || []).map((adminName) => {
+                    if (adminName === "Administrador" && Number(group.creador_id) === currentUserId) {
+                        changed = true;
+                        return displayName;
+                    }
+                    return adminName;
+                });
+                (group.members || []).forEach((member) => {
+                    if (Number(member.id) === currentUserId && (!member.nombre || member.nombre === "Administrador")) {
+                        member.nombre = displayName;
+                        changed = true;
+                    }
+                });
+            });
+            if (changed) saveGroups(groups);
+            return groups;
+        }
+
         function getGroups() {
             const saved = localStorage.getItem("empire_groups");
-            return saved ? JSON.parse(saved) : defaultGroups;
+            const groups = saved ? JSON.parse(saved) : defaultGroups;
+            return migrateGroupNames(groups);
         }
 
         function saveGroups(groups) {
@@ -161,27 +212,27 @@
         document.getElementById("createGroupForm").addEventListener("submit", (event) => {
             event.preventDefault();
             const nombre = document.getElementById("groupName").value.trim();
-            const descripcion = document.getElementById("groupDescription").value.trim();
             const descripcionLarga = document.getElementById("groupLongDescription").value.trim();
             const reglas = document.getElementById("groupRules").value.trim();
             const categoria = document.getElementById("groupCategory").value.trim();
             const etiquetas = document.getElementById("groupTags").value.split(",").map((item) => item.trim()).filter(Boolean);
-            if (!nombre || !descripcion) return;
+            if (!nombre || !descripcionLarga) return;
+            const displayName = getDisplayName();
             const groups = getGroups();
             groups.unshift({
                 id: `group-${Date.now()}`,
                 nombre,
-                descripcion,
-                descripcion_larga: descripcionLarga || descripcion,
+                descripcion: descripcionLarga,
+                descripcion_larga: descripcionLarga,
                 reglas: reglas || "Respeto, colaboracion y no spam",
                 categoria: categoria || "General",
                 etiquetas,
                 fecha_creacion: new Date().toISOString().slice(0, 10),
                 creador_id: currentUserId,
-                creador: currentUserName,
-                admins: [currentUserName],
+                creador: displayName,
+                admins: [displayName],
                 banner: "",
-                members: [{ id: currentUserId, nombre: currentUserName, role: "admin" }],
+                members: [{ id: currentUserId, nombre: displayName, role: "admin" }],
                 solicitudes: [],
                 posts: [],
                 mio: true,
@@ -231,7 +282,12 @@
             }
         });
 
-        renderGroups(getMyGroups(), "Mis grupos");
+        async function initPage() {
+            await hydrateCurrentUserName();
+            renderGroups(getMyGroups(), "Mis grupos");
+        }
+
+        initPage();
     </script>
 </body>
 </html>

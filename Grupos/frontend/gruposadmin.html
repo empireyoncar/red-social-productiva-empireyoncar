@@ -6,88 +6,230 @@
     <title>Administrar grupo</title>
     <link rel="stylesheet" href="/theme.css">
     <style>
-        :root { --brand:#1a73e8; --brand-dark:#155fc0; --bg:#eef5ff; --panel:#fff; --line:#d8e5fb; --text:#233247; --muted:#697b96; }
+        :root { --brand:#1a73e8; --brand-dark:#155fc0; --bg:#eef5ff; --panel:#fff; --line:#d8e5fb; --text:#233247; --muted:#697b96; --danger:#d93025; }
         * { box-sizing:border-box; }
         body { margin:0; font-family:"Segoe UI", Arial, sans-serif; background:linear-gradient(180deg,#f8fbff 0%,var(--bg) 100%); color:var(--text); }
-        .page { max-width:980px; margin:28px auto; padding:0 20px 30px; display:grid; gap:18px; }
+        .page { max-width:1100px; margin:28px auto; padding:0 20px 30px; display:grid; gap:18px; }
         .panel { background:var(--panel); border-radius:16px; box-shadow:0 8px 24px rgba(20,57,110,0.10); padding:20px; display:grid; gap:14px; }
-        .btn, .ghost-btn { border:none; border-radius:12px; padding:12px 16px; cursor:pointer; font-family:inherit; font-weight:600; }
+        .hero { display:flex; justify-content:space-between; gap:16px; align-items:flex-start; flex-wrap:wrap; }
+        .hero p { margin:6px 0 0; color:var(--muted); line-height:1.5; }
+        .action-bar { display:flex; gap:10px; flex-wrap:wrap; }
+        .btn, .ghost-btn, .danger-btn { border:none; border-radius:12px; padding:12px 16px; cursor:pointer; font-family:inherit; font-weight:600; text-decoration:none; }
         .btn { background:var(--brand); color:#fff; }
-        .ghost-btn { background:#edf4ff; color:var(--brand); text-decoration:none; }
-        input, textarea { width:100%; padding:13px 14px; border:1px solid var(--line); border-radius:12px; font-family:inherit; }
+        .ghost-btn { background:#edf4ff; color:var(--brand); }
+        .danger-btn { background:#fdecec; color:var(--danger); }
+        input, textarea, select { width:100%; padding:13px 14px; border:1px solid var(--line); border-radius:12px; font-family:inherit; }
         textarea { min-height:100px; resize:vertical; }
         .list { display:grid; gap:12px; }
         .item { padding:14px; border-radius:12px; background:#f7faff; border:1px solid var(--line); }
         .item-actions { display:flex; gap:10px; flex-wrap:wrap; margin-top:10px; }
         .message { min-height:18px; color:var(--muted); font-size:13px; }
+        .hidden { display:none !important; }
     </style>
 </head>
 <body>
     <div class="page">
         <section class="panel">
-            <h1 id="title">Administrar grupo</h1>
-            <a class="ghost-btn" id="backLink" href="/empireyoncarsocial/grupos/">Volver al grupo</a>
+            <div class="hero">
+                <div>
+                    <h1 id="title">Administrar grupo</h1>
+                    <p id="subtitle">Solo el creador del grupo puede ver y usar estas opciones.</p>
+                </div>
+                <div class="action-bar">
+                    <a class="ghost-btn" id="backLink" href="/empireyoncarsocial/grupos/">Volver al grupo</a>
+                    <button class="btn" id="jumpEditBtn" type="button">Editar grupo</button>
+                    <button class="btn" id="jumpRequestsBtn" type="button">Ver solicitudes de ingreso</button>
+                    <button class="btn" id="jumpMembersBtn" type="button">Expulsar miembros</button>
+                    <button class="btn" id="pinPostBtn" type="button">Fijar publicacion</button>
+                    <button class="danger-btn" id="deleteGroupBtn" type="button">Eliminar grupo</button>
+                </div>
+            </div>
+            <div class="message" id="adminMessage"></div>
         </section>
-        <section class="panel">
+
+        <section class="panel" id="creatorOnlyNotice">
+            <h2>Acceso restringido</h2>
+            <p>Solo el creador del grupo puede administrar esta comunidad.</p>
+        </section>
+
+        <section class="panel hidden" id="editPanel">
             <h2>Editar grupo</h2>
             <input id="editName" type="text" placeholder="Nombre del grupo">
             <textarea id="editLongDescription" placeholder="Descripcion larga"></textarea>
             <input id="editRules" type="text" placeholder="Reglas del grupo">
             <input id="editCategory" type="text" placeholder="Categoria">
             <button class="btn" id="saveGroupBtn" type="button">Guardar cambios</button>
-            <div class="message" id="adminMessage"></div>
         </section>
-        <section class="panel" id="solicitudes">
+
+        <section class="panel hidden" id="solicitudes">
             <h2>Ver solicitudes de ingreso</h2>
             <div class="list" id="requestsList"></div>
         </section>
-        <section class="panel" id="miembros">
+
+        <section class="panel hidden" id="miembros">
             <h2>Expulsar miembros</h2>
             <div class="list" id="membersList"></div>
+        </section>
+
+        <section class="panel hidden" id="admins">
+            <h2>Administradores</h2>
+            <select id="memberAdminSelect"></select>
+            <div class="action-bar">
+                <button class="btn" id="addAdminBtn" type="button">Agregar administrador</button>
+            </div>
+            <div class="list" id="adminsList"></div>
         </section>
     </div>
     <script>
         const params = new URLSearchParams(window.location.search);
         const groupId = params.get("group_id");
         const currentUserId = Number(localStorage.getItem("user_id") || 1);
-        const currentUserName = localStorage.getItem("user_name") || "Administrador";
+        let currentUserName = localStorage.getItem("user_name") || "Administrador";
+        const managedSections = ["editPanel", "solicitudes", "miembros", "admins"];
+
         function getGroups() { return JSON.parse(localStorage.getItem("empire_groups") || "[]"); }
         function saveGroups(groups) { localStorage.setItem("empire_groups", JSON.stringify(groups)); }
         function getGroup() { return getGroups().find((item) => item.id === groupId); }
         let group = getGroup();
 
+        function getDisplayName() {
+            const first = (localStorage.getItem("user_first_name") || "").trim();
+            const last = (localStorage.getItem("user_last_name") || "").trim();
+            return `${first} ${last}`.trim() || currentUserName || "Administrador";
+        }
+
+        async function hydrateCurrentUserName() {
+            if (!currentUserId) return;
+            try {
+                const response = await fetch(`/empireyoncarsocial/usuarios/api/perfil/${currentUserId}`);
+                if (!response.ok) return;
+                const user = await response.json();
+                const first = (user.nombres || "").trim();
+                const last = (user.apellidos || "").trim();
+                const combined = `${first} ${last}`.trim();
+                if (first) localStorage.setItem("user_first_name", first);
+                if (last) localStorage.setItem("user_last_name", last);
+                if (combined) {
+                    localStorage.setItem("user_name", combined);
+                    currentUserName = combined;
+                }
+            } catch {}
+        }
+
+        function migrateGroupIdentity(groups, target) {
+            if (!target) return;
+            const displayName = getDisplayName();
+            let changed = false;
+            if (Number(target.creador_id) === currentUserId && (!target.creador || target.creador === "Administrador")) {
+                target.creador = displayName;
+                changed = true;
+            }
+            target.admins = (target.admins || []).map((adminName) => {
+                if (adminName === "Administrador" && Number(target.creador_id) === currentUserId) {
+                    changed = true;
+                    return displayName;
+                }
+                return adminName;
+            });
+            (target.members || []).forEach((member) => {
+                if (Number(member.id) === currentUserId && (!member.nombre || member.nombre === "Administrador")) {
+                    member.nombre = displayName;
+                    changed = true;
+                }
+            });
+            if (changed) saveGroups(groups);
+        }
+
+        function isCreator() {
+            return !!group && Number(group.creador_id) === currentUserId;
+        }
+
+        function scrollToSection(id) {
+            document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+
+        function showManagementUi(show) {
+            managedSections.forEach((id) => document.getElementById(id).classList.toggle("hidden", !show));
+            document.getElementById("creatorOnlyNotice").classList.toggle("hidden", show);
+            ["jumpEditBtn", "jumpRequestsBtn", "jumpMembersBtn", "pinPostBtn", "deleteGroupBtn", "addAdminBtn"].forEach((id) => {
+                const node = document.getElementById(id);
+                if (node) node.classList.toggle("hidden", !show);
+            });
+        }
+
+        function renderAdminOptions() {
+            const nonAdminMembers = (group.members || []).filter((member) => member.role !== "admin");
+            const select = document.getElementById("memberAdminSelect");
+            select.innerHTML = nonAdminMembers.length
+                ? nonAdminMembers.map((member) => `<option value="${member.id}">${member.nombre}</option>`).join("")
+                : '<option value="">No hay miembros disponibles</option>';
+
+            document.getElementById("adminsList").innerHTML = (group.members || [])
+                .filter((member) => member.role === "admin")
+                .map((member) => `
+                    <div class="item">
+                        <strong>${member.nombre}</strong>
+                        <div>${Number(member.id) === Number(group.creador_id) ? "Creador del grupo" : "Administrador"}</div>
+                        ${Number(member.id) !== Number(group.creador_id) ? `<div class="item-actions"><button class="danger-btn" type="button" data-remove-admin="${member.id}">Eliminar administrador</button></div>` : ""}
+                    </div>
+                `).join("");
+        }
+
         function render() {
-            group = getGroup();
-            if (!group) return;
+            const groups = getGroups();
+            group = groups.find((item) => item.id === groupId);
+            if (!group) {
+                document.getElementById("title").textContent = "Grupo no encontrado";
+                document.getElementById("subtitle").textContent = "No hay datos disponibles para administrar.";
+                showManagementUi(false);
+                return;
+            }
+            migrateGroupIdentity(groups, group);
+
             document.getElementById("title").textContent = `Administrar ${group.nombre}`;
+            document.getElementById("subtitle").textContent = `Creador: ${group.creador || "-"} | Fecha: ${group.fecha_creacion || "-"}`;
             document.getElementById("backLink").href = `/empireyoncarsocial/grupos/grupo?group_id=${group.id}`;
             document.getElementById("editName").value = group.nombre || "";
             document.getElementById("editLongDescription").value = group.descripcion_larga || "";
             document.getElementById("editRules").value = group.reglas || "";
             document.getElementById("editCategory").value = group.categoria || "";
-            document.getElementById("requestsList").innerHTML = (group.solicitudes || []).length ? (group.solicitudes || []).map((request) => `
-                <div class="item">
-                    <strong>${request.nombre}</strong>
-                    <div>${request.motivo}</div>
-                    <div class="item-actions">
-                        <button class="btn" type="button" data-approve="${request.id}">Aprobar</button>
-                        <button class="ghost-btn" type="button" data-reject="${request.id}">Rechazar</button>
+
+            const creatorMode = isCreator();
+            showManagementUi(creatorMode);
+            if (!creatorMode) return;
+
+            document.getElementById("requestsList").innerHTML = (group.solicitudes || []).length
+                ? (group.solicitudes || []).map((request) => `
+                    <div class="item">
+                        <strong>${request.nombre}</strong>
+                        <div>${request.motivo}</div>
+                        <div class="item-actions">
+                            <button class="btn" type="button" data-approve="${request.id}">Aprobar</button>
+                            <button class="ghost-btn" type="button" data-reject="${request.id}">Rechazar</button>
+                        </div>
                     </div>
-                </div>
-            `).join("") : '<div class="item">No hay solicitudes pendientes.</div>';
+                `).join("")
+                : '<div class="item">No hay solicitudes pendientes.</div>';
+
             document.getElementById("membersList").innerHTML = (group.members || []).map((member) => `
                 <div class="item">
                     <strong>${member.nombre}</strong>
                     <div>${member.role === "admin" ? "Administrador" : "Miembro"}</div>
-                    ${member.role !== "admin" ? `<div class="item-actions"><button class="ghost-btn" type="button" data-remove-member="${member.id}">Expulsar miembro</button></div>` : ""}
+                    ${Number(member.id) !== Number(group.creador_id) ? `<div class="item-actions"><button class="danger-btn" type="button" data-remove-member="${member.id}">Expulsar miembro</button></div>` : ""}
                 </div>
             `).join("");
+
+            renderAdminOptions();
         }
+
+        document.getElementById("jumpEditBtn").addEventListener("click", () => scrollToSection("editPanel"));
+        document.getElementById("jumpRequestsBtn").addEventListener("click", () => scrollToSection("solicitudes"));
+        document.getElementById("jumpMembersBtn").addEventListener("click", () => scrollToSection("miembros"));
 
         document.getElementById("saveGroupBtn").addEventListener("click", () => {
             const groups = getGroups();
             const target = groups.find((item) => item.id === groupId);
-            if (!target) return;
+            if (!target || !isCreator()) return;
             target.nombre = document.getElementById("editName").value.trim() || target.nombre;
             target.descripcion_larga = document.getElementById("editLongDescription").value.trim() || target.descripcion_larga;
             target.reglas = document.getElementById("editRules").value.trim() || target.reglas;
@@ -97,13 +239,49 @@
             render();
         });
 
+        document.getElementById("pinPostBtn").addEventListener("click", () => {
+            const groups = getGroups();
+            const target = groups.find((item) => item.id === groupId);
+            if (!target || !isCreator()) return;
+            if (!(target.posts || []).length) {
+                document.getElementById("adminMessage").textContent = "No hay publicaciones para fijar.";
+                return;
+            }
+            target.fixed_post_id = target.posts[0].id;
+            saveGroups(groups);
+            document.getElementById("adminMessage").textContent = "Se fijo la publicacion mas reciente.";
+            render();
+        });
+
+        document.getElementById("addAdminBtn").addEventListener("click", () => {
+            const memberId = Number(document.getElementById("memberAdminSelect").value);
+            const groups = getGroups();
+            const target = groups.find((item) => item.id === groupId);
+            if (!target || !isCreator() || !memberId) return;
+            const member = (target.members || []).find((item) => Number(item.id) === memberId);
+            if (!member) return;
+            member.role = "admin";
+            target.admins = Array.from(new Set([...(target.admins || []), member.nombre]));
+            saveGroups(groups);
+            document.getElementById("adminMessage").textContent = "Administrador agregado.";
+            render();
+        });
+
+        document.getElementById("deleteGroupBtn").addEventListener("click", () => {
+            if (!isCreator() || !confirm("Deseas eliminar este grupo?")) return;
+            const groups = getGroups().filter((item) => item.id !== groupId);
+            saveGroups(groups);
+            window.location.href = "/empireyoncarsocial/grupos/";
+        });
+
         document.addEventListener("click", (event) => {
             const approveBtn = event.target.closest("[data-approve]");
             const rejectBtn = event.target.closest("[data-reject]");
             const removeBtn = event.target.closest("[data-remove-member]");
+            const removeAdminBtn = event.target.closest("[data-remove-admin]");
             const groups = getGroups();
             const target = groups.find((item) => item.id === groupId);
-            if (!target) return;
+            if (!target || !isCreator()) return;
 
             if (approveBtn) {
                 const requestId = Number(approveBtn.dataset.approve);
@@ -125,13 +303,32 @@
             if (removeBtn) {
                 const memberId = Number(removeBtn.dataset.removeMember);
                 target.members = (target.members || []).filter((item) => Number(item.id) !== memberId);
+                target.admins = (target.admins || []).filter((name) => {
+                    const member = (group.members || []).find((item) => item.nombre === name);
+                    return !member || Number(member.id) !== memberId;
+                });
                 target.miembros = target.members.length;
+                saveGroups(groups);
+                render();
+            }
+            if (removeAdminBtn) {
+                const memberId = Number(removeAdminBtn.dataset.removeAdmin);
+                if (memberId === Number(target.creador_id)) return;
+                const member = (target.members || []).find((item) => Number(item.id) === memberId);
+                if (!member) return;
+                member.role = "member";
+                target.admins = (target.admins || []).filter((name) => name !== member.nombre);
                 saveGroups(groups);
                 render();
             }
         });
 
-        render();
+        async function initPage() {
+            await hydrateCurrentUserName();
+            render();
+        }
+
+        initPage();
     </script>
 </body>
 </html>
