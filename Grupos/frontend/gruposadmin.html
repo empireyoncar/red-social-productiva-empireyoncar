@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administrar grupo</title>
+    <link rel="stylesheet" href="/theme.css">
+    <style>
+        :root { --brand:#1a73e8; --brand-dark:#155fc0; --bg:#eef5ff; --panel:#fff; --line:#d8e5fb; --text:#233247; --muted:#697b96; }
+        * { box-sizing:border-box; }
+        body { margin:0; font-family:"Segoe UI", Arial, sans-serif; background:linear-gradient(180deg,#f8fbff 0%,var(--bg) 100%); color:var(--text); }
+        .page { max-width:980px; margin:28px auto; padding:0 20px 30px; display:grid; gap:18px; }
+        .panel { background:var(--panel); border-radius:16px; box-shadow:0 8px 24px rgba(20,57,110,0.10); padding:20px; display:grid; gap:14px; }
+        .btn, .ghost-btn { border:none; border-radius:12px; padding:12px 16px; cursor:pointer; font-family:inherit; font-weight:600; }
+        .btn { background:var(--brand); color:#fff; }
+        .ghost-btn { background:#edf4ff; color:var(--brand); text-decoration:none; }
+        input, textarea { width:100%; padding:13px 14px; border:1px solid var(--line); border-radius:12px; font-family:inherit; }
+        textarea { min-height:100px; resize:vertical; }
+        .list { display:grid; gap:12px; }
+        .item { padding:14px; border-radius:12px; background:#f7faff; border:1px solid var(--line); }
+        .item-actions { display:flex; gap:10px; flex-wrap:wrap; margin-top:10px; }
+        .message { min-height:18px; color:var(--muted); font-size:13px; }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <section class="panel">
+            <h1 id="title">Administrar grupo</h1>
+            <a class="ghost-btn" id="backLink" href="/grupos">Volver al grupo</a>
+        </section>
+        <section class="panel">
+            <h2>Editar grupo</h2>
+            <input id="editName" type="text" placeholder="Nombre del grupo">
+            <textarea id="editLongDescription" placeholder="Descripcion larga"></textarea>
+            <input id="editRules" type="text" placeholder="Reglas del grupo">
+            <input id="editCategory" type="text" placeholder="Categoria">
+            <button class="btn" id="saveGroupBtn" type="button">Guardar cambios</button>
+            <div class="message" id="adminMessage"></div>
+        </section>
+        <section class="panel" id="solicitudes">
+            <h2>Ver solicitudes de ingreso</h2>
+            <div class="list" id="requestsList"></div>
+        </section>
+        <section class="panel" id="miembros">
+            <h2>Expulsar miembros</h2>
+            <div class="list" id="membersList"></div>
+        </section>
+    </div>
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const groupId = params.get("group_id");
+        const currentUserId = Number(localStorage.getItem("user_id") || 1);
+        const currentUserName = localStorage.getItem("user_name") || "Administrador";
+        function getGroups() { return JSON.parse(localStorage.getItem("empire_groups") || "[]"); }
+        function saveGroups(groups) { localStorage.setItem("empire_groups", JSON.stringify(groups)); }
+        function getGroup() { return getGroups().find((item) => item.id === groupId); }
+        let group = getGroup();
+
+        function render() {
+            group = getGroup();
+            if (!group) return;
+            document.getElementById("title").textContent = `Administrar ${group.nombre}`;
+            document.getElementById("backLink").href = `/grupo?group_id=${group.id}`;
+            document.getElementById("editName").value = group.nombre || "";
+            document.getElementById("editLongDescription").value = group.descripcion_larga || "";
+            document.getElementById("editRules").value = group.reglas || "";
+            document.getElementById("editCategory").value = group.categoria || "";
+            document.getElementById("requestsList").innerHTML = (group.solicitudes || []).length ? (group.solicitudes || []).map((request) => `
+                <div class="item">
+                    <strong>${request.nombre}</strong>
+                    <div>${request.motivo}</div>
+                    <div class="item-actions">
+                        <button class="btn" type="button" data-approve="${request.id}">Aprobar</button>
+                        <button class="ghost-btn" type="button" data-reject="${request.id}">Rechazar</button>
+                    </div>
+                </div>
+            `).join("") : '<div class="item">No hay solicitudes pendientes.</div>';
+            document.getElementById("membersList").innerHTML = (group.members || []).map((member) => `
+                <div class="item">
+                    <strong>${member.nombre}</strong>
+                    <div>${member.role === "admin" ? "Administrador" : "Miembro"}</div>
+                    ${member.role !== "admin" ? `<div class="item-actions"><button class="ghost-btn" type="button" data-remove-member="${member.id}">Expulsar miembro</button></div>` : ""}
+                </div>
+            `).join("");
+        }
+
+        document.getElementById("saveGroupBtn").addEventListener("click", () => {
+            const groups = getGroups();
+            const target = groups.find((item) => item.id === groupId);
+            if (!target) return;
+            target.nombre = document.getElementById("editName").value.trim() || target.nombre;
+            target.descripcion_larga = document.getElementById("editLongDescription").value.trim() || target.descripcion_larga;
+            target.reglas = document.getElementById("editRules").value.trim() || target.reglas;
+            target.categoria = document.getElementById("editCategory").value.trim() || target.categoria;
+            saveGroups(groups);
+            document.getElementById("adminMessage").textContent = "Grupo actualizado.";
+            render();
+        });
+
+        document.addEventListener("click", (event) => {
+            const approveBtn = event.target.closest("[data-approve]");
+            const rejectBtn = event.target.closest("[data-reject]");
+            const removeBtn = event.target.closest("[data-remove-member]");
+            const groups = getGroups();
+            const target = groups.find((item) => item.id === groupId);
+            if (!target) return;
+
+            if (approveBtn) {
+                const requestId = Number(approveBtn.dataset.approve);
+                const request = (target.solicitudes || []).find((item) => Number(item.id) === requestId);
+                if (request) {
+                    target.members.push({ id: request.id, nombre: request.nombre, role: "member" });
+                    target.miembros = target.members.length;
+                    target.solicitudes = target.solicitudes.filter((item) => Number(item.id) !== requestId);
+                    saveGroups(groups);
+                    render();
+                }
+            }
+            if (rejectBtn) {
+                const requestId = Number(rejectBtn.dataset.reject);
+                target.solicitudes = (target.solicitudes || []).filter((item) => Number(item.id) !== requestId);
+                saveGroups(groups);
+                render();
+            }
+            if (removeBtn) {
+                const memberId = Number(removeBtn.dataset.removeMember);
+                target.members = (target.members || []).filter((item) => Number(item.id) !== memberId);
+                target.miembros = target.members.length;
+                saveGroups(groups);
+                render();
+            }
+        });
+
+        render();
+    </script>
+</body>
+</html>

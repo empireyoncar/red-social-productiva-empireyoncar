@@ -3,11 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Solicitud de Grupo</title>
+    <title>Solicitud de grupo</title>
     <link rel="stylesheet" href="/theme.css">
+    <style>
+        :root { --brand:#1a73e8; --brand-dark:#155fc0; --bg:#eef5ff; --panel:#fff; --line:#d8e5fb; --text:#233247; --muted:#697b96; }
+        * { box-sizing:border-box; }
+        body { margin:0; font-family:"Segoe UI", Arial, sans-serif; background:linear-gradient(180deg,#f8fbff 0%,var(--bg) 100%); color:var(--text); }
+        .page { max-width:760px; margin:28px auto; padding:0 20px 30px; }
+        .panel { background:var(--panel); border-radius:16px; box-shadow:0 8px 24px rgba(20,57,110,0.10); padding:22px; display:grid; gap:14px; }
+        h1 { margin:0; color:var(--brand); }
+        p { margin:0; color:var(--muted); line-height:1.5; }
+        input, textarea { width:100%; padding:13px 14px; border:1px solid var(--line); border-radius:12px; font-family:inherit; }
+        textarea { min-height:120px; resize:vertical; }
+        .actions { display:flex; gap:10px; flex-wrap:wrap; }
+        .btn, .ghost-btn { border:none; border-radius:12px; padding:12px 16px; cursor:pointer; font-family:inherit; font-weight:600; text-decoration:none; }
+        .btn { background:var(--brand); color:#fff; }
+        .ghost-btn { background:#edf4ff; color:var(--brand); }
+        .message { min-height:18px; color:var(--muted); font-size:13px; }
+    </style>
 </head>
 <body>
-    <h1>Solicitud de Grupo</h1>
-    <p>Pantalla para solicitar ingreso.</p>
+    <div class="page">
+        <div class="panel">
+            <h1>Solicitar unirse al grupo</h1>
+            <p id="groupSummary">Cargando informacion del grupo...</p>
+            <input id="applicantName" type="text" placeholder="Tu nombre">
+            <textarea id="requestReason" placeholder="Escribe por que quieres unirte a este grupo"></textarea>
+            <div class="actions">
+                <button class="btn" id="sendRequestBtn" type="button">Enviar solicitud</button>
+                <a class="ghost-btn" id="backToGroupsLink" href="/grupos">Volver a grupos</a>
+            </div>
+            <div class="message" id="requestMessage"></div>
+        </div>
+    </div>
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const groupId = params.get("group_id");
+        const currentUserId = Number(localStorage.getItem("user_id") || Date.now());
+        const currentUserName = localStorage.getItem("user_name") || "";
+
+        function getGroups() {
+            return JSON.parse(localStorage.getItem("empire_groups") || "[]");
+        }
+        function saveGroups(groups) {
+            localStorage.setItem("empire_groups", JSON.stringify(groups));
+        }
+        function getGroup() {
+            return getGroups().find((group) => group.id === groupId);
+        }
+
+        const group = getGroup();
+        if (group) {
+            document.getElementById("groupSummary").textContent = `${group.nombre}: ${group.descripcion}`;
+            document.getElementById("backToGroupsLink").href = "/grupos";
+            document.getElementById("applicantName").value = currentUserName;
+        } else {
+            document.getElementById("groupSummary").textContent = "No se encontro el grupo.";
+        }
+
+        document.getElementById("sendRequestBtn").addEventListener("click", () => {
+            if (!group) return;
+            const nombre = document.getElementById("applicantName").value.trim() || "Usuario";
+            const motivo = document.getElementById("requestReason").value.trim();
+            if (!motivo) {
+                document.getElementById("requestMessage").textContent = "Escribe un motivo para continuar.";
+                return;
+            }
+            const groups = getGroups();
+            const target = groups.find((item) => item.id === groupId);
+            if (!target) return;
+            target.solicitudes = target.solicitudes || [];
+            const alreadyRequested = target.solicitudes.some((item) => Number(item.id) === currentUserId);
+            if (alreadyRequested) {
+                document.getElementById("requestMessage").textContent = "Ya enviaste una solicitud a este grupo.";
+                return;
+            }
+            target.solicitudes.push({ id: currentUserId, nombre, motivo });
+            saveGroups(groups);
+            document.getElementById("requestMessage").textContent = "Solicitud enviada correctamente.";
+            document.getElementById("requestReason").value = "";
+        });
+    </script>
 </body>
 </html>

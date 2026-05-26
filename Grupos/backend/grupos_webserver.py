@@ -44,6 +44,21 @@ def chat_grupo():
     return render_template("chatgrupost.html")
 
 
+@app.route("/grupo")
+def grupo_post():
+    return render_template("grupospost.html")
+
+
+@app.route("/miembros-grupo")
+def miembros_grupo():
+    return render_template("miembrosdegrupo.html")
+
+
+@app.route("/grupo-admin")
+def grupo_admin():
+    return render_template("gruposadmin.html")
+
+
 @app.route("/static/<path:filename>")
 def static_files(filename):
     return send_from_directory(os.path.join(FRONTEND_PATH, "static"), filename)

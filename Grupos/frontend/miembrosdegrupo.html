@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Miembros del grupo</title>
+    <link rel="stylesheet" href="/theme.css">
+    <style>
+        :root { --brand:#1a73e8; --bg:#eef5ff; --panel:#fff; --line:#d8e5fb; --text:#233247; --muted:#697b96; }
+        * { box-sizing:border-box; }
+        body { margin:0; font-family:"Segoe UI", Arial, sans-serif; background:linear-gradient(180deg,#f8fbff 0%,var(--bg) 100%); color:var(--text); }
+        .page { max-width:900px; margin:28px auto; padding:0 20px 30px; display:grid; gap:18px; }
+        .panel, .member-card { background:var(--panel); border-radius:16px; box-shadow:0 8px 24px rgba(20,57,110,0.10); }
+        .panel { padding:20px; }
+        .member-list { display:grid; gap:14px; }
+        .member-card { padding:16px; display:flex; justify-content:space-between; gap:14px; align-items:center; }
+        .member-main { display:flex; gap:12px; align-items:center; }
+        .avatar { width:52px; height:52px; border-radius:50%; background:#dce7fb; display:grid; place-items:center; color:var(--brand); font-weight:700; }
+        .role { font-size:13px; color:var(--muted); }
+        .ghost-btn { border:none; border-radius:12px; padding:12px 16px; cursor:pointer; font-family:inherit; font-weight:600; text-decoration:none; background:#edf4ff; color:var(--brand); }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <div class="panel">
+            <h1 id="title">Miembros del grupo</h1>
+            <p id="summary">Cargando miembros...</p>
+            <a class="ghost-btn" id="backLink" href="/grupos">Volver al grupo</a>
+        </div>
+        <div class="member-list" id="memberList"></div>
+    </div>
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const groupId = params.get("group_id");
+        function getGroups() { return JSON.parse(localStorage.getItem("empire_groups") || "[]"); }
+        function initials(name) { return (name || "U").split(" ").map((part) => part[0]).join("").slice(0, 2).toUpperCase(); }
+        const group = getGroups().find((item) => item.id === groupId);
+        if (group) {
+            document.getElementById("title").textContent = `Miembros de ${group.nombre}`;
+            document.getElementById("summary").textContent = `${(group.members || []).length} miembro(s)`;
+            document.getElementById("backLink").href = `/grupo?group_id=${group.id}`;
+            document.getElementById("memberList").innerHTML = (group.members || []).map((member) => `
+                <div class="member-card">
+                    <div class="member-main">
+                        <div class="avatar">${initials(member.nombre)}</div>
+                        <div>
+                            <div><strong>${member.nombre}</strong></div>
+                            <div class="role">${member.role === "admin" ? "Administrador" : "Miembro"}</div>
+                        </div>
+                    </div>
+                </div>
+            `).join("");
+        }
+    </script>
+</body>
+</html>

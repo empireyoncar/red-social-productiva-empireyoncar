@@ -14,32 +14,30 @@
         .nav-links { margin-left:40px; display:flex; gap:18px; flex-wrap:wrap; }
         .nav-links a { color:white; text-decoration:none; font-weight:500; }
         .page { max-width:1180px; margin:28px auto; padding:0 20px 30px; }
-        .hero { display:grid; grid-template-columns:1.1fr 0.9fr; gap:20px; margin-bottom:20px; }
-        .hero-panel, .side-panel, .group-card { background:var(--panel); border-radius:16px; box-shadow:0 8px 24px rgba(20,57,110,0.10); }
-        .hero-panel { padding:22px; }
-        .hero-panel h1 { margin:0 0 10px; font-size:28px; color:var(--brand); }
-        .hero-panel p { margin:0 0 18px; color:var(--muted); line-height:1.5; }
-        .search-row { display:grid; grid-template-columns:1fr auto; gap:12px; }
-        .search-row input, .create-group-form input, .create-group-form textarea { width:100%; padding:13px 14px; border:1px solid var(--line); border-radius:12px; font-family:inherit; }
+        .hero { display:grid; grid-template-columns:1.2fr 0.8fr; gap:20px; margin-bottom:22px; }
+        .panel, .group-card { background:var(--panel); border-radius:16px; box-shadow:0 8px 24px rgba(20,57,110,0.10); }
+        .panel { padding:22px; }
+        h1, h2, h3 { margin:0; }
+        .hero p, .group-body p { color:var(--muted); line-height:1.5; }
+        .hero p { margin:10px 0 18px; }
+        .search-row, .form-row { display:grid; grid-template-columns:1fr auto; gap:12px; }
+        input, textarea { width:100%; padding:13px 14px; border:1px solid var(--line); border-radius:12px; font-family:inherit; }
+        textarea { min-height:100px; resize:vertical; }
         .btn, .ghost-btn { border:none; border-radius:12px; padding:12px 16px; cursor:pointer; font-family:inherit; font-weight:600; }
         .btn { background:var(--brand); color:#fff; }
         .btn:hover { background:var(--brand-dark); }
         .ghost-btn { background:#edf4ff; color:var(--brand); }
-        .side-panel { padding:20px; display:grid; gap:12px; align-content:start; }
+        .side-panel { display:grid; gap:12px; align-content:start; }
         .summary-item { padding:12px; border-radius:12px; background:#f7faff; color:var(--text); }
+        .create-group-form { display:none; margin-top:16px; gap:10px; }
+        .create-group-form.active { display:grid; }
         .section-head { display:flex; justify-content:space-between; align-items:center; margin:24px 0 12px; }
-        .section-head h2 { margin:0; color:var(--brand); font-size:20px; }
         .group-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; }
         .group-card { overflow:hidden; }
-        .group-cover { height:124px; background:linear-gradient(135deg,#1a73e8,#4ca0ff); }
-        .group-body { padding:16px; }
-        .group-body h3 { margin:0 0 8px; }
-        .group-body p { margin:0 0 14px; font-size:14px; color:var(--muted); line-height:1.45; }
-        .group-meta { display:flex; justify-content:space-between; font-size:13px; color:var(--muted); margin-bottom:14px; }
+        .group-cover { height:124px; background:linear-gradient(135deg,#1a73e8,#4ca0ff); background-size:cover; background-position:center; }
+        .group-body { padding:16px; display:grid; gap:10px; }
+        .group-meta { display:flex; justify-content:space-between; font-size:13px; color:var(--muted); }
         .group-actions { display:flex; gap:10px; flex-wrap:wrap; }
-        .create-group-form { display:none; margin-top:16px; padding:16px; border-radius:14px; border:1px solid var(--line); background:#f8fbff; gap:10px; }
-        .create-group-form.active { display:grid; }
-        .create-group-form textarea { min-height:96px; resize:vertical; }
         .empty-state { padding:18px; background:#f7faff; border-radius:14px; color:var(--muted); grid-column:1 / -1; }
         @media (max-width:980px) { .hero,.group-grid { grid-template-columns:1fr; } }
     </style>
@@ -57,26 +55,29 @@
     </div>
     <div class="page">
         <div class="hero">
-            <section class="hero-panel">
+            <section class="panel">
                 <h1>Grupos</h1>
-                <p>Explora comunidades, vuelve a tus grupos frecuentes y crea uno nuevo para tu equipo, tu proyecto o tu comunidad.</p>
+                <p>Crea y administra tus comunidades. Aqui solo aparecen los grupos que has creado.</p>
                 <div class="search-row">
-                    <input id="groupSearch" type="text" placeholder="Buscar grupos por nombre o tema">
+                    <input id="groupSearch" type="text" placeholder="Buscar entre mis grupos">
                     <button class="btn" id="searchGroupsBtn" type="button">Buscar grupos</button>
                 </div>
                 <form class="create-group-form" id="createGroupForm">
                     <input id="groupName" type="text" placeholder="Nombre del grupo">
-                    <textarea id="groupDescription" placeholder="Describe el objetivo del grupo"></textarea>
+                    <textarea id="groupDescription" placeholder="Descripcion corta del grupo"></textarea>
+                    <textarea id="groupLongDescription" placeholder="Descripcion larga del grupo"></textarea>
+                    <input id="groupRules" type="text" placeholder="Reglas del grupo">
+                    <input id="groupCategory" type="text" placeholder="Categoria">
+                    <input id="groupTags" type="text" placeholder="Etiquetas separadas por coma">
                     <button class="btn" type="submit">Crear grupo</button>
                 </form>
             </section>
-            <aside class="side-panel">
+            <aside class="panel side-panel">
                 <h2>Acciones</h2>
                 <button class="btn" id="toggleCreateGroup" type="button">Crear grupo</button>
                 <button class="ghost-btn" id="showMineBtn" type="button">Ver mis grupos</button>
                 <div class="summary-item" id="groupsSummary">Mis grupos: 0</div>
-                <div class="summary-item">Solicitudes pendientes: 0</div>
-                <div class="summary-item">Temas populares: productividad, negocios, tecnologia</div>
+                <div class="summary-item">Solo se listan grupos creados por ti.</div>
             </aside>
         </div>
         <div class="section-head">
@@ -86,13 +87,30 @@
         <div class="group-grid" id="groupsGrid"></div>
     </div>
     <script>
+        const currentUserId = Number(localStorage.getItem("user_id") || 1);
+        const currentUserName = localStorage.getItem("user_name") || "Administrador";
+
         const defaultGroups = [
-            { id: "g1", nombre: "Productividad diaria", descripcion: "Grupo para organizar rutinas, compartir herramientas y avanzar con enfoque.", miembros: 148, estado: "Activo", mio: true },
-            { id: "g2", nombre: "Negocios locales", descripcion: "Espacio para conectar emprendedores, ofrecer servicios y colaborar entre negocios.", miembros: 84, estado: "Moderado", mio: true },
-            { id: "g3", nombre: "Ideas y lanzamientos", descripcion: "Comparte prototipos, pide feedback y valida ideas con otras personas creadoras.", miembros: 62, estado: "Creciendo", mio: true },
-            { id: "g4", nombre: "Marketing de contenidos", descripcion: "Estrategias, herramientas y colaboracion para crecer audiencias con contenido util.", miembros: 210, estado: "Abierto", mio: false },
-            { id: "g5", nombre: "Freelancers LATAM", descripcion: "Red para conseguir colaboraciones, resolver dudas y compartir oportunidades.", miembros: 176, estado: "Abierto", mio: false },
-            { id: "g6", nombre: "Herramientas no-code", descripcion: "Apps, automatizaciones y demos rapidas para lanzar sin escribir demasiado codigo.", miembros: 129, estado: "Abierto", mio: false }
+            {
+                id: "g1",
+                nombre: "Productividad diaria",
+                descripcion: "Grupo para organizar rutinas, compartir herramientas y avanzar con enfoque.",
+                descripcion_larga: "Comunidad para compartir sistemas de trabajo, seguimiento de metas y recursos para organizar el dia a dia.",
+                reglas: "Respeto, aportes utiles, no spam",
+                categoria: "Productividad",
+                etiquetas: ["productividad", "habitos", "organizacion"],
+                fecha_creacion: "2026-05-01",
+                creador_id: currentUserId,
+                creador: currentUserName,
+                admins: [currentUserName],
+                banner: "",
+                members: [{ id: currentUserId, nombre: currentUserName, role: "admin" }],
+                solicitudes: [{ id: 2001, nombre: "Ana Torres", motivo: "Quiero aprender de la comunidad." }],
+                posts: [],
+                mio: true,
+                miembros: 1,
+                estado: "Activo"
+            }
         ];
 
         function getGroups() {
@@ -104,24 +122,32 @@
             localStorage.setItem("empire_groups", JSON.stringify(groups));
         }
 
+        function getMyGroups() {
+            return getGroups().filter((group) => Number(group.creador_id) === currentUserId || group.mio);
+        }
+
+        function openGroup(groupId, target) {
+            window.location.href = `${target}?group_id=${encodeURIComponent(groupId)}`;
+        }
+
         function renderGroups(groups, heading) {
             document.getElementById("groupsHeading").textContent = heading;
-            document.getElementById("groupsSummary").textContent = `Mis grupos: ${getGroups().filter((group) => group.mio).length}`;
+            document.getElementById("groupsSummary").textContent = `Mis grupos: ${getMyGroups().length}`;
             const grid = document.getElementById("groupsGrid");
             if (!groups.length) {
-                grid.innerHTML = '<div class="empty-state">No hay grupos para mostrar con ese filtro.</div>';
+                grid.innerHTML = '<div class="empty-state">Todavia no has creado grupos.</div>';
                 return;
             }
             grid.innerHTML = groups.map((group) => `
                 <article class="group-card">
-                    <div class="group-cover"></div>
+                    <div class="group-cover" style="${group.banner ? `background-image:url('${group.banner}');` : ''}"></div>
                     <div class="group-body">
                         <h3>${group.nombre}</h3>
                         <p>${group.descripcion}</p>
-                        <div class="group-meta"><span>${group.miembros} miembros</span><span>${group.estado}</span></div>
+                        <div class="group-meta"><span>${group.miembros || (group.members || []).length} miembros</span><span>${group.categoria || group.estado || "Activo"}</span></div>
                         <div class="group-actions">
-                            <button class="btn" type="button">${group.mio ? "Entrar" : "Unirme"}</button>
-                            <button class="ghost-btn" type="button">Miembros</button>
+                            <button class="btn" type="button" data-enter-group="${group.id}">${group.mio ? "Entrar" : "Solicitar unirse"}</button>
+                            <button class="ghost-btn" type="button" data-members-group="${group.id}">Miembros</button>
                         </div>
                     </div>
                 </article>
@@ -136,30 +162,54 @@
             event.preventDefault();
             const nombre = document.getElementById("groupName").value.trim();
             const descripcion = document.getElementById("groupDescription").value.trim();
+            const descripcionLarga = document.getElementById("groupLongDescription").value.trim();
+            const reglas = document.getElementById("groupRules").value.trim();
+            const categoria = document.getElementById("groupCategory").value.trim();
+            const etiquetas = document.getElementById("groupTags").value.split(",").map((item) => item.trim()).filter(Boolean);
             if (!nombre || !descripcion) return;
             const groups = getGroups();
-            groups.unshift({ id: `custom-${Date.now()}`, nombre, descripcion, miembros: 1, estado: "Nuevo", mio: true });
+            groups.unshift({
+                id: `group-${Date.now()}`,
+                nombre,
+                descripcion,
+                descripcion_larga: descripcionLarga || descripcion,
+                reglas: reglas || "Respeto, colaboracion y no spam",
+                categoria: categoria || "General",
+                etiquetas,
+                fecha_creacion: new Date().toISOString().slice(0, 10),
+                creador_id: currentUserId,
+                creador: currentUserName,
+                admins: [currentUserName],
+                banner: "",
+                members: [{ id: currentUserId, nombre: currentUserName, role: "admin" }],
+                solicitudes: [],
+                posts: [],
+                mio: true,
+                miembros: 1,
+                estado: "Activo"
+            });
             saveGroups(groups);
             document.getElementById("createGroupForm").reset();
             document.getElementById("createGroupForm").classList.remove("active");
-            renderGroups(groups.filter((group) => group.mio), "Mis grupos");
+            renderGroups(getMyGroups(), "Mis grupos");
         });
 
         document.getElementById("showMineBtn").addEventListener("click", () => {
-            renderGroups(getGroups().filter((group) => group.mio), "Mis grupos");
-            document.getElementById("groupsGrid").scrollIntoView({ behavior: "smooth", block: "start" });
+            renderGroups(getMyGroups(), "Mis grupos");
         });
 
         document.getElementById("resetGroupsBtn").addEventListener("click", () => {
-            renderGroups(getGroups(), "Todos los grupos");
+            renderGroups(getMyGroups(), "Mis grupos");
         });
 
         document.getElementById("searchGroupsBtn").addEventListener("click", () => {
             const term = document.getElementById("groupSearch").value.trim().toLowerCase();
-            const groups = getGroups().filter((group) =>
-                group.nombre.toLowerCase().includes(term) || group.descripcion.toLowerCase().includes(term)
+            const groups = getMyGroups().filter((group) =>
+                group.nombre.toLowerCase().includes(term) ||
+                group.descripcion.toLowerCase().includes(term) ||
+                (group.categoria || "").toLowerCase().includes(term)
             );
-            renderGroups(groups, term ? `Resultados para "${term}"` : "Todos los grupos");
+            renderGroups(groups, term ? `Resultados para "${term}"` : "Mis grupos");
         });
 
         document.getElementById("groupSearch").addEventListener("keydown", (event) => {
@@ -169,7 +219,19 @@
             }
         });
 
-        renderGroups(getGroups().filter((group) => group.mio), "Mis grupos");
+        document.getElementById("groupsGrid").addEventListener("click", (event) => {
+            const enterButton = event.target.closest("[data-enter-group]");
+            if (enterButton) {
+                openGroup(enterButton.dataset.enterGroup, "/grupo");
+                return;
+            }
+            const membersButton = event.target.closest("[data-members-group]");
+            if (membersButton) {
+                openGroup(membersButton.dataset.membersGroup, "/miembros-grupo");
+            }
+        });
+
+        renderGroups(getMyGroups(), "Mis grupos");
     </script>
 </body>
 </html>
