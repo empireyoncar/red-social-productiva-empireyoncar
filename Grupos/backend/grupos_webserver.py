@@ -25,36 +25,45 @@ def index():
 
 
 @app.route("/grupos")
+@app.route("/grupos/")
+@app.route("/empireyoncarsocial/grupos")
+@app.route("/empireyoncarsocial/grupos/")
 def grupos():
     return render_template("grupos.html")
 
 
 @app.route("/solicitud-grupo")
+@app.route("/empireyoncarsocial/grupos/solicitud-grupo")
 def solicitud_grupo():
     return render_template("solicituddegrupos.html")
 
 
 @app.route("/aprobar-miembro")
+@app.route("/empireyoncarsocial/grupos/aprobar-miembro")
 def aprobar_miembro():
     return render_template("aprobarmiembrogrupo.html")
 
 
 @app.route("/chat-grupo")
+@app.route("/empireyoncarsocial/grupos/chat-grupo")
 def chat_grupo():
     return render_template("chatgrupost.html")
 
 
 @app.route("/grupo")
+@app.route("/empireyoncarsocial/grupos/grupo")
 def grupo_post():
     return render_template("grupospost.html")
 
 
 @app.route("/miembros-grupo")
+@app.route("/empireyoncarsocial/grupos/miembros-grupo")
 def miembros_grupo():
     return render_template("miembrosdegrupo.html")
 
 
 @app.route("/grupo-admin")
+@app.route("/empireyoncarsocial/grupos/grupo-admin")
 def grupo_admin():
     return render_template("gruposadmin.html")
 

@@ -25,7 +25,7 @@
         <div class="panel">
             <h1 id="title">Miembros del grupo</h1>
             <p id="summary">Cargando miembros...</p>
-            <a class="ghost-btn" id="backLink" href="/grupos">Volver al grupo</a>
+            <a class="ghost-btn" id="backLink" href="/empireyoncarsocial/grupos/">Volver al grupo</a>
         </div>
         <div class="member-list" id="memberList"></div>
     </div>
@@ -38,7 +38,7 @@
         if (group) {
             document.getElementById("title").textContent = `Miembros de ${group.nombre}`;
             document.getElementById("summary").textContent = `${(group.members || []).length} miembro(s)`;
-            document.getElementById("backLink").href = `/grupo?group_id=${group.id}`;
+            document.getElementById("backLink").href = `/empireyoncarsocial/grupos/grupo?group_id=${group.id}`;
             document.getElementById("memberList").innerHTML = (group.members || []).map((member) => `
                 <div class="member-card">
                     <div class="member-main">

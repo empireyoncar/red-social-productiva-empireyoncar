@@ -31,7 +31,7 @@
             <textarea id="requestReason" placeholder="Escribe por que quieres unirte a este grupo"></textarea>
             <div class="actions">
                 <button class="btn" id="sendRequestBtn" type="button">Enviar solicitud</button>
-                <a class="ghost-btn" id="backToGroupsLink" href="/grupos">Volver a grupos</a>
+                <a class="ghost-btn" id="backToGroupsLink" href="/empireyoncarsocial/grupos/">Volver a grupos</a>
             </div>
             <div class="message" id="requestMessage"></div>
         </div>
@@ -55,7 +55,7 @@
         const group = getGroup();
         if (group) {
             document.getElementById("groupSummary").textContent = `${group.nombre}: ${group.descripcion}`;
-            document.getElementById("backToGroupsLink").href = "/grupos";
+            document.getElementById("backToGroupsLink").href = "/empireyoncarsocial/grupos/";
             document.getElementById("applicantName").value = currentUserName;
         } else {
             document.getElementById("groupSummary").textContent = "No se encontro el grupo.";

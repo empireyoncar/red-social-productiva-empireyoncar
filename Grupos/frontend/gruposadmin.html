@@ -26,7 +26,7 @@
     <div class="page">
         <section class="panel">
             <h1 id="title">Administrar grupo</h1>
-            <a class="ghost-btn" id="backLink" href="/grupos">Volver al grupo</a>
+            <a class="ghost-btn" id="backLink" href="/empireyoncarsocial/grupos/">Volver al grupo</a>
         </section>
         <section class="panel">
             <h2>Editar grupo</h2>
@@ -60,7 +60,7 @@
             group = getGroup();
             if (!group) return;
             document.getElementById("title").textContent = `Administrar ${group.nombre}`;
-            document.getElementById("backLink").href = `/grupo?group_id=${group.id}`;
+            document.getElementById("backLink").href = `/empireyoncarsocial/grupos/grupo?group_id=${group.id}`;
             document.getElementById("editName").value = group.nombre || "";
             document.getElementById("editLongDescription").value = group.descripcion_larga || "";
             document.getElementById("editRules").value = group.reglas || "";

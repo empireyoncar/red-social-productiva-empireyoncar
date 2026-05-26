@@ -127,7 +127,7 @@
         }
 
         function openGroup(groupId, target) {
-            window.location.href = `${target}?group_id=${encodeURIComponent(groupId)}`;
+            window.location.href = `/empireyoncarsocial/grupos/${target}?group_id=${encodeURIComponent(groupId)}`;
         }
 
         function renderGroups(groups, heading) {
@@ -222,12 +222,12 @@
         document.getElementById("groupsGrid").addEventListener("click", (event) => {
             const enterButton = event.target.closest("[data-enter-group]");
             if (enterButton) {
-                openGroup(enterButton.dataset.enterGroup, "/grupo");
+                openGroup(enterButton.dataset.enterGroup, "grupo");
                 return;
             }
             const membersButton = event.target.closest("[data-members-group]");
             if (membersButton) {
-                openGroup(membersButton.dataset.membersGroup, "/miembros-grupo");
+                openGroup(membersButton.dataset.membersGroup, "miembros-grupo");
             }
         });
 
