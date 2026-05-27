@@ -4,20 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat - Empireyoncar Social</title>
-    <link rel="stylesheet" href="/theme.css">
-
     <style>
+        :root {
+            --brand: #1a73e8;
+            --brand-dark: #155fc0;
+            --bg: #f0f4ff;
+            --panel: #ffffff;
+            --line: #d0d7e6;
+            --muted: #6f7d94;
+            --text: #243247;
+        }
+
+        * { box-sizing: border-box; }
         body {
             margin: 0;
             padding: 0;
             font-family: "Segoe UI", Arial, sans-serif;
-            background: #f0f4ff;
+            background: var(--bg);
+            color: var(--text);
         }
 
-        /* NAVBAR */
         .navbar {
             width: 100%;
-            background: #1a73e8;
+            background: var(--brand);
             padding: 12px 20px;
             color: white;
             display: flex;
@@ -34,40 +43,36 @@
         .nav-links {
             margin-left: 40px;
             display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
         }
 
         .nav-links a {
-            margin-right: 20px;
             color: white;
             text-decoration: none;
             font-weight: 500;
         }
 
-        .nav-links a:hover {
-            text-decoration: underline;
-        }
-
-        /* CONTENEDOR PRINCIPAL */
         .chat-container {
             display: flex;
             width: 100%;
-            height: calc(100vh - 60px);
+            height: calc(100vh - 56px);
         }
 
-        /* LISTA DE CONVERSACIONES */
         .chat-list {
-            width: 28%;
-            background: white;
-            border-right: 1px solid #d0d7e6;
+            width: 30%;
+            min-width: 290px;
+            background: var(--panel);
+            border-right: 1px solid var(--line);
             overflow-y: auto;
         }
 
         .chat-list h3 {
-            padding: 15px;
+            padding: 16px;
             margin: 0;
             background: #e8f0ff;
-            border-bottom: 1px solid #d0d7e6;
-            color: #1a73e8;
+            border-bottom: 1px solid var(--line);
+            color: var(--brand);
         }
 
         .chat-user {
@@ -75,19 +80,22 @@
             display: flex;
             align-items: center;
             cursor: pointer;
-            border-bottom: 1px solid #f0f0f0;
+            border-bottom: 1px solid #eef2f7;
             transition: 0.2s;
+            gap: 12px;
         }
 
-        .chat-user:hover {
+        .chat-user:hover,
+        .chat-user.active {
             background: #f5f9ff;
         }
 
         .chat-user img {
-            width: 45px;
-            height: 45px;
+            width: 46px;
+            height: 46px;
             border-radius: 50%;
-            margin-right: 12px;
+            object-fit: cover;
+            background: #dce7fb;
         }
 
         .chat-user .name {
@@ -98,29 +106,37 @@
         .chat-user .last-msg {
             font-size: 12px;
             color: #777;
+            margin-top: 4px;
         }
 
-        /* PANEL DEL CHAT */
         .chat-panel {
-            width: 72%;
+            width: 70%;
             display: flex;
             flex-direction: column;
             background: #ffffff;
         }
 
         .chat-header {
-            padding: 15px;
+            padding: 15px 18px;
             background: #e8f0ff;
-            border-bottom: 1px solid #d0d7e6;
+            border-bottom: 1px solid var(--line);
             font-weight: bold;
-            color: #1a73e8;
+            color: var(--brand);
         }
 
-        /* MENSAJES */
+        .chat-header small {
+            display: block;
+            margin-top: 4px;
+            font-weight: 500;
+            color: var(--muted);
+        }
+
         .messages {
             flex: 1;
             padding: 20px;
             overflow-y: auto;
+            display: flex;
+            flex-direction: column;
         }
 
         .msg {
@@ -130,10 +146,11 @@
             border-radius: 12px;
             font-size: 14px;
             line-height: 1.4;
+            white-space: pre-wrap;
         }
 
         .msg.me {
-            background: #1a73e8;
+            background: var(--brand);
             color: white;
             margin-left: auto;
         }
@@ -144,12 +161,20 @@
             margin-right: auto;
         }
 
-        /* INPUT DE MENSAJE */
+        .empty-chat {
+            margin: auto;
+            text-align: center;
+            color: var(--muted);
+            line-height: 1.6;
+            padding: 24px;
+        }
+
         .chat-input {
             display: flex;
             padding: 15px;
-            border-top: 1px solid #d0d7e6;
+            border-top: 1px solid var(--line);
             background: #f7faff;
+            gap: 10px;
         }
 
         .chat-input input {
@@ -161,9 +186,8 @@
         }
 
         .chat-input button {
-            margin-left: 10px;
             padding: 12px 20px;
-            background: #1a73e8;
+            background: var(--brand);
             color: white;
             border: none;
             border-radius: 10px;
@@ -172,30 +196,47 @@
         }
 
         .chat-input button:hover {
-            background: #155fc0;
+            background: var(--brand-dark);
         }
 
-        /* NOTIFICACIONES */
         .notification-box {
             position: fixed;
             top: 80px;
             right: 20px;
-            background: #1a73e8;
+            background: var(--brand);
             color: white;
             padding: 12px 18px;
             border-radius: 10px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            display: none; /* Se activa con JS */
+            display: none;
+            z-index: 30;
+        }
+
+        @media (max-width: 900px) {
+            .chat-container {
+                flex-direction: column;
+                height: auto;
+            }
+
+            .chat-list,
+            .chat-panel {
+                width: 100%;
+            }
+
+            .chat-list {
+                min-width: 0;
+                max-height: 260px;
+            }
+
+            .chat-panel {
+                min-height: calc(100vh - 316px);
+            }
         }
     </style>
 </head>
-
 <body>
-
-    <!-- NAVBAR -->
     <div class="navbar">
         <div class="logo">Empireyoncar Social</div>
-
         <div class="nav-links">
             <a href="/empireyoncarsocial/home">Inicio</a>
             <a href="/empireyoncarsocial/perfil">Perfil</a>
@@ -204,55 +245,186 @@
         </div>
     </div>
 
-    <!-- NOTIFICACIONES -->
-    <div class="notification-box" id="notifBox">
-        🔔 Nuevo mensaje recibido
-    </div>
+    <div class="notification-box" id="notifBox">Nuevo mensaje</div>
 
-    <!-- CONTENEDOR PRINCIPAL -->
     <div class="chat-container">
-
-        <!-- LISTA DE CONVERSACIONES -->
         <div class="chat-list">
             <h3>Mensajes</h3>
-
-            <div class="chat-user">
-                <img src="https://i.pravatar.cc/100" alt="">
-                <div>
-                    <div class="name">Juan Pérez</div>
-                    <div class="last-msg">¿Cómo va todo?</div>
-                </div>
-            </div>
-
-            <div class="chat-user">
-                <img src="https://i.pravatar.cc/101" alt="">
-                <div>
-                    <div class="name">María López</div>
-                    <div class="last-msg">Te envié los documentos</div>
-                </div>
-            </div>
-
+            <div id="chatUsers"></div>
         </div>
 
-        <!-- PANEL DEL CHAT -->
         <div class="chat-panel">
+            <div class="chat-header" id="chatHeader">
+                Selecciona una conversacion
+                <small id="chatHeaderMeta">Abre un perfil y pulsa en Mensaje para iniciar un chat.</small>
+            </div>
 
-            <div class="chat-header">Juan Pérez</div>
-
-            <div class="messages">
-                <div class="msg other">Hola, ¿cómo estás?</div>
-                <div class="msg me">Todo bien, avanzando en mis proyectos.</div>
-                <div class="msg other">Excelente, sigue así.</div>
+            <div class="messages" id="messages">
+                <div class="empty-chat">Todavia no hay una conversacion abierta.</div>
             </div>
 
             <div class="chat-input">
-                <input type="text" placeholder="Escribe un mensaje...">
-                <button>Enviar</button>
+                <input id="messageInput" type="text" placeholder="Escribe un mensaje...">
+                <button id="sendMessageBtn" type="button">Enviar</button>
             </div>
-
         </div>
-
     </div>
 
+    <script>
+        const currentUserId = Number(localStorage.getItem("user_id") || 0);
+        const params = new URLSearchParams(window.location.search);
+        const preselectedUserId = Number(params.get("user_id") || 0);
+        const chatUsers = document.getElementById("chatUsers");
+        const messagesContainer = document.getElementById("messages");
+        const chatHeader = document.getElementById("chatHeader");
+        const chatHeaderMeta = document.getElementById("chatHeaderMeta");
+        const messageInput = document.getElementById("messageInput");
+        const sendMessageBtn = document.getElementById("sendMessageBtn");
+        const notifBox = document.getElementById("notifBox");
+
+        let selectedUserId = preselectedUserId || 0;
+        let refreshTimer = null;
+
+        function escapeHtml(value) {
+            return String(value || "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;");
+        }
+
+        function showNotification(message) {
+            notifBox.textContent = message;
+            notifBox.style.display = "block";
+            window.setTimeout(() => { notifBox.style.display = "none"; }, 2500);
+        }
+
+        async function fetchProfile(userId) {
+            const response = await fetch(`/empireyoncarsocial/usuarios/api/perfil/${userId}?viewer_id=${currentUserId}`);
+            if (!response.ok) throw new Error("No se pudo cargar perfil");
+            return response.json();
+        }
+
+        function renderChatList(chats) {
+            if (!chats.length && !selectedUserId) {
+                chatUsers.innerHTML = '<div class="chat-user"><div><div class="name">Sin conversaciones</div><div class="last-msg">Abre un perfil y pulsa en Mensaje.</div></div></div>';
+                return;
+            }
+            const deduped = new Map();
+            chats.forEach((chat) => deduped.set(Number(chat.otro), chat));
+            if (selectedUserId && !deduped.has(selectedUserId)) {
+                deduped.set(selectedUserId, { otro: selectedUserId, mensaje: "Sin mensajes todavia" });
+            }
+            chatUsers.innerHTML = Array.from(deduped.values()).map((chat) => `
+                <div class="chat-user ${Number(chat.otro) === Number(selectedUserId) ? "active" : ""}" data-chat-user="${chat.otro}">
+                    <img src="https://i.pravatar.cc/100?u=${chat.otro}" alt="">
+                    <div>
+                        <div class="name" id="chat-name-${chat.otro}">Usuario ${chat.otro}</div>
+                        <div class="last-msg">${escapeHtml(chat.mensaje || "Sin mensajes")}</div>
+                    </div>
+                </div>
+            `).join("");
+        }
+
+        async function hydrateChatNames(userIds) {
+            await Promise.all(userIds.map(async (userId) => {
+                try {
+                    const user = await fetchProfile(userId);
+                    const displayName = `${user.nombres || "Usuario"} ${user.apellidos || ""}`.trim();
+                    const nameNode = document.getElementById(`chat-name-${userId}`);
+                    if (nameNode) nameNode.textContent = displayName;
+                    if (Number(userId) === Number(selectedUserId)) {
+                        chatHeader.childNodes[0].textContent = displayName;
+                        chatHeaderMeta.textContent = user.oficio || user.email || "Conversacion privada";
+                    }
+                } catch {}
+            }));
+        }
+
+        function renderMessages(messages) {
+            if (!messages.length) {
+                messagesContainer.innerHTML = '<div class="empty-chat">Todavia no hay mensajes en esta conversacion.</div>';
+                return;
+            }
+            messagesContainer.innerHTML = messages.map((message) => `
+                <div class="msg ${Number(message.emisor) === Number(currentUserId) ? "me" : "other"}">${escapeHtml(message.mensaje)}</div>
+            `).join("");
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        async function loadConversation() {
+            if (!currentUserId || !selectedUserId) return;
+            try {
+                const response = await fetch(`/empireyoncarsocial/chat/api/chat/conversacion/${currentUserId}/${selectedUserId}`);
+                const messages = await response.json();
+                if (!response.ok) throw new Error();
+                renderMessages(messages);
+            } catch {
+                messagesContainer.innerHTML = '<div class="empty-chat">No se pudo cargar la conversacion.</div>';
+            }
+        }
+
+        async function loadChatList() {
+            if (!currentUserId) {
+                window.location.href = "/empireyoncarsocial/login";
+                return;
+            }
+            try {
+                const response = await fetch(`/empireyoncarsocial/chat/api/chat/lista/${currentUserId}`);
+                const chats = await response.json();
+                if (!response.ok) throw new Error();
+                renderChatList(chats);
+                const userIds = [...new Set(chats.map((chat) => Number(chat.otro)).concat(selectedUserId ? [selectedUserId] : []))].filter(Boolean);
+                await hydrateChatNames(userIds);
+                if (selectedUserId) {
+                    await loadConversation();
+                }
+            } catch {
+                chatUsers.innerHTML = '<div class="chat-user"><div><div class="name">Error</div><div class="last-msg">No se pudo cargar el chat.</div></div></div>';
+            }
+        }
+
+        chatUsers.addEventListener("click", async (event) => {
+            const userCard = event.target.closest("[data-chat-user]");
+            if (!userCard) return;
+            selectedUserId = Number(userCard.dataset.chatUser);
+            history.replaceState(null, "", `/empireyoncarsocial/chat?user_id=${selectedUserId}`);
+            await loadChatList();
+        });
+
+        sendMessageBtn.addEventListener("click", async () => {
+            const mensaje = messageInput.value.trim();
+            if (!currentUserId || !selectedUserId || !mensaje) return;
+            try {
+                const response = await fetch("/empireyoncarsocial/chat/api/chat/enviar", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ emisor: currentUserId, receptor: selectedUserId, mensaje })
+                });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.error || "No se pudo enviar");
+                messageInput.value = "";
+                await loadChatList();
+                await loadConversation();
+                showNotification("Mensaje enviado");
+            } catch {
+                showNotification("No se pudo enviar el mensaje");
+            }
+        });
+
+        messageInput.addEventListener("keydown", (event) => {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                sendMessageBtn.click();
+            }
+        });
+
+        async function initChat() {
+            await loadChatList();
+            if (refreshTimer) clearInterval(refreshTimer);
+            refreshTimer = setInterval(async () => {
+                await loadChatList();
+                if (selectedUserId) await loadConversation();
+            }, 5000);
+        }
+
+        initChat();
+    </script>
 </body>
 </html>

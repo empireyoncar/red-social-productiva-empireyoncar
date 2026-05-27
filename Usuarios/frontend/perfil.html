@@ -170,6 +170,7 @@
                     <input id="photoInput" type="file" accept="image/*" hidden>
                     <button class="btn" id="toggleEditBtn" type="button">Editar perfil</button>
                     <button class="btn" id="followBtn" type="button" hidden>Seguir</button>
+                    <a class="btn" id="messageBtn" href="/empireyoncarsocial/chat" hidden>Mensaje</a>
                     <div class="status-message" id="profileMessage"></div>
                 </div>
             </div>
@@ -212,6 +213,7 @@
         const profileMessage = document.getElementById("profileMessage");
         const photoInput = document.getElementById("photoInput");
         const followBtn = document.getElementById("followBtn");
+        const messageBtn = document.getElementById("messageBtn");
         const openPostsPageLink = document.getElementById("openPostsPageLink");
         const linksRows = document.getElementById("linksRows");
         let currentUser = null;
@@ -348,10 +350,13 @@
                 profileForm.classList.remove("active");
                 if (!isOwnProfile) {
                     followBtn.hidden = false;
+                    messageBtn.hidden = false;
+                    messageBtn.href = `/empireyoncarsocial/chat?user_id=${viewedUserId}`;
                     followBtn.textContent = user.siguiendo_usuario ? "Siguiendo" : "Seguir";
                     followBtn.disabled = Boolean(user.siguiendo_usuario);
                 } else {
                     followBtn.hidden = true;
+                    messageBtn.hidden = true;
                 }
             } catch {
                 document.getElementById("profileName").textContent = "Error de conexion";
