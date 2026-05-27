@@ -296,7 +296,7 @@
         }
 
         async function fetchProfile(userId) {
-            const response = await fetch(`/empireyoncarsocial/usuarios/api/perfil/${userId}?viewer_id=${currentUserId}`);
+                const response = await fetch(`/empireyoncarsocial/usuarios/api/perfil/${userId}?viewer_id=${currentUserId}`);
             if (!response.ok) throw new Error("No se pudo cargar perfil");
             return response.json();
         }
@@ -351,7 +351,7 @@
         async function loadConversation() {
             if (!currentUserId || !selectedUserId) return;
             try {
-                const response = await fetch(`/empireyoncarsocial/chat/api/chat/conversacion/${currentUserId}/${selectedUserId}`);
+                const response = await fetch(`/empireyoncarsocial/chat_api/api/chat/conversacion/${currentUserId}/${selectedUserId}`);
                 const messages = await response.json();
                 if (!response.ok) throw new Error();
                 renderMessages(messages);
@@ -366,7 +366,7 @@
                 return;
             }
             try {
-                const response = await fetch(`/empireyoncarsocial/chat/api/chat/lista/${currentUserId}`);
+                const response = await fetch(`/empireyoncarsocial/chat_api/api/chat/lista/${currentUserId}`);
                 const chats = await response.json();
                 if (!response.ok) throw new Error();
                 renderChatList(chats);
@@ -392,7 +392,7 @@
             const mensaje = messageInput.value.trim();
             if (!currentUserId || !selectedUserId || !mensaje) return;
             try {
-                const response = await fetch("/empireyoncarsocial/chat/api/chat/enviar", {
+                const response = await fetch("/empireyoncarsocial/chat_api/api/chat/enviar", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ emisor: currentUserId, receptor: selectedUserId, mensaje })

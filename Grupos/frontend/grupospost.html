@@ -277,6 +277,7 @@
         let currentLinkMetadata = null;
         let compressedImageData = null;
         let group = null;
+        let currentUserIsPlatformAdmin = false;
 
         function getGroups() { return JSON.parse(localStorage.getItem("empire_groups") || "[]"); }
         function saveGroups(groups) { localStorage.setItem("empire_groups", JSON.stringify(groups)); }
@@ -302,6 +303,7 @@
                     localStorage.setItem("user_name", combined);
                     currentUserName = combined;
                 }
+                currentUserIsPlatformAdmin = Boolean(user.verificado);
             } catch {}
         }
         function migrateGroupIdentity(targetGroup) {
@@ -486,7 +488,7 @@
             document.getElementById("groupBanner").style.backgroundImage = group.banner ? `url('${group.banner}')` : "linear-gradient(135deg,#1a73e8,#4ca0ff)";
             document.getElementById("membersSummary").textContent = `${(group.members || []).length} miembro(s) registrados.`;
             document.getElementById("viewMembersBtn").href = `/empireyoncarsocial/grupos/miembros-grupo?group_id=${group.id}`;
-            const isAdmin = Number(group.creador_id) === currentUserId || (group.admins || []).includes(getDisplayName());
+            const isAdmin = currentUserIsPlatformAdmin || Number(group.creador_id) === currentUserId || (group.admins || []).includes(getDisplayName());
             document.getElementById("adminPanel").style.display = isAdmin ? "grid" : "none";
             document.getElementById("editGroupBtn").href = `/empireyoncarsocial/grupos/grupo-admin?group_id=${group.id}`;
             document.getElementById("viewRequestsBtn").href = `/empireyoncarsocial/grupos/grupo-admin?group_id=${group.id}#solicitudes`;
@@ -643,8 +645,8 @@
         });
 
         document.getElementById("deleteGroupBtn").addEventListener("click", () => {
-            if (!group || Number(group.creador_id) !== currentUserId) {
-                postMessage.textContent = "Solo el creador puede eliminar el grupo.";
+            if (!group || (!currentUserIsPlatformAdmin && Number(group.creador_id) !== currentUserId)) {
+                postMessage.textContent = "No tienes permisos para eliminar este grupo.";
                 return;
             }
             if (!confirm("Deseas eliminar este grupo?")) return;

@@ -3,155 +3,341 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Empireyoncar Social - Login</title>
+    <title>Login - Empireyoncar Social</title>
     <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: "Segoe UI", Arial, sans-serif;
-            background: linear-gradient(135deg, #e8f0ff, #f5f8ff);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+        :root {
+            --bg-color: #050a18;
+            --panel-bg: rgba(13, 25, 48, 0.7);
+            --accent-blue: #00d2ff;
+            --accent-purple: #9d50bb;
+            --text-main: #ffffff;
+            --text-muted: #8a99b5;
+            --input-bg: rgba(255, 255, 255, 0.05);
+            --border-color: rgba(0, 210, 255, 0.2);
+            --glow: 0 0 20px rgba(0, 210, 255, 0.3);
+            --success: #00ff88;
+            --error: #fda4af;
         }
 
-        .login-container {
-            background: #ffffff;
-            width: 380px;
-            padding: 35px;
-            border-radius: 16px;
-            box-shadow: 0 6px 30px rgba(0,0,0,0.12);
-            text-align: center;
-            animation: fadeIn 0.4s ease-in-out;
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image:
+                radial-gradient(circle at 20% 30%, rgba(0, 210, 255, 0.1) 0%, transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(157, 80, 187, 0.1) 0%, transparent 40%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            color: var(--text-main);
+            padding: 20px;
+        }
+
+        .bg-decoration {
+            position: absolute;
+            inset: 0;
+            z-index: -1;
+            opacity: 0.55;
+        }
+
+        .node {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--accent-blue);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--accent-blue);
+        }
+
+        .login-card {
+            background: var(--panel-bg);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 40px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5), var(--glow);
+            animation: fadeIn 0.8s ease-out;
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+            from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .title {
-            font-size: 26px;
-            font-weight: bold;
-            color: #1a73e8;
-            margin-bottom: 5px;
+        .header {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(to right, var(--accent-blue), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
         }
 
         .subtitle {
-            font-size: 15px;
-            color: #444;
-            margin-bottom: 25px;
-        }
-
-        input {
-            width: 100%;
-            padding: 12px;
-            margin: 8px 0;
-            border-radius: 10px;
-            border: 1px solid #cbd5e1;
+            color: var(--text-muted);
             font-size: 14px;
-            background: #f9fbff;
-            color: #222;
-            transition: 0.2s;
-            box-sizing: border-box;
         }
 
-        input:focus {
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            background: var(--input-bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 14px 16px;
+            color: white;
+            font-size: 15px;
+            transition: all 0.3s ease;
             outline: none;
-            border-color: #1a73e8;
-            background: #ffffff;
-            box-shadow: 0 0 6px rgba(26,115,232,0.35);
+        }
+
+        input[type="email"]:focus,
+        input[type="password"]:focus {
+            border-color: var(--accent-blue);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 15px rgba(0, 210, 255, 0.1);
+        }
+
+        .options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            font-size: 13px;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-muted);
+            cursor: pointer;
+            text-transform: none;
+            letter-spacing: 0;
+            margin-bottom: 0;
+        }
+
+        .remember-me input {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+
+        .forgot-pass {
+            color: var(--accent-blue);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .forgot-pass:hover,
+        .footer-links a:hover {
+            text-decoration: underline;
         }
 
         .btn-login {
             width: 100%;
-            padding: 12px;
-            background: #1a73e8;
-            color: white;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
             border: none;
-            border-radius: 10px;
+            border-radius: 12px;
+            padding: 16px;
+            color: white;
             font-size: 16px;
+            font-weight: 700;
             cursor: pointer;
-            margin-top: 10px;
-            font-weight: bold;
-            transition: 0.2s;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 20px rgba(0, 210, 255, 0.2);
         }
 
         .btn-login:hover {
-            background: #155fc0;
-            transform: translateY(-1px);
+            transform: translateY(-2px);
+            box-shadow: 0 15px 25px rgba(0, 210, 255, 0.3);
+            filter: brightness(1.1);
+        }
+
+        .btn-login:active {
+            transform: translateY(0);
         }
 
         .status {
-            min-height: 20px;
-            margin-top: 12px;
+            min-height: 22px;
+            margin-top: 16px;
             font-size: 14px;
-            color: #1a73e8;
+            color: var(--accent-blue);
+            text-align: center;
         }
 
-        .register-link {
-            margin-top: 15px;
-            font-size: 14px;
+        .status.error {
+            color: var(--error);
         }
 
-        .register-link a {
-            color: #1a73e8;
+        .status.success {
+            color: var(--success);
+        }
+
+        .footer-links {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .footer-links a {
+            color: var(--accent-blue);
             text-decoration: none;
-            font-weight: bold;
+            font-weight: 600;
         }
 
-        .register-link a:hover {
-            text-decoration: underline;
+        .status-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: var(--success);
+            border-radius: 50%;
+            margin-right: 6px;
+            box-shadow: 0 0 8px var(--success);
+        }
+
+        @media (max-width: 520px) {
+            .login-card {
+                padding: 28px 22px;
+                border-radius: 20px;
+            }
+
+            .logo {
+                font-size: 24px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="login-container">
-        <div class="title">Empireyoncar Social</div>
-        <div class="subtitle">Bienvenido a la Red Social Productiva</div>
+    <div class="bg-decoration" id="nodes"></div>
+
+    <div class="login-card">
+        <div class="header">
+            <div class="logo">EMPIREYONCAR SOCIAL</div>
+            <div class="subtitle">
+                <span class="status-dot"></span>
+                Red Social productiva, amantes del desarrollo personal en todas las areas.
+            </div>
+        </div>
 
         <form id="loginForm">
-            <input id="email" type="email" placeholder="Correo electrónico" required>
-            <input id="password" type="password" placeholder="Contraseña" required>
-            <button class="btn-login" type="submit">Entrar</button>
+            <div class="form-group">
+                <label for="email">Correo Electronico</label>
+                <input type="email" id="email" placeholder="nombre@ejemplo.com" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Contrasena</label>
+                <input type="password" id="password" placeholder="••••••••" required>
+            </div>
+
+            <div class="options">
+                <label class="remember-me">
+                    <input type="checkbox" id="rememberMe"> Recordarme
+                </label>
+                <a href="#" class="forgot-pass">Olvidaste tu contrasena?</a>
+            </div>
+
+            <button type="submit" class="btn-login">Iniciar sesion</button>
         </form>
 
         <div id="loginStatus" class="status"></div>
 
-        <div class="register-link">
-            ¿No tienes cuenta? <a href="register">Regístrate aquí</a>
+        <div class="footer-links">
+            No tienes una cuenta? <a href="register">Registrate ahora</a>
         </div>
     </div>
 
     <script>
+        const nodesContainer = document.getElementById("nodes");
+        for (let i = 0; i < 20; i++) {
+            const node = document.createElement("div");
+            node.className = "node";
+            node.style.left = Math.random() * 100 + "%";
+            node.style.top = Math.random() * 100 + "%";
+            node.style.opacity = Math.random();
+            nodesContainer.appendChild(node);
+        }
+
         const loginForm = document.getElementById("loginForm");
         const loginStatus = document.getElementById("loginStatus");
+        const rememberMe = document.getElementById("rememberMe");
+
+        function setStatus(message, type = "") {
+            loginStatus.textContent = message;
+            loginStatus.className = `status${type ? ` ${type}` : ""}`;
+        }
+
+        const rememberedEmail = localStorage.getItem("remembered_email");
+        if (rememberedEmail) {
+            document.getElementById("email").value = rememberedEmail;
+            rememberMe.checked = true;
+        }
 
         loginForm.addEventListener("submit", async (event) => {
             event.preventDefault();
+            setStatus("Validando acceso...");
 
             try {
+                const email = document.getElementById("email").value.trim();
+                const password = document.getElementById("password").value;
                 const response = await fetch("/empireyoncarsocial/usuarios/api/login", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        email: document.getElementById("email").value.trim(),
-                        password: document.getElementById("password").value,
-                    }),
+                    body: JSON.stringify({ email, password }),
                 });
 
                 const data = await response.json();
 
                 if (!response.ok) {
-                    loginStatus.textContent = data.error || "No se pudo iniciar sesión.";
+                    setStatus(data.error || "No se pudo iniciar sesion.", "error");
                     return;
                 }
 
                 localStorage.setItem("user_id", data.user_id);
+                if (rememberMe.checked) {
+                    localStorage.setItem("remembered_email", email);
+                } else {
+                    localStorage.removeItem("remembered_email");
+                }
+
+                setStatus("Acceso correcto. Redirigiendo...", "success");
                 window.location.href = "home";
             } catch {
-                loginStatus.textContent = "Error de conexión con el servidor.";
+                setStatus("Error de conexion con el servidor.", "error");
             }
         });
     </script>
