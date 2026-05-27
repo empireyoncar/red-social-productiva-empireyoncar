@@ -313,7 +313,7 @@
             }
             chatUsers.innerHTML = Array.from(deduped.values()).map((chat) => `
                 <div class="chat-user ${Number(chat.otro) === Number(selectedUserId) ? "active" : ""}" data-chat-user="${chat.otro}">
-                    <img src="https://i.pravatar.cc/100?u=${chat.otro}" alt="">
+                    <img id="chat-avatar-${chat.otro}" src="https://i.pravatar.cc/100?u=${chat.otro}" alt="">
                     <div>
                         <div class="name" id="chat-name-${chat.otro}">Usuario ${chat.otro}</div>
                         <div class="last-msg">${escapeHtml(chat.mensaje || "Sin mensajes")}</div>
@@ -328,7 +328,9 @@
                     const user = await fetchProfile(userId);
                     const displayName = `${user.nombres || "Usuario"} ${user.apellidos || ""}`.trim();
                     const nameNode = document.getElementById(`chat-name-${userId}`);
+                    const avatarNode = document.getElementById(`chat-avatar-${userId}`);
                     if (nameNode) nameNode.textContent = displayName;
+                    if (avatarNode && user.foto_url) avatarNode.src = user.foto_url;
                     if (Number(userId) === Number(selectedUserId)) {
                         chatHeader.childNodes[0].textContent = displayName;
                         chatHeaderMeta.textContent = user.oficio || user.email || "Conversacion privada";

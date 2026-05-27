@@ -89,6 +89,7 @@
         const currentUserId = Number(localStorage.getItem("user_id") || 1);
         let currentUserName = localStorage.getItem("user_name") || "";
         let currentUserIsPlatformAdmin = false;
+        let showingAllGroups = false;
 
         const defaultGroups = [
             {
@@ -179,12 +180,23 @@
             return getGroups().filter((group) => Number(group.creador_id) === currentUserId || group.mio);
         }
 
+        function isOwnerlessGroup(group) {
+            const creatorId = Number(group.creador_id || 0);
+            const creatorName = String(group.creador || "").trim();
+            return !creatorId || !creatorName || creatorName.toLowerCase() === "sin definir" || creatorName.toLowerCase() === "administrador";
+        }
+
         function canModerateGroup(group) {
-            return currentUserIsPlatformAdmin || Number(group.creador_id) === currentUserId;
+            return currentUserIsPlatformAdmin || Number(group.creador_id) === currentUserId || isOwnerlessGroup(group);
         }
 
         function getVisibleGroups() {
-            return currentUserIsPlatformAdmin ? getGroups() : getMyGroups();
+            if (currentUserIsPlatformAdmin && showingAllGroups) {
+                return getGroups();
+            }
+            const mine = getMyGroups();
+            const ownerless = getGroups().filter((group) => isOwnerlessGroup(group) && !mine.some((item) => item.id === group.id));
+            return [...mine, ...ownerless];
         }
 
         function openGroup(groupId, target) {
@@ -193,12 +205,17 @@
 
         function renderGroups(groups, heading) {
             document.getElementById("groupsHeading").textContent = heading;
-            document.getElementById("groupsSummary").textContent = currentUserIsPlatformAdmin
+            document.getElementById("showMineBtn").textContent = currentUserIsPlatformAdmin
+                ? (showingAllGroups ? "Ver mis grupos" : "Ver todos los grupos")
+                : "Ver mis grupos";
+            document.getElementById("groupsSummary").textContent = currentUserIsPlatformAdmin && showingAllGroups
                 ? `Grupos visibles: ${getGroups().length}`
                 : `Mis grupos: ${getMyGroups().length}`;
             document.getElementById("groupsIntro").textContent = currentUserIsPlatformAdmin
-                ? "Como usuario verificado puedes ver y moderar cualquier grupo, incluso si no lo creaste."
-                : "Crea y administra tus comunidades. Aqui solo aparecen los grupos que has creado.";
+                ? (showingAllGroups
+                    ? "Como usuario verificado puedes moderar cualquier grupo, incluso si no lo creaste."
+                    : "Estas viendo tus grupos. Si necesitas moderar otros, puedes abrir la vista de todos los grupos.")
+                : "Crea y administra tus comunidades. Aqui aparecen tus grupos y tambien los grupos sin dueño para que puedas limpiarlos.";
             const grid = document.getElementById("groupsGrid");
             if (!groups.length) {
                 grid.innerHTML = `<div class="empty-state">${currentUserIsPlatformAdmin ? "No hay grupos guardados." : "Todavia no has creado grupos."}</div>`;
@@ -211,6 +228,7 @@
                         <h3>${group.nombre}</h3>
                         <p>${group.descripcion}</p>
                         <div class="group-meta"><span>${group.miembros || (group.members || []).length} miembros</span><span>${group.categoria || group.estado || "Activo"}</span></div>
+                        <div class="group-meta"><span>Creador: ${group.creador || "Sin definir"}</span><span>${isOwnerlessGroup(group) ? "Sin dueño" : (group.fecha_creacion || "-")}</span></div>
                         <div class="group-actions">
                             <button class="btn" type="button" data-enter-group="${group.id}">${canModerateGroup(group) || group.mio ? "Entrar" : "Solicitar unirse"}</button>
                             <button class="ghost-btn" type="button" data-members-group="${group.id}">Miembros</button>
@@ -262,11 +280,14 @@
         });
 
         document.getElementById("showMineBtn").addEventListener("click", () => {
-            renderGroups(currentUserIsPlatformAdmin ? getGroups() : getMyGroups(), currentUserIsPlatformAdmin ? "Todos los grupos" : "Mis grupos");
+            if (currentUserIsPlatformAdmin) {
+                showingAllGroups = !showingAllGroups;
+            }
+            renderGroups(getVisibleGroups(), currentUserIsPlatformAdmin && showingAllGroups ? "Todos los grupos" : "Mis grupos");
         });
 
         document.getElementById("resetGroupsBtn").addEventListener("click", () => {
-            renderGroups(getVisibleGroups(), currentUserIsPlatformAdmin ? "Todos los grupos" : "Mis grupos");
+            renderGroups(getVisibleGroups(), currentUserIsPlatformAdmin && showingAllGroups ? "Todos los grupos" : "Mis grupos");
         });
 
         document.getElementById("searchGroupsBtn").addEventListener("click", () => {
@@ -276,7 +297,7 @@
                 group.descripcion.toLowerCase().includes(term) ||
                 (group.categoria || "").toLowerCase().includes(term)
             );
-            renderGroups(groups, term ? `Resultados para "${term}"` : currentUserIsPlatformAdmin ? "Todos los grupos" : "Mis grupos");
+            renderGroups(groups, term ? `Resultados para "${term}"` : currentUserIsPlatformAdmin && showingAllGroups ? "Todos los grupos" : "Mis grupos");
         });
 
         document.getElementById("groupSearch").addEventListener("keydown", (event) => {
@@ -304,13 +325,13 @@
                 if (!group || !canModerateGroup(group)) return;
                 if (!confirm(`Deseas eliminar el grupo "${group.nombre}"?`)) return;
                 saveGroups(groups.filter((item) => item.id !== group.id));
-                renderGroups(getVisibleGroups(), currentUserIsPlatformAdmin ? "Todos los grupos" : "Mis grupos");
+                renderGroups(getVisibleGroups(), currentUserIsPlatformAdmin && showingAllGroups ? "Todos los grupos" : "Mis grupos");
             }
         });
 
         async function initPage() {
             await hydrateCurrentUserName();
-            renderGroups(getVisibleGroups(), currentUserIsPlatformAdmin ? "Todos los grupos" : "Mis grupos");
+            renderGroups(getVisibleGroups(), "Mis grupos");
         }
 
         initPage();

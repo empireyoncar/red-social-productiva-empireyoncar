@@ -322,6 +322,11 @@
             });
             return targetGroup;
         }
+        function isOwnerlessGroup(targetGroup) {
+            const creatorId = Number(targetGroup?.creador_id || 0);
+            const creatorName = String(targetGroup?.creador || "").trim().toLowerCase();
+            return !creatorId || !creatorName || creatorName === "sin definir" || creatorName === "administrador";
+        }
         function escapeHtml(value) {
             return String(value || "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;");
         }
@@ -488,7 +493,7 @@
             document.getElementById("groupBanner").style.backgroundImage = group.banner ? `url('${group.banner}')` : "linear-gradient(135deg,#1a73e8,#4ca0ff)";
             document.getElementById("membersSummary").textContent = `${(group.members || []).length} miembro(s) registrados.`;
             document.getElementById("viewMembersBtn").href = `/empireyoncarsocial/grupos/miembros-grupo?group_id=${group.id}`;
-            const isAdmin = currentUserIsPlatformAdmin || Number(group.creador_id) === currentUserId || (group.admins || []).includes(getDisplayName());
+            const isAdmin = currentUserIsPlatformAdmin || Number(group.creador_id) === currentUserId || isOwnerlessGroup(group) || (group.admins || []).includes(getDisplayName());
             document.getElementById("adminPanel").style.display = isAdmin ? "grid" : "none";
             document.getElementById("editGroupBtn").href = `/empireyoncarsocial/grupos/grupo-admin?group_id=${group.id}`;
             document.getElementById("viewRequestsBtn").href = `/empireyoncarsocial/grupos/grupo-admin?group_id=${group.id}#solicitudes`;
@@ -645,7 +650,7 @@
         });
 
         document.getElementById("deleteGroupBtn").addEventListener("click", () => {
-            if (!group || (!currentUserIsPlatformAdmin && Number(group.creador_id) !== currentUserId)) {
+            if (!group || (!currentUserIsPlatformAdmin && Number(group.creador_id) !== currentUserId && !isOwnerlessGroup(group))) {
                 postMessage.textContent = "No tienes permisos para eliminar este grupo.";
                 return;
             }
