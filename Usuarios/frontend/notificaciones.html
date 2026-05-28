@@ -4,20 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Notificaciones - Empireyoncar Social</title>
-    <link rel="stylesheet" href="/theme.css">
-
     <style>
+        :root {
+            --brand: #1a73e8;
+            --brand-dark: #155fc0;
+            --bg: #f0f4ff;
+            --panel: #ffffff;
+            --line: #d7e2f3;
+            --text: #243247;
+            --muted: #6d7f98;
+        }
+
+        * { box-sizing: border-box; }
         body {
             margin: 0;
             padding: 0;
             font-family: "Segoe UI", Arial, sans-serif;
-            background: #f0f4ff;
+            background: var(--bg);
+            color: var(--text);
         }
 
-        /* NAVBAR */
         .navbar {
             width: 100%;
-            background: #1a73e8;
+            background: var(--brand);
             padding: 12px 20px;
             color: white;
             display: flex;
@@ -34,52 +43,92 @@
         .nav-links {
             margin-left: 40px;
             display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
         }
 
         .nav-links a {
-            margin-right: 20px;
             color: white;
             text-decoration: none;
             font-weight: 500;
         }
 
-        .nav-links a:hover {
-            text-decoration: underline;
-        }
-
-        /* CONTENEDOR PRINCIPAL */
         .notif-container {
-            width: 600px;
+            width: min(760px, calc(100% - 32px));
             margin: 30px auto;
             background: white;
             padding: 25px;
             border-radius: 16px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            display: grid;
+            gap: 18px;
+        }
+
+        .notif-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
         }
 
         .notif-title {
             font-size: 22px;
             font-weight: bold;
-            color: #1a73e8;
-            margin-bottom: 20px;
-            text-align: center;
+            color: var(--brand);
         }
 
-        /* NOTIFICACIÓN */
+        .notif-actions-top {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn, .ghost-btn {
+            border: none;
+            padding: 10px 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .btn {
+            background: var(--brand);
+            color: white;
+        }
+
+        .ghost-btn {
+            background: #edf4ff;
+            color: var(--brand);
+        }
+
+        .status {
+            min-height: 18px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .notif-list {
+            display: grid;
+            gap: 14px;
+        }
+
         .notif-item {
             display: flex;
             align-items: center;
+            gap: 14px;
             padding: 15px;
             border-radius: 12px;
-            margin-bottom: 15px;
             background: #f7faff;
-            border-left: 4px solid #1a73e8;
+            border-left: 4px solid var(--brand);
             transition: 0.2s;
         }
 
         .notif-item.unread {
             background: #e8f0ff;
-            border-left-color: #155fc0;
+            border-left-color: var(--brand-dark);
         }
 
         .notif-item:hover {
@@ -87,15 +136,22 @@
         }
 
         .notif-icon {
-            font-size: 24px;
-            margin-right: 15px;
-            color: #1a73e8;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            background: #dce8ff;
+            color: var(--brand);
+            font-size: 20px;
+            flex: 0 0 auto;
         }
 
         .notif-text {
             flex: 1;
             font-size: 14px;
             color: #333;
+            line-height: 1.5;
         }
 
         .notif-time {
@@ -105,30 +161,37 @@
         }
 
         .notif-actions {
-            margin-left: 10px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
         }
 
-        .notif-actions button {
-            background: #e8f0ff;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 12px;
+        .empty-state {
+            padding: 24px;
+            border-radius: 14px;
+            background: #f7faff;
+            color: var(--muted);
+            text-align: center;
+            line-height: 1.6;
         }
 
-        .notif-actions button:hover {
-            background: #d6e4ff;
+        @media (max-width: 680px) {
+            .notif-item {
+                flex-wrap: wrap;
+                align-items: flex-start;
+            }
+
+            .notif-actions {
+                width: 100%;
+                justify-content: flex-end;
+            }
         }
     </style>
 </head>
-
 <body>
-
-    <!-- NAVBAR -->
     <div class="navbar">
         <div class="logo">Empireyoncar Social</div>
-
         <div class="nav-links">
             <a href="/empireyoncarsocial/home">Inicio</a>
             <a href="/empireyoncarsocial/perfil">Perfil</a>
@@ -137,54 +200,129 @@
         </div>
     </div>
 
-    <!-- CONTENEDOR PRINCIPAL -->
     <div class="notif-container">
-
-        <div class="notif-title">Notificaciones</div>
-
-        <!-- NOTIFICACIÓN 1 -->
-        <div class="notif-item unread">
-            <div class="notif-icon">💬</div>
-            <div class="notif-text">
-                Juan Pérez te envió un mensaje.
-                <div class="notif-time">Hace 2 minutos</div>
-            </div>
-            <div class="notif-actions">
-                <button>Marcar leído</button>
+        <div class="notif-head">
+            <div class="notif-title">Notificaciones</div>
+            <div class="notif-actions-top">
+                <button class="ghost-btn" id="markReadBtn" type="button">Marcar todo leido</button>
+                <button class="ghost-btn" id="reloadBtn" type="button">Actualizar</button>
             </div>
         </div>
 
-        <!-- NOTIFICACIÓN 2 -->
-        <div class="notif-item">
-            <div class="notif-icon">👍</div>
-            <div class="notif-text">
-                María López le dio Me gusta a tu publicación.
-                <div class="notif-time">Hace 1 hora</div>
-            </div>
-        </div>
-
-        <!-- NOTIFICACIÓN 3 -->
-        <div class="notif-item unread">
-            <div class="notif-icon">👥</div>
-            <div class="notif-text">
-                Nuevo miembro en tu grupo de Productividad.
-                <div class="notif-time">Hace 3 horas</div>
-            </div>
-            <div class="notif-actions">
-                <button>Marcar leído</button>
-            </div>
-        </div>
-
-        <!-- NOTIFICACIÓN 4 -->
-        <div class="notif-item">
-            <div class="notif-icon">🔔</div>
-            <div class="notif-text">
-                Tu solicitud para unirte al grupo fue aprobada.
-                <div class="notif-time">Ayer</div>
-            </div>
-        </div>
-
+        <div class="status" id="statusMessage"></div>
+        <div class="notif-list" id="notifList"></div>
     </div>
 
+    <script>
+        const currentUserId = Number(localStorage.getItem("user_id") || 0);
+        const notifList = document.getElementById("notifList");
+        const statusMessage = document.getElementById("statusMessage");
+        const markReadBtn = document.getElementById("markReadBtn");
+        const reloadBtn = document.getElementById("reloadBtn");
+
+        function escapeHtml(value) {
+            return String(value || "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;");
+        }
+
+        function formatDate(value) {
+            if (!value) return "Ahora";
+            const date = new Date(value);
+            if (Number.isNaN(date.getTime())) return "Ahora";
+            return date.toLocaleString("es-ES", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" });
+        }
+
+        function getIcon(type) {
+            if (type === "mensaje") return "💬";
+            if (type === "like") return "👍";
+            if (type === "comentario") return "📝";
+            if (type === "grupo") return "👥";
+            return "🔔";
+        }
+
+        function normalizeNotification(item, source) {
+            return {
+                id: item.id,
+                source,
+                tipo: item.tipo || "sistema",
+                contenido: item.contenido || "Notificacion",
+                fecha: item.fecha,
+                leido: Boolean(item.leido)
+            };
+        }
+
+        function renderNotifications(items) {
+            if (!items.length) {
+                notifList.innerHTML = '<div class="empty-state">No tienes notificaciones por ahora.</div>';
+                return;
+            }
+            notifList.innerHTML = items.map((item) => `
+                <div class="notif-item ${item.leido ? "" : "unread"}">
+                    <div class="notif-icon">${getIcon(item.tipo)}</div>
+                    <div class="notif-text">
+                        ${escapeHtml(item.contenido)}
+                        <div class="notif-time">${formatDate(item.fecha)} | ${item.source === "chat" ? "Chat" : "Sistema"}</div>
+                    </div>
+                    <div class="notif-actions">
+                        ${item.tipo === "mensaje" ? `<a class="ghost-btn" href="/empireyoncarsocial/chat">Abrir chat</a>` : ""}
+                    </div>
+                </div>
+            `).join("");
+        }
+
+        async function loadNotifications() {
+            if (!currentUserId) {
+                window.location.href = "/empireyoncarsocial/login";
+                return;
+            }
+            statusMessage.textContent = "Cargando notificaciones...";
+            try {
+                const [chatResponse, systemResponse] = await Promise.all([
+                    fetch(`/empireyoncarsocial/chat_api/api/chat/notificaciones/${currentUserId}`),
+                    fetch(`/empireyoncarsocial/notificaciones_api/api/notificaciones/${currentUserId}`)
+                ]);
+
+                const chatItems = chatResponse.ok ? await chatResponse.json() : [];
+                const systemItems = systemResponse.ok ? await systemResponse.json() : [];
+                const merged = [
+                    ...chatItems.map((item) => normalizeNotification(item, "chat")),
+                    ...systemItems.map((item) => normalizeNotification(item, "sistema"))
+                ].sort((a, b) => new Date(b.fecha || 0) - new Date(a.fecha || 0));
+
+                renderNotifications(merged);
+                statusMessage.textContent = merged.some((item) => !item.leido)
+                    ? "Tienes notificaciones nuevas."
+                    : "Todo al dia.";
+            } catch {
+                notifList.innerHTML = '<div class="empty-state">No se pudieron cargar las notificaciones.</div>';
+                statusMessage.textContent = "Error al consultar el servidor.";
+            }
+        }
+
+        markReadBtn.addEventListener("click", async () => {
+            if (!currentUserId) return;
+            statusMessage.textContent = "Marcando notificaciones...";
+            try {
+                await Promise.all([
+                    fetch("/empireyoncarsocial/chat_api/api/chat/notificaciones/leido", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ user_id: currentUserId })
+                    }),
+                    fetch("/empireyoncarsocial/notificaciones_api/api/notificaciones/marcar_leidas", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ user_id: currentUserId })
+                    })
+                ]);
+                await loadNotifications();
+            } catch {
+                statusMessage.textContent = "No se pudieron marcar como leidas.";
+            }
+        });
+
+        reloadBtn.addEventListener("click", loadNotifications);
+
+        loadNotifications();
+    </script>
 </body>
 </html>
